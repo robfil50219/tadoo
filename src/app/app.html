@@ -1,3 +1,5 @@
+<!-- src/app/app.html -->
+
 <div class="app-container">
   <!-- Header -->
   <header class="app-header">
@@ -13,13 +15,19 @@
     </div>
   </header>
 
-  <!-- Hovedinnhold -->
+  <!-- Hovedinnhold: flex-container med kalender til venstre og Todo‐skjema/oversikt til høyre -->
   <main class="app-main">
-    <!-- Todo‐listen -->
-    <app-todo-list></app-todo-list>
+    <div class="content-wrapper">
+      <!-- Kalenderen ligger til venstre -->
+      <div class="calendar-wrapper">
+        <app-calendar></app-calendar>
+      </div>
 
-    <!-- FullCalendar-visningen -->
-    <app-calendar></app-calendar>
+      <!-- Todo‐listen (hele komponenten) ligger til høyre -->
+      <div class="todo-wrapper">
+        <app-todo-list></app-todo-list>
+      </div>
+    </div>
   </main>
 
   <!-- Footer -->

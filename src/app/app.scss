@@ -75,27 +75,42 @@
 
 .app-main {
     flex: 1;
-    /* Fyll tilgjengelig vertikal plass mellom header og footer */
     width: 100%;
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
-    /* Sentrer horisontalt */
     padding: 2rem 1rem;
-    /* Luft innvendig (ingen ytre margin) */
+}
+
+
+.content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    align-items: stretch;
+}
+
+
+.calendar-wrapper {
+    flex: 3;
+    min-width: 300px;
+}
+
+/* Todo‐delen (liste + skjema) legger seg på høyre side */
+.todo-wrapper {
+    flex: 2;
+    min-width: 300px;
 }
 
 /* ========================= Footer ========================= */
 
 .app-footer {
     width: 100%;
-    /* Fyller hele viewport‐bredden */
     background-color: #333;
     color: #ddd;
     padding: 1rem 0;
-    /* Innvendig padding på topp/bunn */
     text-align: center;
     margin: 0;
-    /* Ingen ytre margin */
     border: none;
     /* Ingen ramme */
 }

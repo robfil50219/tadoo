@@ -1,5 +1,3 @@
-<!-- src/app/todo-list/todo-list.html -->
-
 <div class="todo-container">
   <h2>Familie To-Do</h2>
 
@@ -11,7 +9,6 @@
         (change)="toggleCompleted(todo)"
       />
 
-      <!-- Hvis oppgaven IKKE er i redigeringsmodus, vis teksten -->
       <span
         *ngIf="editingId !== todo.id"
         (click)="editingId = todo.id"
@@ -20,7 +17,6 @@
         {{ todo.title }}
       </span>
 
-      <!-- Hvis oppgaven ER i redigeringsmodus, vis input -->
       <input
         *ngIf="editingId === todo.id"
         type="text"
@@ -42,6 +38,14 @@
       [(ngModel)]="newTitle"
       (keyup.enter)="addTodo()"
     />
+
+    <!-- Dato + tid‐velger -->
+    <input
+      type="datetime-local"
+      [(ngModel)]="newDueDateTime"
+      class="due-input"
+    />
+
     <button (click)="addTodo()">Legg til</button>
   </div>
 </div>

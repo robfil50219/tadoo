@@ -1,4 +1,37 @@
-.calendar-container {
-    max-width: 800px;
-    margin: 2rem auto;
+/* src/app/calendar/calendar.component.scss */
+
+/* La dag‐celler og grid‐seksjoner slippe overløp av event‐bokser */
+:host ::ng-deep .fc .fc-daygrid-day-frame,
+:host ::ng-deep .fc .fc-daygrid-day-frame>.fc-daygrid-day-top,
+:host ::ng-deep .fc .fc-daygrid-body,
+:host ::ng-deep .fc .fc-scrollgrid-section-liquid {
+    overflow: visible !important;
+}
+
+/* Hendelsesbokser vokser i både høyde og bredde */
+:host ::ng-deep .fc-daygrid-event {
+    width: auto !important;
+    min-width: 80px !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 40px !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    box-sizing: border-box !important;
+}
+
+/* Tid og tittel brytes og klippes ikke */
+:host ::ng-deep .fc-event-title {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    font-size: 0.9rem;
+}
+
+:host ::ng-deep .fc-event-time {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    font-size: 0.8rem;
+    padding-right: 4px;
 }

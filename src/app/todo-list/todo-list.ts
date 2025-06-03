@@ -1,8 +1,6 @@
-// src/app/todo-list/todo-list.ts
-
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';    // <--- Viktig!
 import { TodoService, TodoItem } from '../services/todo';
 import { Subscription } from 'rxjs';
 
@@ -19,7 +17,8 @@ import { Subscription } from 'rxjs';
 export class TodoListComponent implements OnInit, OnDestroy {
     todos: TodoItem[] = [];
     newTitle = '';
-    editingId: string | null = null;      // <– Nye linje
+    newDueDateTime = '';
+    editingId: string | null = null;
     private sub?: Subscription;
 
     constructor(private todoService: TodoService) { }
@@ -41,24 +40,35 @@ export class TodoListComponent implements OnInit, OnDestroy {
     addTodo() {
         const title = this.newTitle.trim();
         if (!title) return;
+
+        // Hvis bruker har valgt dato/tid, bruk den; ellers blir feltet tomt
+        const due = this.newDueDateTime ? new Date(this.newDueDateTime).toISOString() : undefined;
         this.todoService.leggTil(title);
+
+        if (due) {
+            // Finn siste lagt til oppgave og oppdater med valgt dueDateTime
+            const siste = this.todos[this.todos.length - 1];
+            if (siste) {
+                this.todoService.oppdater({ ...siste, dueDateTime: due });
+            }
+        }
+
         this.newTitle = '';
+        this.newDueDateTime = '';
     }
 
     deleteTodo(id: string) {
         this.todoService.slett(id);
     }
 
-    // Kalles når vi er ferdig med å redigere (blur eller Enter)
     finishEdit(todo: TodoItem) {
-        // Hvis tom tittel etter redigering, sletter vi oppgaven
         const trimmed = todo.title.trim();
         if (!trimmed) {
             this.todoService.slett(todo.id);
         } else {
             this.todoService.oppdater({ ...todo, title: trimmed });
         }
-        this.editingId = null;  // gå ut av redigeringsmodus
+        this.editingId = null;
     }
 }
 
