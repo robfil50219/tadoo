@@ -1,3 +1,5 @@
+<!-- src/app/todo-list/todo-list.html -->
+
 <div class="todo-container">
   <h2>Tadoo – Familie To-Do</h2>
 
@@ -8,7 +10,27 @@
         [checked]="todo.completed"
         (change)="toggleCompleted(todo)"
       />
-      <span>{{ todo.title }}</span>
+
+      <!-- Hvis oppgaven IKKE er i redigeringsmodus, vis teksten -->
+      <span
+        *ngIf="editingId !== todo.id"
+        (click)="editingId = todo.id"
+        class="todo-title"
+      >
+        {{ todo.title }}
+      </span>
+
+      <!-- Hvis oppgaven ER i redigeringsmodus, vis input -->
+      <input
+        *ngIf="editingId === todo.id"
+        type="text"
+        [(ngModel)]="todo.title"
+        (blur)="finishEdit(todo)"
+        (keyup.enter)="finishEdit(todo)"
+        class="edit-input"
+        autofocus
+      />
+
       <button class="delete-btn" (click)="deleteTodo(todo.id)">×</button>
     </li>
   </ul>
