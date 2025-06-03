@@ -33,15 +33,24 @@ export class CalendarComponent implements OnInit, OnDestroy {
             plugins: [dayGridPlugin, interactionPlugin],
             locale: noLocale,
             initialView: 'dayGridMonth',
+
+            // Sørger for at hendelser ikke overlapper
+            eventOverlap: false,
+
+            // La cellene utvide seg i høyden for å vise flere hendelser
             dayMaxEventRows: false,
             expandRows: true,
+
             eventDisplay: 'block',
             eventTimeFormat: {
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: false
             },
+
             events: [],
+
+            // Klikk på hendelse åpner modal
             eventClick: this.handleEventClick.bind(this)
         };
 
