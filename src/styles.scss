@@ -1,1 +1,20 @@
-/* You can add global styles to this file, and also import other style files */
+/* src/styles.scss (globalt) */
+
+/* 1) Global reset for margin og padding på html og body */
+html,
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+}
+
+/* 2) Box-sizing reset (valgfritt, men anbefalt) */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}

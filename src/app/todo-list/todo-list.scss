@@ -5,6 +5,15 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #f9f9f9;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    h2 {
+        margin: 0 0 1rem 0;
+        /* valgfri margin */
+    }
 }
 
 .todo-list {

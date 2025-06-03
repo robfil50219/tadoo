@@ -1,0 +1,110 @@
+/* src/app/app.scss */
+
+/* --------------------------------------------------
+   2) App‐komponentens styling (ingen reset her)
+-------------------------------------------------- */
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /* Sørger for at footer presses til bunn */
+    margin: 0 auto;
+    /* Ingen ytre margin, bare horisontal sentrering */
+    padding: 0;
+    /* Ingen ytre padding */
+    width: 100%;
+}
+
+/* ========================= Header ========================= */
+
+.app-header {
+    width: 100%;
+    /* Fyller hele viewport‐bredden */
+    background-color: #00a0a0;
+    color: white;
+    padding: 1rem 0;
+    /* Innvendig padding på topp/bunn */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    /* Pass på ingen ytre margin */
+    border: none;
+    /* Ingen ramme */
+
+    .header-content {
+        max-width: 800px;
+        margin: 0 auto;
+        /* Sentrer horisontalt */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1rem;
+        /* Luft på sidene */
+    }
+
+    .app-title {
+        font-size: 1.5rem;
+        margin: 0;
+        /* <h1> standardmargin fjernet */
+    }
+
+    .app-nav ul {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .app-nav li {
+        margin-left: 1rem;
+    }
+
+    .app-nav a {
+        color: white;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: opacity 0.2s ease;
+    }
+
+    .app-nav a:hover {
+        opacity: 0.8;
+    }
+}
+
+/* ========================= Main ========================= */
+
+.app-main {
+    flex: 1;
+    /* Fyll tilgjengelig vertikal plass mellom header og footer */
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    /* Sentrer horisontalt */
+    padding: 2rem 1rem;
+    /* Luft innvendig (ingen ytre margin) */
+}
+
+/* ========================= Footer ========================= */
+
+.app-footer {
+    width: 100%;
+    /* Fyller hele viewport‐bredden */
+    background-color: #333;
+    color: #ddd;
+    padding: 1rem 0;
+    /* Innvendig padding på topp/bunn */
+    text-align: center;
+    margin: 0;
+    /* Ingen ytre margin */
+    border: none;
+    /* Ingen ramme */
+}
+
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+    /* Sentrer horisontalt */
+    padding: 0 1rem;
+    /* Luft på sidene */
+    font-size: 0.9rem;
+}
