@@ -7,6 +7,7 @@ export interface TodoItem {
     id: string;
     title: string;
     completed: boolean;
+    dueDateTime?: string; // ISO‐streng, f.eks. "2025-06-15T14:30"
 }
 
 @Injectable({ providedIn: 'root' })

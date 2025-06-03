@@ -1,17 +1,18 @@
-// src/app/app.ts
-
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';        // <–– Bruk CommonModule
+import { CommonModule } from '@angular/common';
 import { TodoListComponent } from './todo-list/todo-list';
+import { CalendarComponent } from './calendar/calendar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    CommonModule,            // for *ngIf, *ngFor osv. (brukes indirekte av TodoList)
-    TodoListComponent        // importér TodoListComponent, som selv importerer det den trenger
+    CommonModule,
+    TodoListComponent,
+    CalendarComponent
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })
 export class App { }
+
