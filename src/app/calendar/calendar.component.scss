@@ -1,6 +1,46 @@
 /* src/app/calendar/calendar.component.scss */
 
-/* La dag‐celler og grid‐seksjoner slippe overløp av event‐bokser */
+/* … eksisterende styling for kalender‐container … */
+.calendar-container {
+    max-width: 800px;
+    margin: 2rem auto;
+}
+
+/* Sørg for at hendelsesbokser ikke strekker seg helt over, bare én linje */
+:host ::ng-deep .fc-daygrid-event {
+    height: auto !important;
+    min-height: 40px !important;
+    max-width: 100% !important;
+    /* Begrens til cellens bredde */
+    overflow: hidden !important;
+    /* Skjul alt som ikke får plass */
+    white-space: nowrap !important;
+    /* Én linje */
+    text-overflow: ellipsis !important;
+    /* Vis “…” for avkortet tekst */
+    box-sizing: border-box !important;
+}
+
+/* Tittelen i hhv. month‐view heter .fc-event-title */
+:host ::ng-deep .fc-event-title {
+    display: block;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 0.9rem;
+}
+
+/* Behold 24‐t format for tid, men skjul hvis det ikke får plass */
+:host ::ng-deep .fc-event-time {
+    flex-shrink: 0;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 0.8rem;
+    padding-right: 4px;
+}
+
+/* Sørg for at celle‐rammene ikke klipper (vertikalt er OK) */
 :host ::ng-deep .fc .fc-daygrid-day-frame,
 :host ::ng-deep .fc .fc-daygrid-day-frame>.fc-daygrid-day-top,
 :host ::ng-deep .fc .fc-daygrid-body,
@@ -8,30 +48,86 @@
     overflow: visible !important;
 }
 
-/* Hendelsesbokser vokser i både høyde og bredde */
-:host ::ng-deep .fc-daygrid-event {
-    width: auto !important;
-    min-width: 80px !important;
-    max-width: none !important;
-    height: auto !important;
-    min-height: 40px !important;
-    overflow: visible !important;
-    white-space: normal !important;
-    box-sizing: border-box !important;
+/* src/app/calendar/calendar.component.scss */
+
+/* … behold eksisterende regler for kalenderen … */
+
+/* ==============================
+   Modal‐bakgrunn
+   (brukes for å mørkne resten av siden, valgfritt)
+============================== */
+:host ::ng-deep .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    /* Mørk, halvtransparent bakgrunn */
+    z-index: 1000;
 }
 
-/* Tid og tittel brytes og klippes ikke */
-:host ::ng-deep .fc-event-title {
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    font-size: 0.9rem;
+/* ==============================
+   Blå, gjennomsiktig modal‐boks
+============================== */
+:host ::ng-deep .modal-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    /* Blå gjennomsiktig bakgrunn */
+    background: rgba(0, 123, 255, 0.3);
+    /* Du kan justere opacity (0.3) for mer eller mindre gjennomsiktighet */
+
+    padding: 1.5rem;
+    border-radius: 8px;
+    width: 80%;
+    /* Eller velg en fast bredde, f.eks. 400px */
+    max-width: 500px;
+    max-height: 60%;
+    /* Begrens høyden slik at boksen ikke blir for stor */
+    overflow-y: auto;
+    /* Rullbar dersom teksten blir for lang */
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    /* Sørg for at den ligger over alt annet */
+
+    /* Tekst‐farge hvit for kontrast mot blå bakgrunn */
+    color: white;
+    text-align: center;
 }
 
-:host ::ng-deep .fc-event-time {
-    white-space: nowrap !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    font-size: 0.8rem;
-    padding-right: 4px;
+/* Tittel i modal‐boksen */
+:host ::ng-deep .modal-box h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+    color: white;
+}
+
+/* Innholdstekst i modal: */
+:host ::ng-deep .modal-box p {
+    margin-bottom: 1rem;
+    white-space: pre-wrap;
+    /* Beholder linjeskift hvis det finnes i teksten */
+    color: white;
+}
+
+/* Lukk‐knapp i modal */
+:host ::ng-deep .modal-box button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: rgba(255, 255, 255, 0.3);
+    /* Hvitt, litt gjennomsiktig */
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+/* Hover‐effekt på knappen */
+:host ::ng-deep .modal-box button:hover {
+    background: rgba(255, 255, 255, 0.5);
 }

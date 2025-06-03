@@ -1,3 +1,16 @@
+<div
+  class="modal-backdrop"
+  *ngIf="showModal"
+  (click)="showModal = false"
+></div>
+
+<div class="modal-box" *ngIf="showModal">
+  <h3>Oppgavedetaljer</h3>
+  <p>{{ modalText }}</p>
+  <button (click)="showModal = false">Lukk</button>
+</div>
+
+<!-- Kalenderen -->
 <div class="calendar-container">
   <full-calendar [options]="calendarOptions"></full-calendar>
 </div>

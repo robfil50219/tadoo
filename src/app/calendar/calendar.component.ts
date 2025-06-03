@@ -23,6 +23,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
     calendarOptions: any;
     private sub?: Subscription;
 
+    showModal = false;
+    modalText = '';
+
     constructor(private todoService: TodoService) { }
 
     ngOnInit(): void {
@@ -30,11 +33,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
             plugins: [dayGridPlugin, interactionPlugin],
             locale: noLocale,
             initialView: 'dayGridMonth',
-
-            // Slå av maks‐antall-hendelser per dag slik at cellen vokser
-            dayMaxEvents: false,       // ingen “+n more”
-            dayMaxEventRows: false,    // tillat ubegrenset rader
-
+            dayMaxEventRows: false,
+            expandRows: true,
             eventDisplay: 'block',
             eventTimeFormat: {
                 hour: '2-digit',
@@ -62,7 +62,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
 
     handleEventClick(clickInfo: any) {
-        const eventId = clickInfo.event.id;
-        alert('Clicked event ID: ' + eventId);
+        this.modalText = clickInfo.event.title;
+        this.showModal = true;
     }
 }
