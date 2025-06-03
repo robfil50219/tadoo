@@ -1,0 +1,25 @@
+<div class="todo-container">
+  <h2>Tadoo – Familie To-Do</h2>
+
+  <ul class="todo-list">
+    <li *ngFor="let todo of todos" [class.completed]="todo.completed">
+      <input
+        type="checkbox"
+        [checked]="todo.completed"
+        (change)="toggleCompleted(todo)"
+      />
+      <span>{{ todo.title }}</span>
+      <button class="delete-btn" (click)="deleteTodo(todo.id)">×</button>
+    </li>
+  </ul>
+
+  <div class="add-form">
+    <input
+      type="text"
+      placeholder="Ny oppgave…"
+      [(ngModel)]="newTitle"
+      (keyup.enter)="addTodo()"
+    />
+    <button (click)="addTodo()">Legg til</button>
+  </div>
+</div>

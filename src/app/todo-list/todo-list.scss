@@ -1,0 +1,67 @@
+/* src/app/todo-list/todo-list.scss */
+
+.todo-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.todo-list {
+    list-style: none;
+    padding: 0;
+
+    li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+
+        &.completed span {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        input[type='checkbox'] {
+            margin-right: 0.5rem;
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+
+        .delete-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #e74c3c;
+            cursor: pointer;
+            line-height: 1;
+        }
+    }
+}
+
+.add-form {
+    display: flex;
+    margin-top: 1rem;
+
+    input[type='text'] {
+        flex: 1;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px 0 0 4px;
+        outline: none;
+    }
+
+    button {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border: none;
+        background-color: #00a0a0;
+        color: white;
+        cursor: pointer;
+        border-radius: 0 4px 4px 0;
+    }
+}
