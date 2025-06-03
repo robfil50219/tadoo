@@ -145,7 +145,29 @@ body {
         margin: 0 auto;
         font-size: 0.9rem;
     }
+
 }
+
+.app-footer .footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.app-footer .made-with {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    color: #ddd;
+}
+
+.app-footer .made-with .angular-logo {
+    width: 1.2rem;
+    height: auto;
+}
+
 
 /* … eksisterende styling … */
 
