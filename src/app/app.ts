@@ -18,6 +18,16 @@ import { CalendarComponent } from './calendar/calendar.component';
   styleUrls: ['./app.scss']
 })
 export class App {
-  // Som standard viser vi 'home' (kalender + liste)
   showSection: 'home' | 'about' = 'home';
+
+  // Ny: styrer om “Stor kalender”-modal er åpen
+  showFullCalendar = false;
+
+  // Toggle-metoder for knappen
+  openFullCalendar() {
+    this.showFullCalendar = true;
+  }
+  closeFullCalendar() {
+    this.showFullCalendar = false;
+  }
 }
