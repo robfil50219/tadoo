@@ -7,27 +7,79 @@
       <h1 class="app-title">Tadoo</h1>
       <nav class="app-nav">
         <ul>
-          <li><a href="#">Hjem</a></li>
-          <li><a href="#">Om</a></li>
-          <li><a href="#">Kontakt</a></li>
+          <li>
+            <a
+              href="#"
+              [class.active]="showSection === 'home'"
+              (click)="showSection = 'home'; $event.preventDefault()"
+              >Hjem</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              [class.active]="showSection === 'about'"
+              (click)="showSection = 'about'; $event.preventDefault()"
+              >Om</a
+            >
+          </li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <!-- Hovedinnhold: flex-container med kalender til venstre og Todo‐skjema/oversikt til høyre -->
+  <!-- Hovedinnhold -->
   <main class="app-main">
-    <div class="content-wrapper">
-      <!-- Kalenderen ligger til venstre -->
-      <div class="calendar-wrapper">
-        <app-calendar></app-calendar>
-      </div>
+    <!-- Hjem‐seksjon: viser både kalender og todo‐liste -->
+    <section *ngIf="showSection === 'home'" class="home-section">
+      <div class="home-container">
+        <!-- Kalenderen til venstre -->
+        <div class="calendar-wrapper">
+          <app-calendar></app-calendar>
+        </div>
 
-      <!-- Todo‐listen (hele komponenten) ligger til høyre -->
-      <div class="todo-wrapper">
-        <app-todo-list></app-todo-list>
+        <!-- Todo‐listen til høyre -->
+        <div class="todo-wrapper">
+          <app-todo-list></app-todo-list>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Om‐seksjon -->
+    <section *ngIf="showSection === 'about'" class="about-section">
+      <div class="about-container">
+        <h2>Om Tadoo</h2>
+        <p>
+          Tadoo er en enkel familie‐To‐Do‐app skrevet i Angular. Her kan du legge til
+          oppgaver, redigere dem og merke dem som fullført. Denne seksjonen forteller
+          litt om prosjektet og teknologiene som er brukt.
+        </p>
+
+        <h3>Formål</h3>
+        <p>
+          Målet med Tadoo er at jeg skal lære meg Angular ved å bygge en småskalert
+          webapp. Oppgavene lagres i browserens localStorage, slik at de ligger der selv
+          om du lukker nettleseren.
+        </p>
+
+        <h3>Teknologier</h3>
+        <ul>
+          <li>Angular (v20.0.0)</li>
+          <li>TypeScript</li>
+          <li>RxJS (for tilstandsstyring i Todo‐servicen)</li>
+          <li>SCSS for styling</li>
+          <li>FullCalendar (for kalender‐visning av oppgaver)</li>
+          <li>LocalStorage‐API (for vedvarende lagring uten backend)</li>
+        </ul>
+
+        <h3>Videre utvikling</h3>
+        <p>
+          Dette er et pågående prosjekt—jeg legger til nye funksjoner etter hvert som
+          jeg lærer mer, for eksempel: brukerpålogging, sanntids‐sync via Firebase,
+          kategorisering av oppgaver og mobiloptimalisering.
+        </p>
+      </div>
+    </section>
   </main>
 
   <!-- Footer -->
