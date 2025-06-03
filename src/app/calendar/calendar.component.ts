@@ -34,10 +34,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
             locale: noLocale,
             initialView: 'dayGridMonth',
 
-            // Sørger for at hendelser ikke overlapper
-            eventOverlap: false,
+            // La hendelsene overlappe
+            // (standarden er true, så vi kan fjerne eller eksplisitt sette det til true)
+            eventOverlap: true,
 
-            // La cellene utvide seg i høyden for å vise flere hendelser
+            // La cellene utvide seg i høyden om nødvendig
             dayMaxEventRows: false,
             expandRows: true,
 
@@ -46,6 +47,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: false
+            },
+
+            // Legg til title-attributt ved mount, slik at hover viser full tittel
+            eventDidMount: (info: any) => {
+                info.el.setAttribute('title', info.event.title);
             },
 
             events: [],
