@@ -1,59 +1,117 @@
-# Tadoo
+Tadoo
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.0.
+![Tadoo Screenshot](public/images/Tadoo.png)
 
-## Development server
+Tadoo is a simple family To-Do app built with Angular. All tasks are stored locally in the browser’s localStorage. You can add, edit, and check off tasks without any external database. This was my very first Angular project, and it helped me learn the core concepts—components, services, and two-way data binding with ngModel—while structuring a basic application from scratch. It’s still a work in progress, and I’ll be adding more changes and features as I continue learning.
 
-To start a local development server, run:
+Features
 
-```bash
-ng serve
-```
+• Add Tasks: Enter a task title and click “Add” or press Enter to create a new task.
+• Edit Tasks: Click on a task title to edit inline; press Enter or click outside to save.
+• Mark Complete: Check or uncheck the checkbox to toggle a task’s completed state.
+• Delete Tasks: Remove tasks by clicking the “×” button or by clearing the text in edit mode.
+• Local Storage: All tasks persist in localStorage so they remain after page reload or browser restart.
+• Responsive Layout: Simple header, main content, and footer layout that adapts to most screen widths.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Demo
 
-## Code scaffolding
+Currently no live demo deployed. You can run the app locally following the instructions below.
+Getting Started
+Prerequisites
+• Node.js (version ≥ 16.x recommended)
+• npm (version ≥ 8.x)
+• Angular CLI (version ≥ 16):
+  
+  npm install -g @angular/cli
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Installation
 
-```bash
-ng generate component component-name
-```
+Clone this repository:
+  git clone https://github.com/robfil50219/tadoo.git
+  cd tadoo
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Install dependencies:
 
-```bash
-ng generate --help
-```
+  npm install
 
-## Building
+Running the App Locally
 
-To build the project run:
+Build and serve:
 
-```bash
-ng build
-```
+  ng serve
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Open in Browser:
 
-## Running unit tests
+  Navigate to http://localhost:4200 to view the app.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+The development server will automatically reload if you change any source files.
 
-```bash
-ng test
-```
+Usage
 
-## Running end-to-end tests
+Add a Task:
 
-For end-to-end (e2e) testing, run:
+  - Type your task in the “New task…” input field and press Enter or click the “Add” button. The task appears in the list and is saved to localStorage.
 
-```bash
-ng e2e
-```
+Edit a Task:
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+  - Click on a task’s title. The title becomes editable. Modify the text, then press Enter or click outside the input to save. If you clear all text and save, the task is deleted.
 
-## Additional Resources
+Toggle Completion:
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+  - Click the checkbox to mark a task as completed or uncompleted. Completed tasks display with a line-through style.
+
+Delete a Task:
+
+  - Click the red “×” on the right side of a task to delete it immediately.
+
+Project Structure
+
+tadoo/
+├── dist/                      # Compiled output (after ng build)
+├── node_modules/              # npm dependencies
+├── src/
+│   ├── app/
+│   │   ├── app.html            # Root component template
+│   │   ├── app.scss            # Root component styles
+│   │   ├── app.ts              # Root standalone component
+│   │   ├── services/
+│   │   │   └── todo.ts         # TodoService (stores tasks in localStorage)
+│   │   └── todo-list/
+│   │       ├── todo-list.html  # TodoList component template
+│   │       ├── todo-list.scss  # TodoList component styles
+│   │       └── todo-list.ts    # TodoList standalone component logic
+│   ├── assets/                 # Static assets (images, fonts, etc.)
+│   ├── environments/           # Environment configuration files
+│   │   ├── environment.ts
+│   │   └── environment.prod.ts
+│   ├── index.html              # Main HTML file
+│   ├── main.ts                 # Bootstraps the root component
+│   ├── polyfills.ts            # Polyfills needed by Angular
+│   ├── styles.scss             # Global styles (reset + defaults)
+│   └── test.ts                 # Test setup (unused in this simple project)
+├── angular.json                # Angular CLI configuration
+├── package.json                # npm scripts & dependencies
+├── tsconfig.json               # TypeScript configuration
+└── README.md                   # This file
+
+Technologies Used
+
+• Angular (v20.0.0)
+• TypeScript
+• RxJS (for BehaviorSubject and Observable)
+• SCSS (component and global styling)
+• LocalStorage (browser API for persisting tasks)
+• Angular CLI (project scaffolding, build, serve)
+
+Future Improvements
+
+• Category tags: Assign categories (e.g., Shopping, Chores) to tasks and filter by category.
+• Due dates & reminders: Add date picker support so tasks can have deadlines.
+• Import/Export JSON: Allow users to export the entire task list as a JSON file and import it on another device.
+• User authentication & cloud sync: Integrate Firebase (or another backend) to enable multiple family members to sync tasks in real time.
+• Responsive design enhancements: Fine-tune CSS/SCSS to improve layout on tablets and small mobile screens.
+• Unit & integration tests: Add Angular testing (Karma/Jasmine) for components and services.
+
+License
+
+This project is released under the MIT License.
