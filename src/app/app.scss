@@ -302,40 +302,24 @@ body {
     z-index: 1000;
 }
 
-
-
-/* =============================
-   Mobil­justeringer
-   (gjelder kun skjermbredde ≤ 768px)
-============================= */
+/* Mobil‐justeringer */
 @media (max-width: 768px) {
 
-    /* Stabl kalender og liste under hverandre på mobil */
-    .home-container {
+    /* Kalender‐wrapper stables i kolonne og sentreres */
+    .calendar-wrapper {
+        display: flex;
         flex-direction: column;
-        gap: 1rem;
-        /* litt luft mellom seksjonene */
-        margin: 0 1rem;
-        /* padding på sidene */
+        align-items: center;
     }
 
-    /* Sørg at wrapperne fyller bredden */
-    .calendar-wrapper,
-    .todo-wrapper {
+    /* Helt bredde på knappen, men med litt maks‐bredde for ikke å bli for stor */
+    .full-calendar-btn {
         width: 100%;
-        /* full bredde på mobil */
-    }
-
-    /* Tving kalenderkomponenten til 100 % bredde */
-    .calendar-wrapper app-calendar,
-    .calendar-wrapper .expanded-calendar {
-        width: 100% !important;
-        max-width: 100% !important;
-    }
-
-    /* Tving todo‐listen til 100 % bredde */
-    .todo-wrapper app-todo-list {
-        width: 100%;
-        max-width: 100%;
+        max-width: 300px;
+        /* juster etter behov */
+        box-sizing: border-box;
+        /* tar hensyn til padding */
+        margin-top: 1rem;
+        /* litt luft over knappen */
     }
 }
