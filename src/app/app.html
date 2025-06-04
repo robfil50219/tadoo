@@ -1,11 +1,14 @@
 <div class="app-container">
-  <header class="app-header">
+ <header class="app-header">
   <div class="header-content">
+    <!-- Logo med click‐handler -->
     <img
       src="/images/tadoologo.png"
       alt="Tadoo logo"
       class="app-logo"
+      (click)="showSection = 'home'"
     />
+
     <nav class="app-nav">
       <ul>
         <li>
@@ -28,8 +31,6 @@
     </nav>
   </div>
 </header>
-
-
   <!-- Hovedinnhold -->
   <main class="app-main">
     <!-- Hjem-seksjon: kalender + todo-list -->
