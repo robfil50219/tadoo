@@ -1,30 +1,34 @@
 <div class="app-container">
-  <!-- Header -->
   <header class="app-header">
-    <div class="header-content">
-      <h1 class="app-title">Tadoo</h1>
-      <nav class="app-nav">
-        <ul>
-          <li>
-            <a
-              href="#"
-              [class.active]="showSection === 'home'"
-              (click)="showSection = 'home'; $event.preventDefault()"
-              >Hjem</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              [class.active]="showSection === 'about'"
-              (click)="showSection = 'about'; $event.preventDefault()"
-              >Om</a
-            >
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <div class="header-content">
+    <img
+      src="/images/tadoologo.png"
+      alt="Tadoo logo"
+      class="app-logo"
+    />
+    <nav class="app-nav">
+      <ul>
+        <li>
+          <a
+            href="#"
+            [class.active]="showSection === 'home'"
+            (click)="showSection = 'home'; $event.preventDefault()"
+            >Hjem</a
+          >
+        </li>
+        <li>
+          <a
+            href="#"
+            [class.active]="showSection === 'about'"
+            (click)="showSection = 'about'; $event.preventDefault()"
+            >Om</a
+          >
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
 
   <!-- Hovedinnhold -->
   <main class="app-main">
