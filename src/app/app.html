@@ -1,39 +1,40 @@
 <div class="app-container">
- <header class="app-header">
-  <div class="header-content">
-    <!-- Logo med click‐handler -->
-    <img
-      src="/images/tadoologo.png"
-      alt="Tadoo logo"
-      class="app-logo"
-      (click)="showSection = 'home'"
-    />
+  <header class="app-header">
+    <div class="header-content">
+      <!-- Logo med click‐handler -->
+      <img
+        src="/images/tadoologo.png"
+        alt="Tadoo logo"
+        class="app-logo"
+        (click)="showSection = 'home'"
+      />
 
-    <nav class="app-nav">
-      <ul>
-        <li>
-          <a
-            href="#"
-            [class.active]="showSection === 'home'"
-            (click)="showSection = 'home'; $event.preventDefault()"
-            >Hjem</a
-          >
-        </li>
-        <li>
-          <a
-            href="#"
-            [class.active]="showSection === 'about'"
-            (click)="showSection = 'about'; $event.preventDefault()"
-            >Om</a
-          >
-        </li>
-      </ul>
-    </nav>
-  </div>
-</header>
+      <nav class="app-nav">
+        <ul>
+          <li>
+            <a
+              href="#"
+              [class.active]="showSection === 'home'"
+              (click)="showSection = 'home'; $event.preventDefault()"
+              >Hjem</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              [class.active]="showSection === 'about'"
+              (click)="showSection = 'about'; $event.preventDefault()"
+              >Om</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
   <!-- Hovedinnhold -->
   <main class="app-main">
-    <!-- Hjem-seksjon: kalender + todo-list -->
+    <!-- Hjem-seksjon: kalender + todo-liste -->
     <section *ngIf="showSection === 'home'" class="home-section">
       <div class="home-container">
         <!-- Kalenderen til venstre -->
@@ -45,19 +46,19 @@
           </button>
         </div>
 
-        <!-- Todo-list til høyre -->
+        <!-- Todo-liste til høyre -->
         <div class="todo-wrapper">
           <app-todo-list></app-todo-list>
         </div>
       </div>
     </section>
 
-    <!-- Om‐seksjon -->
+    <!-- Om-seksjon -->
     <section *ngIf="showSection === 'about'" class="about-section">
       <div class="about-container">
         <h2>Om Tadoo</h2>
         <p>
-          Tadoo er en enkel familie‐To‐Do‐app skrevet i Angular. Her kan du legge til oppgaver,
+          Tadoo er en enkel familie-To-Do-app skrevet i Angular. Her kan du legge til oppgaver,
           redigere dem og merke dem som fullført. Denne seksjonen forteller litt om prosjektet
           og teknologiene som er brukt.
         </p>
@@ -72,10 +73,10 @@
         <ul>
           <li>Angular (v20.0.0)</li>
           <li>TypeScript</li>
-          <li>RxJS (for tilstandsstyring i Todo‐servicen)</li>
+          <li>RxJS (for tilstandsstyring i Todo-servicen)</li>
           <li>SCSS for styling</li>
-          <li>FullCalendar (for kalender‐visning av oppgaver)</li>
-          <li>LocalStorage‐API (for vedvarende lagring uten backend)</li>
+          <li>FullCalendar (for kalender-visning av oppgaver)</li>
+          <li>LocalStorage-API (for vedvarende lagring uten backend)</li>
         </ul>
 
         <h3>Videre utvikling</h3>
@@ -84,12 +85,12 @@
           for eksempel:
         </p>
         <ul>
-          <li>Brukerpålogging og sanntids‐sync via Firebase</li>
+          <li>Brukerpålogging og sanntids-sync via Firebase</li>
           <li>Kategorisering og filtrering av oppgaver</li>
-          <li>Mobil‐ og nettbrettoptimalisering</li>
-          <li>Due‐dates med notifikasjoner/remindere</li>
+          <li>Mobil- og nettbrettoptimalisering</li>
+          <li>Due-dates med notifikasjoner/remindere</li>
           <li>Import/Eksport av oppgavelister som JSON</li>
-          <li>Enklere design‐forbedringer og UX‐tilpasninger</li>
+          <li>Enklere design-forbedringer og UX-tilpasninger</li>
         </ul>
       </div>
     </section>
@@ -105,17 +106,17 @@
   </div>
 
   <!-- Footer -->
- <footer class="app-footer">
-  <div class="footer-content">
-    <p>&copy; 2025 Tadoo. Alle rettigheter reservert.</p>
-    <div class="made-with">
-      <span>Made with</span>
-      <img
-        src="images\lockup_angular_gradient_alt01.png"
-        alt="Angular logo"
-        class="angular-logo"
-      />
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>&copy; 2025 Tadoo. Alle rettigheter reservert.</p>
+      <div class="made-with">
+        <span>Made with</span>
+        <img
+          src="/images/lockup_angular_gradient_alt01.png"
+          alt="Angular logo"
+          class="angular-logo"
+        />
+      </div>
     </div>
-  </div>
-</footer>
+  </footer>
 </div>

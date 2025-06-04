@@ -1,113 +1,214 @@
+/* ===============================
+   Todo‐container – generell styling
+=============================== */
 .todo-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
     h2 {
         text-align: center;
         margin-bottom: 1rem;
     }
 }
 
-
-.add-form {
-    display: flex;
-    gap: 0.5rem;
-
-
-    input[type='text'] {
-        flex: 1;
-        max-width: 300px;
-        padding: 0.5rem;
-        font-size: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 4px 0 0 4px;
-        outline: none;
-    }
-
-    input[type='datetime-local'] {
-        max-width: 200px;
-        padding: 0.5rem;
-        font-size: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 0;
-        outline: none;
-    }
-
-    button {
-        padding: 0.5rem 1rem;
-        font-size: 1rem;
-        border: none;
-        background-color: #00a0a0;
-        color: white;
-        cursor: pointer;
-        border-radius: 0 4px 4px 0;
-    }
-}
-
+/* ===============================
+   Oppgaveliste (uendret fra før)
+=============================== */
 .todo-list {
     list-style: none;
+    margin: 0 0 1rem 0;
     padding: 0;
 
     li {
         display: flex;
         align-items: center;
-        margin-bottom: 0.5rem;
-        font-size: 1.1rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
 
-        &.completed span {
+        &.completed .todo-title {
             text-decoration: line-through;
             color: #888;
         }
 
-        input[type='checkbox'] {
+        input[type="checkbox"] {
             margin-right: 0.5rem;
-            width: 1.2rem;
-            height: 1.2rem;
         }
 
         .todo-title {
-            cursor: pointer;
             flex: 1;
+            cursor: pointer;
         }
 
         .edit-input {
             flex: 1;
             padding: 0.25rem;
-            font-size: 1.1rem;
-            border: 1px solid #aaa;
+            font-size: 1rem;
+            border: 1px solid #ccc;
             border-radius: 4px;
-            outline: none;
         }
 
         .delete-btn {
-            margin-left: auto;
             background: none;
             border: none;
-            font-size: 1.2rem;
             color: #e74c3c;
+            font-size: 1.2rem;
             cursor: pointer;
-            line-height: 1;
+            padding: 0 0.5rem;
         }
     }
 }
 
+/* ===============================
+   Legg til‐skjema (desktop først)
+=============================== */
 .add-form {
     display: flex;
+    gap: 0.5rem;
+    align-items: center;
     margin-top: 1rem;
 
-    input[type='text'] {
-        flex: 1;
+    /* Inputfelt for tittel */
+    input[type="text"] {
+        flex: 2;
+        /* tar mest plass */
         padding: 0.5rem;
         font-size: 1rem;
         border: 1px solid #ccc;
-        border-radius: 4px 0 0 4px;
-        outline: none;
+        border-radius: 4px;
+    }
+
+    /* Dato + tid‐velger */
+    .due-input {
+        flex: 2;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        color: #333;
+    }
+
+    /* Legg til‐knapp */
+    button {
+        flex: 1;
+        /* knapp litt smalere enn inputene */
+        padding: 0.5rem 1rem;
+        background-color: #00a0a0;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.2s ease;
+
+        &:hover {
+            background-color: darken(#00a0a0, 10%);
+        }
+    }
+}
+
+/* ===============================
+   Mobil‐justeringer (≤ 768px)
+=============================== */
+@media (max-width: 768px) {
+
+    /* Legg til‐skjema stables vertikalt */
+    .add-form {
+        flex-direction: column;
+        gap: 0.75rem;
+
+        input[type="text"],
+        .due-input {
+            width: 100%;
+            /* Finnes ingen flex‐prop ved kolonne‐layout, men bredde:100 % gjør dem fulle */
+        }
+
+        button {
+            width: 100%;
+            /* Fyll hele bredden under inputene */
+            margin-top: 0;
+            /* fjern eventuell top‐margin */
+        }
+    }
+
+    /* Økt margin/topp‐mellomrom hvis ønskelig */
+    .add-form {
+        margin-top: 1.5rem;
+    }
+
+    /* Stabl todolisten mer luftig om ønskelig */
+    .todo-list li {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .delete-btn {
+            align-self: flex-end;
+            margin-top: 0.5rem;
+        }
+    }
+}
+
+/* ===============================
+   Legg til-skjema – generell styling
+=============================== */
+.add-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 1rem;
+
+    /* Viktig: tillat barna å krympe under auto-bredde */
+    input[type="text"],
+    .due-input {
+        flex: 1;
+        /* la begge input-felter dele plassen likt */
+        min-width: 0;
+        /* tillat krymping */
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
     }
 
     button {
+        flex: 0 0 auto;
+        /* knapp beholder sin naturlige bredde */
         padding: 0.5rem 1rem;
-        font-size: 1rem;
-        border: none;
         background-color: #00a0a0;
         color: white;
+        border: none;
+        border-radius: 4px;
         cursor: pointer;
-        border-radius: 0 4px 4px 0;
+        font-size: 1rem;
+        transition: background 0.2s ease;
+        white-space: nowrap;
+        /* hindrer at teksten brekker linje */
+
+        &:hover {
+            background-color: darken(#00a0a0, 10%);
+        }
+    }
+}
+
+/* ===============================
+   Mobil-justeringer (≤ 768px)
+=============================== */
+@media (max-width: 768px) {
+    .add-form {
+        flex-direction: column;
+        gap: 0.75rem;
+
+        input[type="text"],
+        .due-input {
+            width: 100%;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 0;
+        }
     }
 }

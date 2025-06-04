@@ -302,24 +302,20 @@ body {
     z-index: 1000;
 }
 
-/* Mobil‐justeringer */
-@media (max-width: 768px) {
+/* Default (desktop): input + knapp på samme linje */
+.new-todo {
+    display: flex;
+    gap: 0.5rem;
+}
 
-    /* Kalender‐wrapper stables i kolonne og sentreres */
-    .calendar-wrapper {
-        display: flex;
+/* Mobil (opp til 768px): knapp under input */
+@media (max-width: 768px) {
+    .new-todo {
         flex-direction: column;
-        align-items: center;
     }
 
-    /* Helt bredde på knappen, men med litt maks‐bredde for ikke å bli for stor */
-    .full-calendar-btn {
+    .new-todo button {
         width: 100%;
-        max-width: 300px;
-        /* juster etter behov */
-        box-sizing: border-box;
-        /* tar hensyn til padding */
-        margin-top: 1rem;
-        /* litt luft over knappen */
+        margin-top: 0.5rem;
     }
 }
