@@ -180,8 +180,6 @@ body {
 }
 
 
-/* … eksisterende styling … */
-
 /* ================= full-kalender-knapp ================= */
 .full-calendar-btn {
     margin-top: 1rem;
@@ -302,4 +300,42 @@ body {
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
+}
+
+/* Behold all desktop‐styles som før, uten endringer */
+
+/* =============================
+   Mobil­justeringer
+   (gjelder kun skjermbredde ≤ 768px)
+============================= */
+@media (max-width: 768px) {
+
+    /* Stabl kalender og liste under hverandre på mobil */
+    .home-container {
+        flex-direction: column;
+        gap: 1rem;
+        /* litt luft mellom seksjonene */
+        margin: 0 1rem;
+        /* padding på sidene */
+    }
+
+    /* Sørg at wrapperne fyller bredden */
+    .calendar-wrapper,
+    .todo-wrapper {
+        width: 100%;
+        /* full bredde på mobil */
+    }
+
+    /* Tving kalenderkomponenten til 100 % bredde */
+    .calendar-wrapper app-calendar,
+    .calendar-wrapper .expanded-calendar {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Tving todo‐listen til 100 % bredde */
+    .todo-wrapper app-todo-list {
+        width: 100%;
+        max-width: 100%;
+    }
 }
