@@ -1,22 +1,16 @@
-/* ==============================================
-   src/app/app.scss
-   Responsive header/logo using CSS variables
-============================================== */
+/* src/app/app.scss */
 
-/*--------------------------------------------------------
-  1) RESET & BASE STYLES
---------------------------------------------------------*/
+/* Reset basics */
 html,
 body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
-    width: 100%;
     height: 100%;
 }
 
-/* Include padding/border in element’s total size */
+/* Ensure box-sizing includes padding/border in width/height */
 *,
 *::before,
 *::after {
@@ -29,62 +23,38 @@ body {
     min-height: 100vh;
 }
 
-/*--------------------------------------------------------
-  2) CSS VARIABLES FOR HEADER & LOGO SIZING
---------------------------------------------------------*/
-/* Desktop defaults: header 6rem tall, logo 4rem tall */
-:root {
-    --header-height: 6rem;
-    /* ≈96px */
-    --logo-height: 3.5rem;
-    /* ≈56px */
-}
+/* =============================
+   Header + dropdown-styling
+============================= */
 
-/* Mobile override (≤768px): header 4rem tall, logo 2.25rem tall */
-@media (max-width: 768px) {
-    :root {
-        --header-height: 4rem;
-        /* ≈64px */
-        --logo-height: 2.25rem;
-        /* ≈36px */
-    }
-}
-
-/*--------------------------------------------------------
-  3) HEADER & LOGO
---------------------------------------------------------*/
+/* 1) Make header a fixed height (6rem) with no vertical padding */
 .app-header {
     position: relative;
     background-color: #00a0a0;
     color: white;
 
-    height: var(--header-height);
+    height: 6rem;
     padding: 0 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 10;
+
     overflow: visible;
+    /* ← changed from hidden so dropdown is not clipped */
 }
 
+/* 2) Flex container inside header spans full header height */
 .header-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
+    height: 100%;
     width: 100%;
     max-width: 1000px;
-    height: var(--header-height);
     margin: 0 auto;
 }
 
-/* Logo: max-height fills entire header (6rem), scaled on hover */
+/* 3) Logo fills most of header’s height (max‐height: 100% of 6rem) */
 .app-logo {
     max-height: 10rem;
-    /* at most 6rem tall */
     width: auto;
     cursor: pointer;
     transition: transform 0.2s ease;
@@ -94,19 +64,15 @@ body {
     transform: scale(1.05);
 }
 
-/*--------------------------------------------------------
-  4) NAVIGATION LINKS & BUTTONS
---------------------------------------------------------*/
-/* Nav links container */
+/* Navigation links */
 .app-nav ul {
-    display: flex;
-    gap: 1.5rem;
+    list-style: none;
     margin: 0;
     padding: 0;
-    list-style: none;
+    display: flex;
+    gap: 1.5rem;
 }
 
-/* Individual link */
 .app-nav a {
     color: white;
     text-decoration: none;
@@ -139,12 +105,10 @@ body {
     transform: translateY(-1px);
 }
 
-/*--------------------------------------------------------
-  5) TO-DO DROPDOWN PANEL
---------------------------------------------------------*/
+/* Dropdown panel (positioned under header) */
 .todo-dropdown {
     position: absolute;
-    top: calc(var(--header-height) + 0.5rem);
+    top: 100%;
     right: 1rem;
     width: 500px;
     max-height: 500px;
@@ -153,12 +117,12 @@ body {
     border: 1px solid #ddd;
     border-radius: 4px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    z-index: 999;
+    z-index: 100;
+    margin-top: 0.5rem;
 }
 
-/*--------------------------------------------------------
-  6) MAIN CONTENT (HOME + CALENDAR)
---------------------------------------------------------*/
+/* ========================= Main ========================= */
+
 .app-main {
     flex: 1;
     width: 100%;
@@ -167,7 +131,7 @@ body {
     padding: 0 1rem;
 }
 
-/* Center calendar on home */
+/* Home section: calendar layout */
 .home-container {
     display: flex;
     justify-content: center;
@@ -175,19 +139,16 @@ body {
 
 .calendar-wrapper {
     flex: 1 1 400px;
-    /* base width 400px; can grow or shrink */
     min-width: 400px;
 }
 
-/*--------------------------------------------------------
-  7) ABOUT SECTION
---------------------------------------------------------*/
+/* ================= Om‐seksjon ================= */
+
 .about-container {
     background-color: #fff;
     padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
 }
 
 .about-container h2 {
@@ -218,9 +179,58 @@ body {
     color: #333;
 }
 
-/*--------------------------------------------------------
-  8) FULL-CALENDAR MODAL
---------------------------------------------------------*/
+/* ========================= Footer ========================= */
+
+.app-footer {
+    background-color: #333;
+    color: #ddd;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.app-footer .footer-content {
+    max-width: 900px;
+    margin: 0 auto;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.app-footer .made-with {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    color: #ddd;
+}
+
+.app-footer .made-with .angular-logo {
+    width: 5rem;
+    height: auto;
+}
+
+/* ================= full‐calendar‐button ================= */
+
+.full-calendar-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #00a0a0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.full-calendar-btn:hover {
+    background-color: #008080;
+    transform: translateY(-1px);
+}
+
+/* ================= full‐calendar‐modal ================= */
+
 .full-calendar-backdrop {
     position: fixed;
     top: 0;
@@ -260,7 +270,6 @@ body {
     color: #000;
 }
 
-/* Ensure expanded calendar covers viewport */
 .expanded-calendar {
     width: 100% !important;
     height: 100% !important;
@@ -300,102 +309,13 @@ body {
     margin-right: 0.3rem;
 }
 
-/*--------------------------------------------------------
-  9) FOOTER
---------------------------------------------------------*/
-.app-footer {
-    background-color: #333;
-    color: #ddd;
-    padding: 1rem 0;
-    text-align: center;
-    margin-top: auto;
-    /* push footer to bottom */
-}
+/* ================= responsive: dropdown & kalender på mobil ================= */
 
-.app-footer .footer-content {
-    max-width: 900px;
-    margin: 0 auto;
-    font-size: 0.9rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.app-footer .made-with {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.9rem;
-    color: #ddd;
-}
-
-.app-footer .made-with .angular-logo {
-    width: 5rem;
-    height: auto;
-}
-
-/*--------------------------------------------------------
- 10) FULL-CALENDAR BUTTON
---------------------------------------------------------*/
-.full-calendar-btn {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #00a0a0;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease;
-}
-
-.full-calendar-btn:hover {
-    background-color: #008080;
-    transform: translateY(-1px);
-}
-
-/*--------------------------------------------------------
- 11) MOBILE ADJUSTMENTS (≤768px)
---------------------------------------------------------*/
 @media (max-width: 768px) {
-
-    /* (A) Header padding shrinks automatically because --header-height changed above */
-    .app-header {
-        padding: 0 0.75rem;
-    }
-
-    /* (B) Smaller nav and button */
-    .app-nav a {
-        font-size: 0.9rem;
-    }
-
-    .app-nav ul {
-        gap: 1rem;
-    }
-
-    .todo-toggle-btn {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.9rem;
-    }
-
-    /* (C) Reposition dropdown under the 4rem header */
-    .todo-dropdown {
-        top: calc(var(--header-height) + 0.25rem);
-        right: 0.75rem;
-        width: calc(100% - 1.5rem);
-        margin-top: 0;
-    }
-
-    /* (D) Tighter spacing for main content */
-    .app-main {
-        margin: 1.5rem auto;
-        padding: 0 0.75rem;
-    }
-
     .home-container {
         flex-direction: column;
         gap: 1rem;
-        margin: 0 0.5rem;
+        margin: 0 1rem;
     }
 
     .calendar-wrapper {
@@ -409,33 +329,11 @@ body {
         max-width: 100% !important;
     }
 
-    /* (E) Narrower About section */
-    .about-container {
-        margin: 1rem 0;
-        padding: 1rem;
-    }
-
-    /* (F) Footer tweaks */
-    .app-footer {
-        font-size: 0.85rem;
-        padding: 0.75rem 0;
-    }
-
-    .app-footer .footer-content {
-        gap: 0.25rem;
-    }
-
-    .app-footer .made-with .angular-logo {
-        width: 4rem;
-    }
-
-    /* (G) Full-calendar button & close button tweaks */
-    .full-calendar-btn {
-        font-size: 0.9rem;
-        padding: 0.4rem 0.8rem;
-    }
-
-    .close-modal-btn {
-        font-size: 1.25rem;
+    .todo-dropdown {
+        right: 0;
+        left: 0;
+        width: calc(100% - 2rem);
+        /* 1rem margin each side */
+        margin: 0.5rem 1rem;
     }
 }
