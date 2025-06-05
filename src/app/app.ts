@@ -26,6 +26,9 @@ export class App {
   // Ny: styrer om To-Do‐dropdown vises
   showTodoDropdown = false;
 
+  // ← Legg til denne linjen for hamburger-menyen:
+  showMobileMenu = false;
+
   // Åpne/lukke “Stor kalender”-modal
   openFullCalendar() {
     this.showFullCalendar = true;

@@ -1,6 +1,8 @@
 /* src/app/app.scss */
 
-/* Reset basics */
+/* =============================
+   RESET + BASE STYLES
+============================= */
 html,
 body {
     margin: 0;
@@ -8,9 +10,10 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
     height: 100%;
+    width: 100%;
 }
 
-/* Ensure box-sizing includes padding/border in width/height */
+/* Include padding/border in element’s total size */
 *,
 *::before,
 *::after {
@@ -24,37 +27,47 @@ body {
 }
 
 /* =============================
-   Header + dropdown-styling
+   HEADER + DROPDOWN-STYLING
 ============================= */
 
-/* 1) Make header a fixed height (6rem) with no vertical padding */
+/*
+  Desktop header: fixed 6rem height (≈96px),
+  white text on teal, with horizontal padding.
+  Dropdown (To-Do) is absolutely positioned under header.
+*/
 .app-header {
     position: relative;
     background-color: #00a0a0;
     color: white;
 
     height: 6rem;
+    /* fixed height on desktop */
     padding: 0 1rem;
+    /* horizontal padding; no vertical padding */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
     overflow: visible;
-    /* ← changed from hidden so dropdown is not clipped */
+    /* allow To-Do dropdown and mobile menu to appear below */
 }
 
-/* 2) Flex container inside header spans full header height */
 .header-content {
     display: flex;
     align-items: center;
+    /* vertically center content within 6rem */
     justify-content: space-between;
     height: 100%;
+    /* fill the entire 6rem */
     width: 100%;
     max-width: 1000px;
+    /* cap width for large screens */
     margin: 0 auto;
+    /* center horizontally */
 }
 
-/* 3) Logo fills most of header’s height (max‐height: 100% of 6rem) */
+/* 1) Logo: max-height fills entire header (6rem), scaled on hover */
 .app-logo {
-    max-height: 10rem;
+    max-height: 100%;
+    /* at most 6rem tall */
     width: auto;
     cursor: pointer;
     transition: transform 0.2s ease;
@@ -64,13 +77,14 @@ body {
     transform: scale(1.05);
 }
 
-/* Navigation links */
+/* 2) Desktop navigation (hidden on mobile) */
 .app-nav ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     gap: 1.5rem;
+    /* space between links */
 }
 
 .app-nav a {
@@ -88,7 +102,7 @@ body {
     font-weight: bold;
 }
 
-/* To-Do toggle button */
+/* 3) Desktop To-Do toggle button (hidden on mobile) */
 .todo-toggle-btn {
     background: white;
     color: #00a0a0;
@@ -105,13 +119,35 @@ body {
     transform: translateY(-1px);
 }
 
-/* Dropdown panel (positioned under header) */
+/* 4) Hamburger button (only visible on mobile) */
+.hamburger-btn {
+    display: none;
+    /* hidden by default (desktop) */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.hamburger-btn:hover {
+    color: #ddd;
+}
+
+/* 5) To-Do dropdown panel (unaffected) */
 .todo-dropdown {
     position: absolute;
     top: 100%;
+    /* exactly below the 6rem header */
     right: 1rem;
+    /* align under the right padding */
     width: 500px;
+    /* fixed width on desktop */
     max-height: 500px;
+    /* scroll if content taller */
     overflow-y: auto;
     background: #ffffff;
     border: 1px solid #ddd;
@@ -119,9 +155,76 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     z-index: 100;
     margin-top: 0.5rem;
+    /* small gap between header and panel */
 }
 
-/* ========================= Main ========================= */
+/* 6) Mobile slide-down menu (hidden by default) */
+.mobile-menu {
+    display: none;
+    /* toggled on mobile when showMobileMenu == true */
+    position: absolute;
+    top: 100%;
+    /* immediately below the header’s 6rem */
+    left: 0;
+    width: 100%;
+    background-color: #00a0a0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 105;
+    /* above the To-Do dropdown */
+    padding: 1rem 0;
+    /* vertical padding inside mobile menu */
+}
+
+/* 6a) Inside mobile-menu: vertical stack of nav links */
+.mobile-menu .mobile-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mobile-menu .mobile-nav li {
+    margin: 0.5rem 0;
+    /* spacing between items */
+}
+
+.mobile-menu .mobile-nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: block;
+    padding: 0.5rem 1.5rem;
+    /* hit-area for touch */
+    transition: background 0.2s ease;
+}
+
+.mobile-menu .mobile-nav a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* 6b) Inside mobile-menu: a To-Do button styled full-width */
+.mobile-menu .mobile-todo-btn {
+    display: block;
+    margin: 0.5rem 1.5rem;
+    /* same horizontal padding as links */
+    width: calc(100% - 3rem);
+    background: white;
+    color: #00a0a0;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    text-align: left;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.mobile-menu .mobile-todo-btn:hover {
+    background: #f0f0f0;
+    transform: translateY(-1px);
+}
+
+/* =========================
+   MAIN CONTENT LAYOUT
+========================= */
 
 .app-main {
     flex: 1;
@@ -131,7 +234,7 @@ body {
     padding: 0 1rem;
 }
 
-/* Home section: calendar layout */
+/* Home section: calendar-centered */
 .home-container {
     display: flex;
     justify-content: center;
@@ -139,16 +242,20 @@ body {
 
 .calendar-wrapper {
     flex: 1 1 400px;
+    /* base 400px, can grow/shrink */
     min-width: 400px;
 }
 
-/* ================= Om‐seksjon ================= */
+/* =========================
+   ABOUT SECTION
+========================= */
 
 .about-container {
     background-color: #fff;
     padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
 }
 
 .about-container h2 {
@@ -179,57 +286,9 @@ body {
     color: #333;
 }
 
-/* ========================= Footer ========================= */
-
-.app-footer {
-    background-color: #333;
-    color: #ddd;
-    padding: 1rem 0;
-    text-align: center;
-}
-
-.app-footer .footer-content {
-    max-width: 900px;
-    margin: 0 auto;
-    font-size: 0.9rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.app-footer .made-with {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.9rem;
-    color: #ddd;
-}
-
-.app-footer .made-with .angular-logo {
-    width: 5rem;
-    height: auto;
-}
-
-/* ================= full‐calendar‐button ================= */
-
-.full-calendar-btn {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #00a0a0;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease;
-}
-
-.full-calendar-btn:hover {
-    background-color: #008080;
-    transform: translateY(-1px);
-}
-
-/* ================= full‐calendar‐modal ================= */
+/* =========================
+   FULL-CALENDAR MODAL
+========================= */
 
 .full-calendar-backdrop {
     position: fixed;
@@ -309,13 +368,158 @@ body {
     margin-right: 0.3rem;
 }
 
-/* ================= responsive: dropdown & kalender på mobil ================= */
+/* =========================
+   FOOTER
+========================= */
 
+.app-footer {
+    background-color: #333;
+    color: #ddd;
+    padding: 1rem 0;
+    text-align: center;
+    margin-top: auto;
+    /* push footer to bottom */
+}
+
+.app-footer .footer-content {
+    max-width: 900px;
+    margin: 0 auto;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.app-footer .made-with {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    color: #ddd;
+}
+
+.app-footer .made-with .angular-logo {
+    width: 5rem;
+    height: auto;
+}
+
+/* =======================
+   FULL-CALENDAR BUTTON
+======================= */
+
+.full-calendar-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #00a0a0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.full-calendar-btn:hover {
+    background-color: #008080;
+    transform: translateY(-1px);
+}
+
+/* ==============================
+   RESPONSIVE: MOBILE (≤ 768px)
+============================== */
 @media (max-width: 768px) {
+
+    /*-------------------------------------
+    1) Hide desktop nav & To-Do, show hamburger
+  --------------------------------------*/
+    .app-nav,
+    .todo-toggle-btn {
+        display: none;
+    }
+
+    .hamburger-btn {
+        display: block;
+    }
+
+    /*-------------------------------------
+    2) Shrink header from 6rem → 4.5rem
+  --------------------------------------*/
+    .app-header {
+        height: 4.5rem;
+        /* smaller fixed height on mobile */
+        padding: 0 0.75rem;
+        /* narrower horizontal padding */
+    }
+
+    /* 3) Logo now fills 80% of 4.5rem (≈3.6rem) */
+    .app-logo {
+        max-height: 150%;
+    }
+
+    /*-------------------------------------
+    4) Mobile slide-down menu
+  --------------------------------------*/
+    .mobile-menu {
+        display: block;
+    }
+
+    /* Inside mobile-menu: stack nav links and button vertically */
+    .mobile-menu .mobile-nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .mobile-menu .mobile-nav li {
+        margin: 0.5rem 0;
+    }
+
+    .mobile-menu .mobile-nav a {
+        color: white;
+        text-decoration: none;
+        font-size: 1.1rem;
+        display: block;
+        padding: 0.5rem 1.5rem;
+        transition: background 0.2s ease;
+    }
+
+    .mobile-menu .mobile-nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .mobile-menu .mobile-todo-btn {
+        display: block;
+        margin: 0.5rem 1.5rem;
+        width: calc(100% - 3rem);
+        background: white;
+        color: #00a0a0;
+        border: none;
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        text-align: left;
+        transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    .mobile-menu .mobile-todo-btn:hover {
+        background: #f0f0f0;
+        transform: translateY(-1px);
+    }
+
+    /*-------------------------------------
+    5) Main content adjustments
+  --------------------------------------*/
+    .app-main {
+        margin: 1.5rem auto;
+        /* less vertical margin on mobile */
+        padding: 0 0.75rem;
+        /* less horizontal padding */
+    }
+
     .home-container {
         flex-direction: column;
         gap: 1rem;
-        margin: 0 1rem;
+        margin: 0 0.5rem;
     }
 
     .calendar-wrapper {
@@ -329,11 +533,63 @@ body {
         max-width: 100% !important;
     }
 
+    /*-------------------------------------
+    6) About section narrower margins
+  --------------------------------------*/
+    .about-container {
+        margin: 1rem 0;
+        padding: 1rem;
+    }
+
+    /*-------------------------------------
+    7) Footer adjustments
+  --------------------------------------*/
+    .app-footer {
+        font-size: 0.85rem;
+        padding: 0.75rem 0;
+    }
+
+    .app-footer .footer-content {
+        gap: 0.25rem;
+    }
+
+    .app-footer .made-with .angular-logo {
+        width: 4rem;
+    }
+
+    /*-------------------------------------
+    8) Full-calendar button adjustments
+  --------------------------------------*/
+    .full-calendar-btn {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    /*-------------------------------------
+    9) To-Do dropdown & mobile-menu top adjustments
+  --------------------------------------*/
     .todo-dropdown {
-        right: 0;
+        top: 4.5rem;
+        /* now just below the 4.5rem header */
+        right: 0.75rem;
+        /* match new header padding */
+        width: calc(100% - 1.5rem);
+        margin-top: 0.25rem;
+    }
+
+    .mobile-menu {
+        top: 4.5rem;
+        /* now just below the 4.5rem header */
         left: 0;
-        width: calc(100% - 2rem);
-        /* 1rem margin each side */
-        margin: 0.5rem 1rem;
+        width: 100%;
+        padding: 0.75rem 0;
+        /* vertical padding inside menu */
+    }
+
+    /*-------------------------------------
+    10) Full-calendar modal text
+  --------------------------------------*/
+    .close-modal-btn {
+        font-size: 1.25rem;
     }
 }

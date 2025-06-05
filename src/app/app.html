@@ -4,15 +4,15 @@
   <!-- Header -->
   <header class="app-header">
     <div class="header-content">
-      <!-- Logo med click-handler -->
+      <!-- Logo with click handler -->
       <img
-        src="images\tadoologo2.png"
+        src="images/tadoologo2.png"
         alt="Tadoo logo"
         class="app-logo"
         (click)="showSection = 'home'"
       />
 
-      <!-- Navigasjon -->
+      <!-- Desktop navigation (hidden on mobile) -->
       <nav class="app-nav">
         <ul>
           <li>
@@ -34,28 +34,77 @@
         </ul>
       </nav>
 
-      <!-- Moro-knapp for å åpne To-Do-dropdown -->
+      <!-- Desktop To-Do toggle button (hidden on mobile) -->
       <button class="todo-toggle-btn" (click)="toggleTodoDropdown()">
         📝 To-Do
       </button>
+
+      <!-- Hamburger button (only visible on mobile) -->
+      <button
+        class="hamburger-btn"
+        (click)="showMobileMenu = !showMobileMenu"
+        aria-label="Open mobile menu"
+      >
+        &#9776;
+      </button>
     </div>
 
-    <!-- Dropdown-panelet: dropdown-klassen på selve <app-todo-list> -->
+    <!-- To-Do dropdown (same as before) -->
     <app-todo-list
       *ngIf="showTodoDropdown"
       class="todo-dropdown"
     ></app-todo-list>
+
+    <!-- Mobile slide-down menu -->
+    <div class="mobile-menu" *ngIf="showMobileMenu">
+      <!-- Inside mobile-menu, we replicate the same links and To-Do button -->
+      <nav class="mobile-nav">
+        <ul>
+          <li>
+            <a
+              href="#"
+              [class.active]="showSection === 'home'"
+              (click)="
+                showSection = 'home';
+                showMobileMenu = false;
+                $event.preventDefault()
+              "
+              >Hjem</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              [class.active]="showSection === 'about'"
+              (click)="
+                showSection = 'about';
+                showMobileMenu = false;
+                $event.preventDefault()
+              "
+              >Om</a
+            >
+          </li>
+        </ul>
+      </nav>
+      <button
+        class="todo-toggle-btn mobile-todo-btn"
+        (click)="
+          toggleTodoDropdown();
+          showMobileMenu = false
+        "
+      >
+        📝 To-Do
+      </button>
+    </div>
   </header>
 
-  <!-- Hovedinnhold -->
+  <!-- Main content -->
   <main class="app-main">
-    <!-- Hjem-seksjon: kun kalender (To-Do vises i dropdown) -->
+    <!-- Home section: calendar (To-Do dropdown appears via its own overlay) -->
     <section *ngIf="showSection === 'home'" class="home-section">
       <div class="home-container">
-        <!-- Kalender-wrapper -->
         <div class="calendar-wrapper">
           <app-calendar></app-calendar>
-          <!-- Knapp for å åpne “stor kalender” -->
           <button class="full-calendar-btn" (click)="openFullCalendar()">
             Vis full kalender
           </button>
@@ -63,14 +112,14 @@
       </div>
     </section>
 
-    <!-- Om-seksjon -->
+    <!-- About section -->
     <section *ngIf="showSection === 'about'" class="about-section">
       <div class="about-container">
         <h2>Om Tadoo</h2>
         <p>
           Tadoo er en enkel familie-To-Do-app skrevet i Angular. Her kan du legge til oppgaver,
-          redigere dem og merke dem som fullført. Denne seksjonen forteller litt om prosjektet
-          og teknologiene som er brukt.
+          redigere dem og merke dem som fullført. Denne seksjonen forteller litt om prosjektet og
+          teknologiene som er brukt.
         </p>
 
         <h3>Formål</h3>
@@ -106,7 +155,7 @@
     </section>
   </main>
 
-  <!-- Modal for full kalender -->
+  <!-- Modal for full calendar -->
   <div
     class="full-calendar-backdrop"
     *ngIf="showFullCalendar"
@@ -121,16 +170,16 @@
 
   <!-- Footer -->
   <footer class="app-footer">
-  <div class="footer-content">
-    <p>&copy; 2025 Tadoo &ndash; utviklet av Robert Filep. Alle rettigheter reservert.</p>
-    <div class="made-with">
-      <span>Made with</span>
-      <img
-        src="/images/lockup_angular_gradient_alt01.png"
-        alt="Angular logo"
-        class="angular-logo"
-      />
+    <div class="footer-content">
+      <p>&copy; 2025 Tadoo &ndash; utviklet av Robert Filep. Alle rettigheter reservert.</p>
+      <div class="made-with">
+        <span>Made with</span>
+        <img
+          src="images/lockup_angular_gradient_alt01.png"
+          alt="Angular logo"
+          class="angular-logo"
+        />
+      </div>
     </div>
-  </div>
-</footer>
+  </footer>
 </div>
