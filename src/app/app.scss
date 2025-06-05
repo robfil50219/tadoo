@@ -349,9 +349,9 @@ body {
 
     /* 2) Logo now fills 80% of 4.5rem (≈3.6rem) */
     .app-logo {
-    height: 6rem !important; /* explicit, overrides any max-height rule */
-    width: auto !important;  /* keep aspect ratio */
-  }
+        max-height: 80%;
+        /* 3.6rem high logo, centered by align-items */
+    }
 
     /* 3) Slightly smaller nav font and tighter gap */
     .app-nav a {
