@@ -1,5 +1,6 @@
 /* src/app/app.scss */
 
+/* Reset basics */
 html,
 body {
     margin: 0;
@@ -7,6 +8,13 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
     height: 100%;
+}
+
+/* Ensure box-sizing includes padding/border in width/height */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 .app-container {
@@ -19,31 +27,53 @@ body {
    Header + dropdown-styling
 ============================= */
 
+/* 1) Make header a fixed height (6rem) with no vertical padding */
 .app-header {
     position: relative;
-    /* nødvendig for at dropdown absoluttposisjon skal referere til header */
+    /* for absolute‐positioned dropdown */
     background-color: #00a0a0;
     color: white;
-    padding: 0rem 1rem;
+
+    height: 6rem;
+    /* fixed height */
+    padding: 0 1rem;
+    /* only horizontal padding */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    /* if logo tries to overflow, it’ll be clipped */
 }
 
+/* 2) Flex container inside header spans full header height */
 .header-content {
     display: flex;
     align-items: center;
+    /* vertical centering within 6rem */
     justify-content: space-between;
+    height: 100%;
+    /* so children can center in 6rem */
+    width: 100%;
     max-width: 1000px;
+    /* optional: caps the content width */
     margin: 0 auto;
+    /* centers header-content in viewport */
 }
 
-/* Logo i venstre kant */
+/* 3) Logo fills most of header’s height (max‐height: 100% of 6rem) */
 .app-logo {
-    height: 10rem;
+    max-height: 100%;
+    /* never exceeds header’s 6rem */
     width: auto;
     cursor: pointer;
+    transition: transform 0.2s ease;
+    /* optional: smooth hover‐scale */
 }
 
-/* Nav-lenker i midten/høyre */
+.app-logo:hover {
+    transform: scale(1.05);
+    /* small “zoom” on hover, optional */
+}
+
+/* Navigation links */
 .app-nav ul {
     list-style: none;
     margin: 0;
@@ -56,18 +86,20 @@ body {
     color: white;
     text-decoration: none;
     font-size: 1rem;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, color 0.2s ease;
 }
 
 .app-nav a:hover {
     opacity: 0.8;
+    /* Optionally also change color for more noticeable feedback:
+     color: #ffeb3b;  */
 }
 
 .app-nav a.active {
     font-weight: bold;
 }
 
-/* Moro-knapp for To-Do-dropdown */
+/* To-Do toggle button */
 .todo-toggle-btn {
     background: white;
     color: #00a0a0;
@@ -76,31 +108,31 @@ body {
     padding: 0.5rem 1rem;
     font-size: 1rem;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .todo-toggle-btn:hover {
     background: #f0f0f0;
+    transform: translateY(-1px);
 }
 
-/* Selve dropdown-panelet: står nå direkte på <app-todo-list> */
+/* Dropdown panel (positioned under header) */
 .todo-dropdown {
     position: absolute;
     top: 100%;
-    /* rett under header */
+    /* right below header */
     right: 1rem;
-    /* juster slik at panelet flukter mot høyre */
     width: 500px;
-    /* fast bredde etter smak */
+    /* fixed width */
     max-height: 500px;
-    /* maks høyde, rull om nødvendig */
+    /* scroll if too tall */
     overflow-y: auto;
     background: #ffffff;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     z-index: 100;
-    /* sørg for at dropdown ligger over annet innhold */
+    /* sit on top of other content */
     margin-top: 0.5rem;
 }
 
@@ -114,21 +146,19 @@ body {
     padding: 0 1rem;
 }
 
-/* Hjem-seksjon: kun kalender på desktop */
+/* Home section: calendar layout */
 .home-container {
     display: flex;
     justify-content: center;
 }
 
-/* Kalender-wrapper */
 .calendar-wrapper {
     flex: 1 1 400px;
-    /* basis 400px, kan krympe/vokse */
+    /* base 400px, can grow/shrink */
     min-width: 400px;
-    /* aldri smalere enn 400px */
 }
 
-/* ================= Om-seksjon ================= */
+/* ================= Om‐seksjon ================= */
 
 .about-container {
     background-color: #fff;
@@ -197,7 +227,7 @@ body {
     height: auto;
 }
 
-/* ================= full-kalender-knapp ================= */
+/* ================= full‐calendar‐button ================= */
 
 .full-calendar-btn {
     margin-top: 1rem;
@@ -207,14 +237,15 @@ body {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .full-calendar-btn:hover {
     background-color: #008080;
+    transform: translateY(-1px);
 }
 
-/* ================= full-kalender-modal ================= */
+/* ================= full‐calendar‐modal ================= */
 
 .full-calendar-backdrop {
     position: fixed;
@@ -248,6 +279,7 @@ body {
     font-size: 1.5rem;
     cursor: pointer;
     color: #333;
+    transition: color 0.2s ease;
 }
 
 .close-modal-btn:hover {
@@ -317,7 +349,7 @@ body {
         right: 0;
         left: 0;
         width: calc(100% - 2rem);
-        /* 1rem margin på hver side */
+        /* 1rem margin each side */
         margin: 0.5rem 1rem;
     }
 }
