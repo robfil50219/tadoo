@@ -55,13 +55,15 @@ body {
   color: white;
 
   height: var(--header-height);
-  padding: 0 1rem;         /* horizontal padding only */
+  padding: 0 1rem;
   display: flex;
-  align-items: center;     /* vertically center .header-content */
-  justify-content: center; /* center .header-content horizontally */
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: visible;       /* allow dropdown to overflow below */
+  z-index: 10;
+  overflow: visible;
 }
 
 .header-content {
@@ -70,13 +72,14 @@ body {
   justify-content: space-between;
 
   width: 100%;
-  max-width: 1000px;       /* cap on very wide screens */
+  max-width: 1000px;
+  height: var(--header-height);
   margin: 0 auto;
 }
 
 /* Logo */
 .app-logo {
-  height:6rem;
+  height: var(--logo-height);
   width: auto;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -136,8 +139,8 @@ body {
 --------------------------------------------------------*/
 .todo-dropdown {
   position: absolute;
-  top: var(--header-height);   /* directly under the header */
-  right: 1rem;                 /* align under header’s padding */
+  top: calc(var(--header-height) + 0.5rem);
+  right: 1rem;
   width: 500px;
   max-height: 500px;
   overflow-y: auto;
@@ -145,8 +148,7 @@ body {
   border: 1px solid #ddd;
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  margin-top: 0.5rem;
+  z-index: 999;
 }
 
 /*--------------------------------------------------------
@@ -368,10 +370,10 @@ body {
 
   /* (C) Reposition dropdown under the 4rem header */
   .todo-dropdown {
-    top: var(--header-height);
+    top: calc(var(--header-height) + 0.25rem);
     right: 0.75rem;
     width: calc(100% - 1.5rem);
-    margin-top: 0.25rem;
+    margin-top: 0;
   }
 
   /* (D) Tighter spacing for main content */
