@@ -65,12 +65,12 @@ body {
 }
 
 /* Logo: max-height fills entire header (6rem), scaled on hover */
-.app-logo {
-    max-height: 10rem;
-    /* at most 6rem tall */
-    width: auto;
-    cursor: pointer;
-    transition: transform 0.2s ease;
+//.app-logo {
+max-height: 10rem;
+/* at most 6rem tall */
+width: auto;
+cursor: pointer;
+transition: transform 0.2s ease;
 }
 
 .app-logo:hover {
