@@ -35,14 +35,14 @@ body {
 /* Desktop defaults: header 6rem tall, logo 4rem tall */
 :root {
   --header-height: 6rem;   /* ≈96px */
-  --logo-height: 4rem;     /* ≈64px */
+  --logo-height: 3.5rem;   /* ≈56px */
 }
 
-/* Mobile override (≤768px): header 4rem tall, logo 2.5rem tall */
+/* Mobile override (≤768px): header 4rem tall, logo 2.25rem tall */
 @media (max-width: 768px) {
   :root {
     --header-height: 4rem; /* ≈64px */
-    --logo-height: 2.5rem; /* ≈40px */
+    --logo-height: 2.25rem; /* ≈36px */
   }
 }
 
@@ -79,7 +79,7 @@ body {
 
 /* Logo */
 .app-logo {
-  height: var(--logo-height);
+  height: clamp(2rem, var(--logo-height), 5rem);
   width: auto;
   cursor: pointer;
   transition: transform 0.2s ease;
