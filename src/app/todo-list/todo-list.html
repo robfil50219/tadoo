@@ -1,51 +1,48 @@
-<div class="todo-container">
-  <h2>Gjøremål</h2>
+<!-- src/app/todo-list/todo-list.component.html -->
 
-  <ul class="todo-list">
-    <li *ngFor="let todo of todos" [class.completed]="todo.completed">
-      <input
-        type="checkbox"
-        [checked]="todo.completed"
-        (change)="toggleCompleted(todo)"
-      />
-
-      <span
-        *ngIf="editingId !== todo.id"
-        (click)="editingId = todo.id"
-        class="todo-title"
-      >
-        {{ todo.title }}
-      </span>
-
-      <input
-        *ngIf="editingId === todo.id"
-        type="text"
-        [(ngModel)]="todo.title"
-        (blur)="finishEdit(todo)"
-        (keyup.enter)="finishEdit(todo)"
-        class="edit-input"
-        autofocus
-      />
-
-      <button class="delete-btn" (click)="deleteTodo(todo.id)">×</button>
-    </li>
-  </ul>
-
-  <div class="add-form">
+<ul class="todo-list">
+  <li *ngFor="let todo of todos" [class.completed]="todo.completed">
     <input
+      type="checkbox"
+      [checked]="todo.completed"
+      (change)="toggleCompleted(todo)"
+    />
+
+    <span
+      *ngIf="editingId !== todo.id"
+      (click)="editingId = todo.id"
+      class="todo-title"
+    >
+      {{ todo.title }}
+    </span>
+
+    <input
+      *ngIf="editingId === todo.id"
       type="text"
-      placeholder="Ny oppgave…"
-      [(ngModel)]="newTitle"
-      (keyup.enter)="addTodo()"
+      [(ngModel)]="todo.title"
+      (blur)="finishEdit(todo)"
+      (keyup.enter)="finishEdit(todo)"
+      class="edit-input"
+      autofocus
     />
 
-    <!-- Dato + tid‐velger -->
-    <input
-      type="datetime-local"
-      [(ngModel)]="newDueDateTime"
-      class="due-input"
-    />
+    <button class="delete-btn" (click)="deleteTodo(todo.id)">×</button>
+  </li>
+</ul>
 
-    <button (click)="addTodo()">Legg til</button>
-  </div>
+<div class="add-form">
+  <input
+    type="text"
+    placeholder="Ny oppgave…"
+    [(ngModel)]="newTitle"
+    (keyup.enter)="addTodo()"
+  />
+
+  <input
+    type="datetime-local"
+    [(ngModel)]="newDueDateTime"
+    class="due-input"
+  />
+
+  <button (click)="addTodo()">Legg til</button>
 </div>

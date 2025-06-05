@@ -1,321 +1,314 @@
+/* src/app/app.scss */
+
 html,
 body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
-    height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+  height: 100%;
 }
 
 .app-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
+/* =============================
+   Header + dropdown-styling
+============================= */
 
-/* ========================= Header‐styling ========================= */
 .app-header {
-    background-color: #00a0a0;
-    color: white;
-    padding: 1rem 0;
-
-
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    .header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 2rem;
-    }
-
-    .app-logo {
-        height: 5rem;
-        width: auto;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-
-        &:hover {
-            transform: scale(1.05);
-        }
-    }
-
-    /* Styling av navigasjonen */
-    .app-nav {
-        ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-
-        li {
-            margin-left: 1.5rem;
-        }
-
-        a {
-            color: white;
-            text-decoration: none;
-            font-size: 1rem;
-            transition: opacity 0.2s ease;
-
-            &.active {
-                text-decoration: underline;
-            }
-
-            &:hover {
-                opacity: 0.8;
-            }
-        }
-    }
+  position: relative; /* nødvendig for at dropdown absoluttposisjon skal referere til header */
+  background-color: #00a0a0;
+  color: white;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Logo i venstre kant */
+.app-logo {
+  height: 5rem;
+  width: auto;
+  cursor: pointer;
+}
+
+/* Nav-lenker i midten/høyre */
+.app-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.app-nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: opacity 0.2s ease;
+}
+
+.app-nav a:hover {
+  opacity: 0.8;
+}
+
+.app-nav a.active {
+  font-weight: bold;
+}
+
+/* Moro-knapp for To-Do-dropdown */
+.todo-toggle-btn {
+  background: white;
+  color: #00a0a0;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.todo-toggle-btn:hover {
+  background: #f0f0f0;
+}
+
+/* Selve dropdown-panelet: står nå direkte på <app-todo-list> */
+.todo-dropdown {
+  position: absolute;
+  top: 100%;         /* rett under header */
+  right: 1rem;       /* juster slik at panelet flukter mot høyre */
+  width: 500px;      /* fast bredde etter smak */
+  max-height: 500px; /* maks høyde, rull om nødvendig */
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 100;      /* sørg for at dropdown ligger over annet innhold */
+  margin-top: 0.5rem;
+}
 
 /* ========================= Main ========================= */
 
 .app-main {
-    flex: 1;
-    width: 100%;
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
-/* Hjem‐seksjon: kalender + todo list side om side */
+/* Hjem-seksjon: kun kalender på desktop */
 .home-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    justify-content: center;
-    align-items: flex-start;
+  display: flex;
+  justify-content: center;
 }
 
-/* Kalender‐wrapper */
+/* Kalender-wrapper */
 .calendar-wrapper {
-    flex: 2;
-    /* gir kalenderen dobbel så mye plass */
-    min-width: 300px;
-    /* brytes under 300px */
+  flex: 1 1 400px;  /* basis 400px, kan krympe/vokse */
+  min-width: 400px; /* aldri smalere enn 400px */
 }
 
-/* Todo‐wrapper */
-.todo-wrapper {
-    flex: 1;
-    /* gir todo‐listen halvparten av bredden */
-    min-width: 300px;
-    /* brytes under 300px */
-}
+/* ================= Om-seksjon ================= */
 
-/* Om‐seksjon */
 .about-container {
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
 
-    h2 {
-        text-align: center;
-        margin-bottom: 1rem;
-        color: #00a0a0;
-    }
+.about-container h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #00a0a0;
+}
 
-    p {
-        line-height: 1.6;
-        margin-bottom: 1rem;
-        color: #333;
-    }
+.about-container p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: #333;
+}
 
-    h3 {
-        margin-top: 1.5rem;
-        margin-bottom: 0.5rem;
-        color: #00a0a0;
-    }
+.about-container h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #00a0a0;
+}
 
-    ul {
-        margin-left: 1.5rem;
-        list-style: disc;
+.about-container ul {
+  margin-left: 1.5rem;
+  list-style: disc;
+}
 
-        li {
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-    }
+.about-container ul li {
+  margin-bottom: 0.5rem;
+  color: #333;
 }
 
 /* ========================= Footer ========================= */
 
 .app-footer {
-    background-color: #333;
-    color: #ddd;
-    padding: 1rem 0;
-    text-align: center;
-
-    .footer-content {
-        max-width: 900px;
-        margin: 0 auto;
-        font-size: 0.9rem;
-    }
-
+  background-color: #333;
+  color: #ddd;
+  padding: 1rem 0;
+  text-align: center;
 }
 
 .app-footer .footer-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .app-footer .made-with {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.9rem;
-    color: #ddd;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: #ddd;
 }
 
 .app-footer .made-with .angular-logo {
-    width: 5rem;
-    height: auto;
+  width: 5rem;
+  height: auto;
 }
 
-
 /* ================= full-kalender-knapp ================= */
+
 .full-calendar-btn {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #00a0a0;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s ease;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #00a0a0;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 .full-calendar-btn:hover {
-    background-color: #008080;
+  background-color: #008080;
 }
 
-/* ================= modal-bakgrunn ================= */
+/* ================= full-kalender-modal ================= */
+
 .full-calendar-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
-/* ================= full-kalender-modal (fullskjerm) ================= */
 .full-calendar-modal {
-    position: fixed;
-    top: 0;
-    /* øverst på skjermen */
-    left: 0;
-    /* helt til venstre */
-    width: 100vw;
-    /* full skjermbredde */
-    height: 100vh;
-    /* full skjermhøyde */
-    background: white;
-    /* hvit bakgrunn (eller annen farge du ønsker) */
-    border-radius: 0;
-    /* ingen avrunding i hjørnene */
-    box-shadow: none;
-    /* ingen skygge, siden den dekker hele skjermen */
-    z-index: 1001;
-    display: flex;
-    flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  border-radius: 0;
+  box-shadow: none;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
 }
 
-
-/* Lukk-knapp øverst til høyre i modal */
 .close-modal-btn {
-    align-self: flex-end;
-    margin: 0.5rem;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #333;
+  align-self: flex-end;
+  margin: 0.5rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
 }
 
 .close-modal-btn:hover {
-    color: #000;
+  color: #000;
 }
 
-
-/* Sørg for at expanded-calendar fyller hele plassen */
 .expanded-calendar {
-    width: 100% !important;
-    height: 100% !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
-/* Overstyr FullCalendar‐boksene til å bruke hele plassen */
 .expanded-calendar ::ng-deep .fc {
-    height: 100% !important;
-    /* hele høyden i parent */
+  height: 100% !important;
 }
 
 .expanded-calendar ::ng-deep .fc-daygrid-day-frame {
-    height: auto !important;
-    /* la rader vokse i høyde */
+  height: auto !important;
 }
 
 .expanded-calendar ::ng-deep .fc-daygrid-event {
-    /* La event-boksene strekke seg i høyde for lange titler */
-    height: auto !important;
-    min-height: 3.2rem !important;
-    overflow: visible !important;
+  height: auto !important;
+  min-height: 3.2rem !important;
+  overflow: visible !important;
 }
 
-/* To linjer før avkorting */
 .expanded-calendar ::ng-deep .fc-event-title {
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: normal !important;
-    font-size: 1rem;
-    line-height: 1.4rem;
-    max-height: calc(1.4rem * 2);
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: normal !important;
+  font-size: 1rem;
+  line-height: 1.4rem;
+  max-height: calc(1.4rem * 2);
 }
 
 .expanded-calendar ::ng-deep .fc-event-time {
-    white-space: nowrap !important;
-    font-size: 0.9rem;
-    line-height: 1.4rem;
-    margin-right: 0.3rem;
+  white-space: nowrap !important;
+  font-size: 0.9rem;
+  line-height: 1.4rem;
+  margin-right: 0.3rem;
 }
 
-/* ================= full-kalender-bakgrunn ================= */
-.full-calendar-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-}
+/* ================= responsive: dropdown & kalender på mobil ================= */
 
-/* Default (desktop): input + knapp på samme linje */
-.new-todo {
-    display: flex;
-    gap: 0.5rem;
-}
-
-/* Mobil (opp til 768px): knapp under input */
 @media (max-width: 768px) {
-    .new-todo {
-        flex-direction: column;
-    }
+  .home-container {
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0 1rem;
+  }
 
-    .new-todo button {
-        width: 100%;
-        margin-top: 0.5rem;
-    }
+  .calendar-wrapper {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .calendar-wrapper app-calendar,
+  .calendar-wrapper .expanded-calendar {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .todo-dropdown {
+    right: 0;
+    left: 0;
+    width: calc(100% - 2rem); /* 1rem margin på hver side */
+    margin: 0.5rem 1rem;
+  }
 }

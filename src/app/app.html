@@ -1,7 +1,10 @@
+<!-- src/app/app.html -->
+
 <div class="app-container">
+  <!-- Header -->
   <header class="app-header">
     <div class="header-content">
-      <!-- Logo med click‐handler -->
+      <!-- Logo med click-handler -->
       <img
         src="/images/tadoologo.png"
         alt="Tadoo logo"
@@ -9,6 +12,7 @@
         (click)="showSection = 'home'"
       />
 
+      <!-- Navigasjon -->
       <nav class="app-nav">
         <ul>
           <li>
@@ -29,26 +33,32 @@
           </li>
         </ul>
       </nav>
+
+      <!-- Moro-knapp for å åpne To-Do-dropdown -->
+      <button class="todo-toggle-btn" (click)="toggleTodoDropdown()">
+        📝 To-Do
+      </button>
     </div>
+
+    <!-- Dropdown-panelet: dropdown-klassen på selve <app-todo-list> -->
+    <app-todo-list
+      *ngIf="showTodoDropdown"
+      class="todo-dropdown"
+    ></app-todo-list>
   </header>
 
   <!-- Hovedinnhold -->
   <main class="app-main">
-    <!-- Hjem-seksjon: kalender + todo-liste -->
+    <!-- Hjem-seksjon: kun kalender (To-Do vises i dropdown) -->
     <section *ngIf="showSection === 'home'" class="home-section">
       <div class="home-container">
-        <!-- Kalenderen til venstre -->
+        <!-- Kalender-wrapper -->
         <div class="calendar-wrapper">
           <app-calendar></app-calendar>
           <!-- Knapp for å åpne “stor kalender” -->
           <button class="full-calendar-btn" (click)="openFullCalendar()">
             Vis full kalender
           </button>
-        </div>
-
-        <!-- Todo-liste til høyre -->
-        <div class="todo-wrapper">
-          <app-todo-list></app-todo-list>
         </div>
       </div>
     </section>
@@ -97,7 +107,11 @@
   </main>
 
   <!-- Modal for full kalender -->
-  <div class="full-calendar-backdrop" *ngIf="showFullCalendar" (click)="closeFullCalendar()"></div>
+  <div
+    class="full-calendar-backdrop"
+    *ngIf="showFullCalendar"
+    (click)="closeFullCalendar()"
+  ></div>
   <div class="full-calendar-modal" *ngIf="showFullCalendar">
     <button class="close-modal-btn" (click)="closeFullCalendar()">✕</button>
     <div class="full-calendar-container">

@@ -23,11 +23,19 @@ export class App {
   // Ny: styrer om “Stor kalender”-modal er åpen
   showFullCalendar = false;
 
-  // Toggle-metoder for knappen
+  // Ny: styrer om To-Do‐dropdown vises
+  showTodoDropdown = false;
+
+  // Åpne/lukke “Stor kalender”-modal
   openFullCalendar() {
     this.showFullCalendar = true;
   }
   closeFullCalendar() {
     this.showFullCalendar = false;
+  }
+
+  // Toggle-metode for To-Do‐dropdown
+  toggleTodoDropdown() {
+    this.showTodoDropdown = !this.showTodoDropdown;
   }
 }
