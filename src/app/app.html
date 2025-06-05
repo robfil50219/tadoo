@@ -1,132 +1,42 @@
-<div class="app-container">
-  <!-- Header -->
-  <header class="app-header">
-    <div class="header-content">
-      <!-- Logo with click handler -->
-      <img
-        src="images/tadoologo2.png"
-        alt="Tadoo logo"
-        class="app-logo"
-        (click)="showSection = 'home'"
-      />
+<header class="app-header">
+  <div class="header-content">
+    <!-- Logo -->
+    <img
+      src="images/tadoologo2.png"
+      alt="Tadoo logo"
+      class="app-logo"
+      (click)="showSection = 'home'"
+    />
 
-      <!-- Navigasjon -->
-      <nav class="app-nav">
-        <ul>
-          <li>
-            <a
-              href="#"
-              [class.active]="showSection === 'home'"
-              (click)="showSection = 'home'; $event.preventDefault()"
-              >Hjem</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              [class.active]="showSection === 'about'"
-              (click)="showSection = 'about'; $event.preventDefault()"
-              >Om</a
-            >
-          </li>
-        </ul>
-      </nav>
+    <!-- Navigasjon -->
+    <nav class="app-nav">
+      <ul>
+        <li>
+          <a
+            href="#"
+            [class.active]="showSection === 'home'"
+            (click)="showSection = 'home'; $event.preventDefault()"
+          >Hjem</a>
+        </li>
+        <li>
+          <a
+            href="#"
+            [class.active]="showSection === 'about'"
+            (click)="showSection = 'about'; $event.preventDefault()"
+          >Om</a>
+        </li>
+      </ul>
+    </nav>
 
-      <!-- To-Do toggle button -->
-      <button class="todo-toggle-btn" (click)="toggleTodoDropdown()">
-        📝 To-Do
-      </button>
-    </div>
-
-    <!-- Dropdown panel -->
-    <app-todo-list
-      *ngIf="showTodoDropdown"
-      class="todo-dropdown"
-    ></app-todo-list>
-  </header>
-
-  <!-- Main content -->
-  <main class="app-main">
-    <!-- Home section (calendar + to-do dropdown) -->
-    <section *ngIf="showSection === 'home'" class="home-section">
-      <div class="home-container">
-        <div class="calendar-wrapper">
-          <app-calendar></app-calendar>
-          <button class="full-calendar-btn" (click)="openFullCalendar()">
-            Vis full kalender
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- About section -->
-    <section *ngIf="showSection === 'about'" class="about-section">
-      <div class="about-container">
-        <h2>Om Tadoo</h2>
-        <p>
-          Tadoo er en enkel familie-To-Do-app skrevet i Angular. Her kan du legge til oppgaver,
-          redigere dem og merke dem som fullført. Denne seksjonen forteller litt om prosjektet
-          og teknologiene som er brukt.
-        </p>
-
-        <h3>Formål</h3>
-        <p>
-          Målet med Tadoo er at jeg skal lære meg Angular ved å bygge en småskalert webapp. Oppgavene
-          lagres i browserens localStorage, slik at de ligger lagret selv om du lukker nettleseren.
-        </p>
-
-        <h3>Teknologier</h3>
-        <ul>
-          <li>Angular (v20.0.0)</li>
-          <li>TypeScript</li>
-          <li>RxJS (for tilstandsstyring i Todo-servicen)</li>
-          <li>SCSS for styling</li>
-          <li>FullCalendar (for kalender-visning av oppgaver)</li>
-          <li>LocalStorage-API (for vedvarende lagring uten backend)</li>
-        </ul>
-
-        <h3>Videre utvikling</h3>
-        <p>
-          Dette er et pågående prosjekt—jeg legger til nye funksjoner etter hvert som jeg lærer mer,
-          for eksempel:
-        </p>
-        <ul>
-          <li>Brukerpålogging og sanntids-sync via Firebase</li>
-          <li>Kategorisering og filtrering av oppgaver</li>
-          <li>Mobil- og nettbrettoptimalisering</li>
-          <li>Due-dates med notifikasjoner/remindere</li>
-          <li>Import/Eksport av oppgavelister som JSON</li>
-          <li>Enklere design-forbedringer og UX-tilpasninger</li>
-        </ul>
-      </div>
-    </section>
-  </main>
-
-  <!-- Modal for full calendar -->
-  <div
-    class="full-calendar-backdrop"
-    *ngIf="showFullCalendar"
-    (click)="closeFullCalendar()"
-  ></div>
-  <div class="full-calendar-modal" *ngIf="showFullCalendar">
-    <button class="close-modal-btn" (click)="closeFullCalendar()">✕</button>
-    <div class="full-calendar-container">
-      <app-calendar class="expanded-calendar"></app-calendar>
-    </div>
+    <!-- To-Do knapp -->
+    <button class="todo-toggle-btn" (click)="toggleTodoDropdown()">
+      📝 To-Do
+    </button>
   </div>
 
-  <!-- Footer -->
-  <footer class="app-footer">
-    <div class="footer-content">
-      <p>&copy; 2025 Tadoo &ndash; utviklet av Robert Filep. Alle rettigheter reservert.</p>
-      <div class="made-with">
-        <span>Made with</span>
-        <img
-          src="images/lockup_angular_gradient_alt01.png"
-          alt="Angular logo"
-          class="angular-logo"
-        />
-      </div>
-    </div>
-  </footer>
-</div>
+  <!-- ✅ DROPDOWN flyttes her for riktig posisjonering -->
+  <app-todo-list
+    *ngIf="showTodoDropdown"
+    class="todo-dropdown"
+  ></app-todo-list>
+</header>
