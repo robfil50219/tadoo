@@ -48,13 +48,10 @@
         &#9776;
       </button>
     </div>
-
-    <!-- To-Do dropdown (same as before) -->
-    <app-todo-list
-      *ngIf="showTodoDropdown"
-      class="todo-dropdown"
-    ></app-todo-list>
-
+   <div *ngIf="showTodoDropdown">
+  <div class="todo-backdrop" (click)="showTodoDropdown = false"></div>
+  <app-todo-list class="todo-dropdown"></app-todo-list>
+</div>
     <!-- Mobile slide-down menu -->
     <div class="mobile-menu" *ngIf="showMobileMenu">
       <!-- Inside mobile-menu, we replicate the same links and To-Do button -->

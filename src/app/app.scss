@@ -39,35 +39,25 @@ body {
     position: relative;
     background-color: #00a0a0;
     color: white;
-
     height: 6rem;
-    /* fixed height on desktop */
     padding: 0 1rem;
-    /* horizontal padding; no vertical padding */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
     overflow: visible;
-    /* allow To-Do dropdown and mobile menu to appear below */
 }
 
 .header-content {
     display: flex;
     align-items: center;
-    /* vertically center content within 6rem */
     justify-content: space-between;
     height: 100%;
-    /* fill the entire 6rem */
     width: 100%;
     max-width: 1000px;
-    /* cap width for large screens */
     margin: 0 auto;
-    /* center horizontally */
 }
 
-/* 1) Logo: max-height fills entire header (6rem), scaled on hover */
+
 .app-logo {
-    max-height: 100%;
-    /* at most 6rem tall */
+    max-height: 10rem;
     width: auto;
     cursor: pointer;
     transition: transform 0.2s ease;
@@ -117,6 +107,40 @@ body {
 .todo-toggle-btn:hover {
     background: #f0f0f0;
     transform: translateY(-1px);
+}
+
+.todo-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    /* fully see-through */
+    z-index: 50;
+    /* below the dropdown’s z-index */
+}
+
+/* Ensure the dropdown itself is on top of the backdrop */
+.todo-dropdown {
+    position: absolute;
+    top: 100%;
+    /* just below the header */
+    right: 1rem;
+    /* same as before */
+    width: 500px;
+    /* same as before */
+    max-height: 500px;
+    /* same as before */
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+    /* Must be higher than .todo-backdrop’s z-index of 50 */
+    z-index: 100;
+    margin-top: 0.5rem;
 }
 
 /* 4) Hamburger button (only visible on mobile) */
