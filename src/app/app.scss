@@ -1,8 +1,4 @@
 /* src/app/app.scss */
-
-/* =============================
-   RESET + BASE STYLES
-============================= */
 html,
 body {
     margin: 0;
@@ -13,7 +9,7 @@ body {
     width: 100%;
 }
 
-/* Include padding/border in element’s total size */
+
 *,
 *::before,
 *::after {
@@ -30,11 +26,6 @@ body {
    HEADER + DROPDOWN-STYLING
 ============================= */
 
-/*
-  Desktop header: fixed 6rem height (≈96px),
-  white text on teal, with horizontal padding.
-  Dropdown (To-Do) is absolutely positioned under header.
-*/
 .app-header {
     position: relative;
     background-color: #00a0a0;
@@ -74,7 +65,6 @@ body {
     padding: 0;
     display: flex;
     gap: 1.5rem;
-    /* space between links */
 }
 
 .app-nav a {
@@ -116,29 +106,21 @@ body {
     width: 100vw;
     height: 100vh;
     background: transparent;
-    /* fully see-through */
     z-index: 50;
-    /* below the dropdown’s z-index */
 }
 
 /* Ensure the dropdown itself is on top of the backdrop */
 .todo-dropdown {
     position: absolute;
     top: 100%;
-    /* just below the header */
     right: 1rem;
-    /* same as before */
     width: 500px;
-    /* same as before */
     max-height: 500px;
-    /* same as before */
     overflow-y: auto;
     background: #ffffff;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-
-    /* Must be higher than .todo-backdrop’s z-index of 50 */
     z-index: 100;
     margin-top: 0.5rem;
 }
@@ -146,7 +128,6 @@ body {
 /* 4) Hamburger button (only visible on mobile) */
 .hamburger-btn {
     display: none;
-    /* hidden by default (desktop) */
     background: none;
     border: none;
     color: white;
@@ -161,17 +142,13 @@ body {
     color: #ddd;
 }
 
-/* 5) To-Do dropdown panel (unaffected) */
+/* 5) To-Do dropdown panel  */
 .todo-dropdown {
     position: absolute;
     top: 100%;
-    /* exactly below the 6rem header */
     right: 1rem;
-    /* align under the right padding */
     width: 500px;
-    /* fixed width on desktop */
     max-height: 500px;
-    /* scroll if content taller */
     overflow-y: auto;
     background: #ffffff;
     border: 1px solid #ddd;
@@ -179,7 +156,7 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     z-index: 100;
     margin-top: 0.5rem;
-    /* small gap between header and panel */
+
 }
 
 /* 6) Mobile slide-down menu (hidden by default) */
@@ -204,7 +181,6 @@ body {
 
 .mobile-menu .mobile-nav li {
     margin: 0.5rem 0;
-    /* spacing between items */
 }
 
 .mobile-menu .mobile-nav a {
@@ -213,7 +189,6 @@ body {
     font-size: 1.1rem;
     display: block;
     padding: 0.5rem 1.5rem;
-    /* hit-area for touch */
     transition: background 0.2s ease;
 }
 
@@ -225,7 +200,6 @@ body {
 .mobile-menu .mobile-todo-btn {
     display: block;
     margin: 0.5rem 1.5rem;
-    /* same horizontal padding as links */
     width: calc(100% - 3rem);
     background: white;
     color: #00a0a0;
@@ -262,7 +236,6 @@ body {
 
 .calendar-wrapper {
     flex: 1 1 400px;
-    /* base 400px, can grow/shrink */
     min-width: 400px;
 }
 
@@ -398,7 +371,6 @@ body {
     padding: 1rem 0;
     text-align: center;
     margin-top: auto;
-    /* push footer to bottom */
 }
 
 .app-footer .footer-content {
@@ -466,12 +438,10 @@ body {
   --------------------------------------*/
     .app-header {
         height: 4.5rem;
-        /* smaller fixed height on mobile */
         padding: 0 0.75rem;
-        /* narrower horizontal padding */
     }
 
-    /* 3) Logo now fills 80% of 4.5rem (≈3.6rem) */
+
     .app-logo {
         max-height: 150%;
     }
@@ -531,9 +501,7 @@ body {
   --------------------------------------*/
     .app-main {
         margin: 1.5rem auto;
-        /* less vertical margin on mobile */
         padding: 0 0.75rem;
-        /* less horizontal padding */
     }
 
     .home-container {
@@ -590,20 +558,16 @@ body {
   --------------------------------------*/
     .todo-dropdown {
         top: 4.5rem;
-        /* now just below the 4.5rem header */
         right: 0.75rem;
-        /* match new header padding */
         width: calc(100% - 1.5rem);
         margin-top: 0.25rem;
     }
 
     .mobile-menu {
         top: 4.5rem;
-        /* now just below the 4.5rem header */
         left: 0;
         width: 100%;
         padding: 0.75rem 0;
-        /* vertical padding inside menu */
     }
 
     /*-------------------------------------
