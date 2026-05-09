@@ -4,6 +4,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
+    "rootDir": "./src",
+    "module": "ES2015",
+    "forceConsistentCasingInFileNames": true,
     "types": [
       "jasmine"
     ]

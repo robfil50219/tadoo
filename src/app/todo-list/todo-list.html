@@ -6,12 +6,14 @@
       type="checkbox"
       [checked]="todo.completed"
       (change)="toggleCompleted(todo)"
+      aria-labelledby="title-{{todo.id}}"
     />
 
     <span
       *ngIf="editingId !== todo.id"
       (click)="editingId = todo.id"
       class="todo-title"
+      id="title-{{todo.id}}"
     >
       {{ todo.title }}
     </span>
@@ -23,6 +25,7 @@
       (blur)="finishEdit(todo)"
       (keyup.enter)="finishEdit(todo)"
       class="edit-input"
+      title="Rediger oppgavenavn"
       autofocus
     />
 
@@ -42,6 +45,7 @@
     type="datetime-local"
     [(ngModel)]="newDueDateTime"
     class="due-input"
+    placeholder="Due date and time"
   />
 
   <button (click)="addTodo()">Legg til</button>
