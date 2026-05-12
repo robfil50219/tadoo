@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function familyDoc(familyId) {
+      return get(/databases/$(database)/documents/families/$(familyId));
+    }
+
+    function isFamilyMember(familyId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/families/$(familyId))
+        && familyDoc(familyId).data.memberUids[request.auth.uid] == true;
+    }
+
+    function isFamilyAdult(familyId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/families/$(familyId))
+        && familyDoc(familyId).data.adultUids[request.auth.uid] == true;
+    }
+
+    match /families/{familyId} {
+      allow read: if isFamilyMember(familyId)
+        || signedIn()
+        || (signedIn()
+          && familyId == 'demo-family'
+          && !exists(/databases/$(database)/documents/families/$(familyId)));
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.memberUids[request.auth.uid] == true
+        && request.resource.data.adultUids[request.auth.uid] == true;
+      allow update: if isFamilyAdult(familyId)
+        || (signedIn()
+          && request.resource.data.memberUids[request.auth.uid] == true);
+      allow delete: if false;
+
+      match /tasks/{taskId} {
+        allow read: if isFamilyMember(familyId);
+        allow create, update: if isFamilyMember(familyId);
+        allow delete: if isFamilyAdult(familyId);
+      }
+
+      match /messages/{messageId} {
+        allow read: if isFamilyMember(familyId);
+        allow create: if isFamilyMember(familyId)
+          && request.resource.data.senderUid == request.auth.uid;
+        allow update, delete: if false;
+      }
+
+      match /locations/{memberId} {
+        allow read: if isFamilyMember(familyId);
+        allow write: if isFamilyMember(familyId)
+          && request.resource.data.uid == request.auth.uid;
+      }
+
+      match /invites/{inviteId} {
+        allow read, create, update, delete: if isFamilyAdult(familyId);
+      }
+    }
+
+    match /userProfiles/{uid} {
+      allow read, create, update: if signedIn() && request.auth.uid == uid;
+      allow delete: if false;
+    }
+
+    match /inviteCodes/{code} {
+      allow read: if signedIn();
+      allow create, update: if signedIn();
+      allow delete: if false;
+    }
+  }
+}

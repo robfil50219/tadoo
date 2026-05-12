@@ -60,15 +60,20 @@ export class CalendarComponent implements OnInit, OnDestroy {
             eventClick: this.handleEventClick.bind(this)
         };
 
-        this.sub = this.todoService.hentTodos().subscribe((todos: TodoItem[]) => {
-            this.calendarOptions.events = todos
+        this.sub = this.todoService.hentState().subscribe(state => {
+            this.calendarOptions.events = state.todos
                 .filter(t => !!t.dueDateTime)
-                .map(t => ({
-                    id: t.id,
-                    title: t.title,
-                    start: t.dueDateTime,
-                    allDay: false
-                }));
+                .map((todo: TodoItem) => {
+                    const member = state.members.find(item => item.id === todo.assigneeId);
+                    return {
+                        id: todo.id,
+                        title: `${member?.name || 'Familie'}: ${todo.title}`,
+                        start: todo.dueDateTime,
+                        allDay: false,
+                        backgroundColor: member?.color || '#007c89',
+                        borderColor: member?.color || '#007c89'
+                    };
+                });
         });
     }
 

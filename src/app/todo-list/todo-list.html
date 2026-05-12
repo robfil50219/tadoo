@@ -1,52 +1,140 @@
-<!-- src/app/todo-list/todo-list.component.html -->
+<section class="task-panel">
+  <div class="panel-heading">
+    <div>
+      <p class="eyebrow">Familieoppgaver</p>
+      <h2>To-do</h2>
+    </div>
+    <span class="task-count">{{ todos.length }} aktive</span>
+  </div>
 
-<ul class="todo-list">
-  <li *ngFor="let todo of todos" [class.completed]="todo.completed">
+  <form class="add-form" (ngSubmit)="addTodo()">
     <input
-      type="checkbox"
-      [checked]="todo.completed"
-      (change)="toggleCompleted(todo)"
-      [attr.aria-labelledby]="'title-' + todo.id"
-    />
-
-    <span
-      *ngIf="editingId !== todo.id"
-      (click)="editingId = todo.id"
-      class="todo-title"
-      [attr.id]="'title-' + todo.id"
-    >
-      {{ todo.title }}
-    </span>
-
-    <input
-      *ngIf="editingId === todo.id"
       type="text"
-      [(ngModel)]="todo.title"
-      (blur)="finishEdit(todo)"
-      (keyup.enter)="finishEdit(todo)"
-      class="edit-input"
-      title="Rediger oppgavenavn"
-      autofocus
+      name="title"
+      placeholder="Ny oppgave ..."
+      [(ngModel)]="newTitle"
     />
 
-    <button class="delete-btn" (click)="deleteTodo(todo.id)">×</button>
-  </li>
-</ul>
+    <div class="form-grid">
+      <label>
+        Til
+        <select name="assignee" [(ngModel)]="newAssigneeId">
+          <option *ngFor="let member of members" [value]="member.id">
+            {{ member.name }}
+          </option>
+        </select>
+      </label>
 
-<div class="add-form">
-  <input
-    type="text"
-    placeholder="Ny oppgave…"
-    [(ngModel)]="newTitle"
-    (keyup.enter)="addTodo()"
-  />
+      <label>
+        Kategori
+        <select name="category" [(ngModel)]="newCategory">
+          <option *ngFor="let category of categories" [value]="category.value">
+            {{ category.label }}
+          </option>
+        </select>
+      </label>
 
-  <input
-    type="datetime-local"
-    [(ngModel)]="newDueDateTime"
-    class="due-input"
-    placeholder="Due date and time"
-  />
+      <label>
+        Prioritet
+        <select name="priority" [(ngModel)]="newPriority">
+          <option *ngFor="let priority of priorities" [value]="priority.value">
+            {{ priority.label }}
+          </option>
+        </select>
+      </label>
 
-  <button (click)="addTodo()">Legg til</button>
-</div>
+      <label>
+        Frist
+        <input
+          type="datetime-local"
+          name="due"
+          [(ngModel)]="newDueDateTime"
+        />
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <label class="approval-toggle">
+        <input
+          type="checkbox"
+          name="requiresApproval"
+          [(ngModel)]="newRequiresApproval"
+        />
+        Krev voksen-godkjenning
+      </label>
+
+      <label class="reminder-control">
+        Påminn
+        <select name="reminder" [(ngModel)]="newReminderMinutesBefore">
+          <option [ngValue]="15">15 min før</option>
+          <option [ngValue]="30">30 min før</option>
+          <option [ngValue]="60">1 time før</option>
+          <option [ngValue]="1440">1 dag før</option>
+        </select>
+      </label>
+
+      <button type="submit">Legg til</button>
+    </div>
+  </form>
+
+  <ul class="todo-list">
+    <li *ngFor="let todo of todos" [class.completed]="todo.completed">
+      <div
+        class="member-dot"
+        [style.background]="memberFor(todo.assigneeId)?.color"
+      >
+        {{ memberFor(todo.assigneeId)?.avatar }}
+      </div>
+
+      <input
+        type="checkbox"
+        [checked]="todo.completed"
+        (change)="toggleCompleted(todo)"
+        [attr.aria-labelledby]="'title-' + todo.id"
+      />
+
+      <div class="task-body">
+        <span
+          *ngIf="editingId !== todo.id"
+          (click)="editingId = todo.id"
+          class="todo-title"
+          [attr.id]="'title-' + todo.id"
+        >
+          {{ todo.title }}
+        </span>
+
+        <input
+          *ngIf="editingId === todo.id"
+          type="text"
+          [(ngModel)]="todo.title"
+          (blur)="finishEdit(todo)"
+          (keyup.enter)="finishEdit(todo)"
+          class="edit-input"
+          title="Rediger oppgavenavn"
+          autofocus
+        />
+
+        <div class="task-meta">
+          <span>{{ memberFor(todo.assigneeId)?.name }}</span>
+          <span>{{ formatDue(todo.dueDateTime) }}</span>
+          <span class="priority" [class.high]="todo.priority === 'high'">
+            {{ todo.priority }}
+          </span>
+          <span *ngIf="todo.requiresApproval">
+            {{ todo.approvedById ? 'Godkjent' : 'Mangler godkjenning' }}
+          </span>
+        </div>
+      </div>
+
+      <button
+        *ngIf="todo.requiresApproval && todo.completed && !todo.approvedById"
+        class="approve-btn"
+        (click)="approve(todo)"
+      >
+        Godkjenn
+      </button>
+
+      <button class="delete-btn" (click)="deleteTodo(todo.id)">Slett</button>
+    </li>
+  </ul>
+</section>

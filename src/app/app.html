@@ -1,182 +1,595 @@
-<!-- src/app/app.html -->
+<section class="auth-gate" *ngIf="authService.enabled && !user">
+  <div class="family-play-scene" aria-hidden="true">
+    <span class="sun"></span>
+    <span class="cloud cloud-one"></span>
+    <span class="cloud cloud-two"></span>
+    <span class="balloon"></span>
+    <span class="ball"></span>
+    <span class="person adult-one"></span>
+    <span class="person adult-two"></span>
+    <span class="person child-one"></span>
+    <span class="person child-two"></span>
+    <span class="ground"></span>
+  </div>
+  <div class="auth-card">
+    <img src="images/tadoologo2.png" alt="Tadoo logo" />
+    <p class="eyebrow">Velkommen til Tadoo</p>
+    <h1>{{ authMode === 'login' ? 'Logg inn' : 'Opprett konto' }}</h1>
+    <p>
+      Tadoo er en familieapp for felles oppgaver, kalender, beskjeder,
+      invitasjoner og etter hvert trygg lokasjonsdeling.
+    </p>
+    <p>
+      Dette er en work in progress-demo under utvikling. Funksjoner, design og
+      datamodell vil endres mens appen bygges videre.
+    </p>
+    <p class="invite-hint" *ngIf="hasPendingInvite">
+      Du åpnet en familieinvitasjon. Logg inn eller opprett konto for å bli med.
+    </p>
 
-<div class="app-container">
-  <!-- Header -->
-  <header class="app-header">
-    <div class="header-content">
-      <!-- Logo with click handler -->
-      <img
-        src="images/tadoologo2.png"
-        alt="Tadoo logo"
-        class="app-logo"
-        (click)="showSection = 'home'"
+    <form (ngSubmit)="submitAuth()">
+      <input
+        name="email"
+        type="email"
+        placeholder="E-post"
+        autocomplete="email"
+        [(ngModel)]="authEmail"
+        required
       />
-
-      <!-- Desktop navigation (hidden on mobile) -->
-      <nav class="app-nav">
-        <ul>
-          <li>
-            <a
-              href="#"
-              [class.active]="showSection === 'home'"
-              (click)="showSection = 'home'; $event.preventDefault()"
-              >Hjem</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              [class.active]="showSection === 'about'"
-              (click)="showSection = 'about'; $event.preventDefault()"
-              >Om</a
-            >
-          </li>
-        </ul>
-      </nav>
-
-      <!-- Desktop To-Do toggle button (hidden on mobile) -->
-      <button class="todo-toggle-btn" (click)="toggleTodoDropdown()">
-        📝 To-Do
+      <input
+        name="password"
+        type="password"
+        placeholder="Passord"
+        [autocomplete]="authMode === 'login' ? 'current-password' : 'new-password'"
+        [(ngModel)]="authPassword"
+        required
+      />
+      <input
+        *ngIf="authMode === 'register'"
+        name="passwordConfirm"
+        type="password"
+        placeholder="Gjenta passord"
+        autocomplete="new-password"
+        [(ngModel)]="authPasswordConfirm"
+        required
+      />
+      <p class="auth-error" *ngIf="authError">{{ authError }}</p>
+      <button type="submit">
+        {{ authMode === 'login' ? 'Logg inn' : 'Opprett konto' }}
       </button>
+    </form>
 
-      <!-- Hamburger button (only visible on mobile) -->
+    <button
+      class="link-button"
+      type="button"
+      (click)="authMode = authMode === 'login' ? 'register' : 'login'"
+    >
+      {{ authMode === 'login' ? 'Opprett ny konto' : 'Jeg har konto fra før' }}
+    </button>
+
+    <p class="creator-credit">Bygget av Robert Filep</p>
+  </div>
+</section>
+
+<section class="auth-gate" *ngIf="user && hasPendingInvite">
+  <div class="family-play-scene" aria-hidden="true">
+    <span class="sun"></span>
+    <span class="cloud cloud-one"></span>
+    <span class="cloud cloud-two"></span>
+    <span class="balloon"></span>
+    <span class="ball"></span>
+    <span class="person adult-one"></span>
+    <span class="person adult-two"></span>
+    <span class="person child-one"></span>
+    <span class="person child-two"></span>
+    <span class="ground"></span>
+  </div>
+  <div class="auth-card">
+    <img src="images/tadoologo2.png" alt="Tadoo logo" />
+    <p class="eyebrow">Familieinvitasjon</p>
+    <h1>Bli med i familien</h1>
+    <p>Du er logget inn som {{ user.email }}. Velg navnet familien skal se.</p>
+
+    <form (ngSubmit)="acceptInvite()">
+      <input
+        name="inviteDisplayName"
+        type="text"
+        placeholder="Ditt navn"
+        [(ngModel)]="inviteDisplayName"
+        required
+      />
+      <p class="auth-error" *ngIf="inviteError">{{ inviteError }}</p>
+      <button type="submit">Godta invitasjon</button>
+    </form>
+
+    <button class="link-button" type="button" (click)="logout()">Logg ut</button>
+    <p class="creator-credit">Bygget av Robert Filep</p>
+  </div>
+</section>
+
+<section class="auth-gate" *ngIf="needsFamilySetup">
+  <div class="family-play-scene" aria-hidden="true">
+    <span class="sun"></span>
+    <span class="cloud cloud-one"></span>
+    <span class="cloud cloud-two"></span>
+    <span class="balloon"></span>
+    <span class="ball"></span>
+    <span class="person adult-one"></span>
+    <span class="person adult-two"></span>
+    <span class="person child-one"></span>
+    <span class="person child-two"></span>
+    <span class="ground"></span>
+  </div>
+  <div class="auth-card">
+    <img src="images/tadoologo2.png" alt="Tadoo logo" />
+    <p class="eyebrow">Velkommen til Tadoo</p>
+    <h1>Opprett familien din</h1>
+    <p>Start med en tom familie. Etterpå kan du legge til barn, voksne, oppgaver, kalender og chat.</p>
+
+    <form (ngSubmit)="createFamily()">
+      <input
+        name="setupFamilyName"
+        type="text"
+        placeholder="Familienavn, f.eks. Familien Hansen"
+        [(ngModel)]="setupFamilyName"
+        required
+      />
+      <input
+        name="setupAdultName"
+        type="text"
+        placeholder="Ditt navn"
+        [(ngModel)]="setupAdultName"
+        required
+      />
+      <button type="submit">Opprett familie</button>
+    </form>
+
+    <button class="link-button" type="button" (click)="logout()">Logg ut</button>
+    <p class="creator-credit">Bygget av Robert Filep</p>
+  </div>
+</section>
+
+<div
+  class="app-shell"
+  *ngIf="state as family"
+  [class.locked]="(authService.enabled && !user) || needsFamilySetup || (user && hasPendingInvite)"
+>
+  <button
+    class="menu-backdrop"
+    *ngIf="showMobileMenu"
+    type="button"
+    aria-label="Lukk meny"
+    (click)="showMobileMenu = false"
+  ></button>
+
+  <aside class="sidebar" [class.open]="showMobileMenu">
+    <button class="brand" (click)="selectView('dashboard')">
+      <img src="images/tadoologo2.png" alt="Tadoo logo" />
+      <span>{{ family.familyName }}</span>
+    </button>
+
+    <nav>
       <button
-        class="hamburger-btn"
-        (click)="showMobileMenu = !showMobileMenu"
-        aria-label="Open mobile menu"
+        *ngFor="let item of navItems"
+        [class.active]="activeView === item.id"
+        (click)="selectView(item.id)"
       >
-        &#9776;
+        {{ item.label }}
       </button>
-    </div>
-   <div *ngIf="showTodoDropdown">
-  <div class="todo-backdrop" (click)="showTodoDropdown = false"></div>
-  <app-todo-list class="todo-dropdown"></app-todo-list>
-</div>
-    <!-- Mobile slide-down menu -->
-    <div class="mobile-menu" *ngIf="showMobileMenu">
-      <!-- Inside mobile-menu, we replicate the same links and To-Do button -->
-      <nav class="mobile-nav">
-        <ul>
-          <li>
-            <a
-              href="#"
-              [class.active]="showSection === 'home'"
-              (click)="
-                showSection = 'home';
-                showMobileMenu = false;
-                $event.preventDefault()
-              "
-              >Hjem</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              [class.active]="showSection === 'about'"
-              (click)="
-                showSection = 'about';
-                showMobileMenu = false;
-                $event.preventDefault()
-              "
-              >Om</a
-            >
-          </li>
-        </ul>
-      </nav>
-      <button
-        class="todo-toggle-btn mobile-todo-btn"
-        (click)="
-          toggleTodoDropdown();
-          showMobileMenu = false
-        "
-      >
-        📝 To-Do
-      </button>
-    </div>
-  </header>
+    </nav>
 
-  <!-- Main content -->
-  <main class="app-main">
-    <!-- Home section: calendar (To-Do dropdown appears via its own overlay) -->
-    <section *ngIf="showSection === 'home'" class="home-section">
-      <div class="home-container">
-        <div class="calendar-wrapper">
-          <app-calendar></app-calendar>
-          <button class="full-calendar-btn" (click)="openFullCalendar()">
-            Vis full kalender
-          </button>
+    <button
+      class="sidebar-logout"
+      *ngIf="user && !user.isDemo"
+      type="button"
+      (click)="logout()"
+    >
+      Logg ut
+    </button>
+
+    <div class="sidebar-card">
+      <span>{{ openTasks.length }}</span>
+      <p>åpne oppgaver</p>
+    </div>
+
+    <p class="studio-credit">
+      Bygget av Robert Filep
+    </p>
+  </aside>
+
+  <main class="workspace">
+    <header class="topbar">
+      <button class="menu-button" (click)="showMobileMenu = !showMobileMenu">☰</button>
+      <div>
+        <p class="eyebrow">Tadoo familieapp</p>
+        <h1>{{ activeLabel }}</h1>
+      </div>
+      <div class="member-stack">
+        <button
+          class="account-button"
+          *ngIf="user"
+          type="button"
+          (click)="logout()"
+          [title]="user.email"
+        >
+          {{ user.isDemo ? 'Demo' : 'Logg ut' }}
+        </button>
+        <span
+          *ngFor="let member of members"
+          [style.background]="member.color"
+          [title]="member.name"
+        >
+          {{ member.avatar }}
+        </span>
+      </div>
+    </header>
+
+    <section *ngIf="activeView === 'dashboard'" class="dashboard">
+      <div class="metrics-grid">
+        <article>
+          <span>{{ todayTasks.length }}</span>
+          <p>I dag</p>
+        </article>
+        <article>
+          <span>{{ childTasks.length }}</span>
+          <p>Barneoppgaver</p>
+        </article>
+        <article>
+          <span>{{ approvalQueue.length }}</span>
+          <p>Til godkjenning</p>
+        </article>
+        <article>
+          <span>{{ messages.length }}</span>
+          <p>Meldinger</p>
+        </article>
+      </div>
+
+      <div class="dashboard-grid">
+        <app-todo-list></app-todo-list>
+
+        <div class="stacked-panels">
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Neste påminnelser</h2>
+              <button (click)="selectView('calendar')">Kalender</button>
+            </div>
+            <ul class="compact-list" *ngIf="upcomingReminders.length; else noReminders">
+              <li *ngFor="let task of upcomingReminders">
+                <strong>{{ task.title }}</strong>
+                <span>{{ memberFor(task.assigneeId)?.name }} · {{ formatDateTime(task.dueDateTime) }}</span>
+              </li>
+            </ul>
+            <ng-template #noReminders>
+              <p class="empty-text">Ingen kommende påminnelser.</p>
+            </ng-template>
+          </section>
+
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Siste meldinger</h2>
+              <button (click)="selectView('chat')">Chat</button>
+            </div>
+            <ul class="message-preview">
+              <li *ngFor="let message of messages.slice(-3)">
+                <span
+                  class="avatar"
+                  [style.background]="memberFor(message.senderId)?.color"
+                >
+                  {{ memberFor(message.senderId)?.avatar }}
+                </span>
+                <div>
+                  <strong>{{ memberFor(message.senderId)?.name }}</strong>
+                  <p>{{ message.text }}</p>
+                </div>
+              </li>
+            </ul>
+          </section>
         </div>
       </div>
     </section>
 
-    <!-- About section -->
-    <section *ngIf="showSection === 'about'" class="about-section">
-      <div class="about-container">
-        <h2>Om Tadoo</h2>
-        <p>
-          Tadoo er en enkel familie-To-Do-app skrevet i Angular. Her kan du legge til oppgaver,
-          redigere dem og merke dem som fullført. Denne seksjonen forteller litt om prosjektet og
-          teknologiene som er brukt.
-        </p>
+    <section *ngIf="activeView === 'tasks'">
+      <app-todo-list></app-todo-list>
+    </section>
 
-        <h3>Formål</h3>
-        <p>
-          Målet med Tadoo er at jeg skal lære meg Angular ved å bygge en småskalert webapp. Oppgavene
-          lagres i browserens localStorage, slik at de ligger lagret selv om du lukker nettleseren.
-        </p>
+    <section *ngIf="activeView === 'calendar'" class="panel calendar-page">
+      <div class="panel-title">
+        <h2>Familiekalender</h2>
+        <p>Oppgaver med frist vises automatisk i kalenderen.</p>
+      </div>
+      <app-calendar></app-calendar>
+    </section>
 
-        <h3>Teknologier</h3>
-        <ul>
-          <li>Angular (v20.0.0)</li>
-          <li>TypeScript</li>
-          <li>RxJS (for tilstandsstyring i Todo-servicen)</li>
-          <li>SCSS for styling</li>
-          <li>FullCalendar (for kalender-visning av oppgaver)</li>
-          <li>LocalStorage-API (for vedvarende lagring uten backend)</li>
+    <section *ngIf="activeView === 'family'" class="family-grid">
+      <article class="member-card family-admin-card">
+        <div>
+          <p class="eyebrow">Administrasjon</p>
+          <h2>{{ family.familyName }}</h2>
+          <p>Endre familienavn og legg til nye familiemedlemmer under innstillinger.</p>
+        </div>
+        <button class="secondary-button" (click)="selectView('settings')">Åpne innstillinger</button>
+      </article>
+
+      <article class="member-card" *ngFor="let member of members">
+        <ng-container *ngIf="editingMemberId !== member.id; else editProfile">
+          <span class="avatar large" [style.background]="member.color">{{ member.avatar }}</span>
+          <div class="member-details">
+            <h2>{{ member.name }}</h2>
+            <p>{{ member.role === 'adult' ? 'Voksen' : 'Barn' }}</p>
+            <span>{{ member.status }}</span>
+            <small>{{ member.locationLabel }}</small>
+            <small>{{ member.accountStatus === 'joined' ? 'Egen bruker' : 'Lokal profil' }}</small>
+          </div>
+          <button class="secondary-button" (click)="editMember(member)">Rediger</button>
+        </ng-container>
+
+        <ng-template #editProfile>
+          <form class="profile-form" *ngIf="profileDraft" (ngSubmit)="saveProfile()">
+            <div class="profile-form-header">
+              <span class="avatar large" [style.background]="profileDraft.color">
+                {{ profileDraft.avatar }}
+              </span>
+              <div>
+                <h2>Rediger profil</h2>
+                <p>{{ member.name }}</p>
+              </div>
+            </div>
+
+            <div class="profile-grid">
+              <label>
+                Navn
+                <input name="name" type="text" [(ngModel)]="profileDraft.name" />
+              </label>
+
+              <label>
+                Rolle
+                <select name="role" [(ngModel)]="profileDraft.role">
+                  <option value="adult">Voksen</option>
+                  <option value="child">Barn</option>
+                </select>
+              </label>
+
+              <label>
+                Avatar
+                <input name="avatar" type="text" maxlength="3" [(ngModel)]="profileDraft.avatar" />
+              </label>
+
+              <label>
+                Farge
+                <input name="color" type="color" [(ngModel)]="profileDraft.color" />
+              </label>
+
+              <label>
+                Status
+                <input name="status" type="text" [(ngModel)]="profileDraft.status" />
+              </label>
+
+              <label>
+                Lokasjon
+                <input name="locationLabel" type="text" [(ngModel)]="profileDraft.locationLabel" />
+              </label>
+            </div>
+
+            <div class="profile-actions">
+              <button type="button" class="secondary-button" (click)="cancelProfileEdit()">Avbryt</button>
+              <button type="submit">Lagre profil</button>
+            </div>
+          </form>
+        </ng-template>
+      </article>
+    </section>
+
+    <section *ngIf="activeView === 'chat'" class="panel chat-panel">
+      <div class="panel-title">
+        <h2>Familiechat</h2>
+        <p>Meldinger lagres lokalt i denne prototypen.</p>
+      </div>
+
+      <div class="chat-feed">
+        <article *ngFor="let message of messages">
+          <span class="avatar" [style.background]="memberFor(message.senderId)?.color">
+            {{ memberFor(message.senderId)?.avatar }}
+          </span>
+          <div>
+            <header>
+              <strong>{{ memberFor(message.senderId)?.name }}</strong>
+              <time>{{ formatTime(message.sentAt) }}</time>
+            </header>
+            <p>{{ message.text }}</p>
+          </div>
+        </article>
+      </div>
+
+      <form class="chat-form" (ngSubmit)="sendMessage()">
+        <select name="sender" [(ngModel)]="chatSenderId">
+          <option *ngFor="let member of members" [value]="member.id">{{ member.name }}</option>
+        </select>
+        <input
+          name="message"
+          type="text"
+          placeholder="Skriv en familiemelding ..."
+          [(ngModel)]="chatText"
+        />
+        <button type="submit">Send</button>
+      </form>
+    </section>
+
+    <section *ngIf="activeView === 'location'" class="location-layout">
+      <div class="map-panel">
+        <div class="map-canvas">
+          <span
+            *ngFor="let member of members; let index = index"
+            class="map-pin"
+            [style.background]="member.color"
+            [style.left.%]="18 + index * 20"
+            [style.top.%]="30 + (index % 2) * 26"
+          >
+            {{ member.avatar }}
+          </span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">
+          <h2>Lokasjon</h2>
+          <p>GPS-deling må godkjennes av brukerne når dette kobles til ekte enheter.</p>
+        </div>
+
+        <ul class="location-list">
+          <li *ngFor="let member of members">
+            <span class="avatar" [style.background]="member.color">{{ member.avatar }}</span>
+            <div>
+              <strong>{{ member.name }}</strong>
+              <p>{{ member.locationLabel }} · oppdatert {{ formatTime(member.locationUpdatedAt) }}</p>
+            </div>
+          </li>
         </ul>
 
-        <h3>Videre utvikling</h3>
-        <p>
-          Dette er et pågående prosjekt—jeg legger til nye funksjoner etter hvert som jeg lærer mer,
-          for eksempel:
-        </p>
-        <ul>
-          <li>Brukerpålogging og sanntids-sync via Firebase</li>
-          <li>Kategorisering og filtrering av oppgaver</li>
-          <li>Mobil- og nettbrettoptimalisering</li>
-          <li>Due-dates med notifikasjoner/remindere</li>
-          <li>Import/Eksport av oppgavelister som JSON</li>
-          <li>Enklere design-forbedringer og UX-tilpasninger</li>
-        </ul>
+        <form class="location-form" (ngSubmit)="updateLocation()">
+          <select name="member" [(ngModel)]="locationMemberId">
+            <option *ngFor="let member of members" [value]="member.id">{{ member.name }}</option>
+          </select>
+          <input
+            name="location"
+            type="text"
+            placeholder="Ny lokasjon, f.eks. Skolen"
+            [(ngModel)]="locationLabel"
+          />
+          <button type="submit">Oppdater</button>
+        </form>
       </div>
     </section>
+
+    <section *ngIf="activeView === 'settings'" class="settings-layout">
+      <section class="panel">
+        <div class="panel-title">
+          <div>
+            <h2>Familieinnstillinger</h2>
+            <p>Dette blir grunnlaget for familieoppretting og invitasjoner når Firebase er koblet inn.</p>
+          </div>
+        </div>
+
+        <form class="settings-form" (ngSubmit)="saveFamilyName()">
+          <label>
+            Familienavn
+            <input name="familyName" type="text" [(ngModel)]="familyNameDraft" />
+          </label>
+          <button type="submit">Lagre familienavn</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <div>
+            <h2>Legg til familiemedlem</h2>
+            <p>Bruk dette for lokale profiler. Bruk invitasjon for ekte innloggede familiemedlemmer.</p>
+          </div>
+        </div>
+
+        <form class="settings-form member-add-form" (ngSubmit)="addMember()">
+          <label>
+            Navn
+            <input name="newMemberName" type="text" [(ngModel)]="newMemberName" />
+          </label>
+          <label>
+            Rolle
+            <select name="newMemberRole" [(ngModel)]="newMemberRole">
+              <option value="adult">Voksen</option>
+              <option value="child">Barn</option>
+            </select>
+          </label>
+          <label>
+            Farge
+            <input name="newMemberColor" type="color" [(ngModel)]="newMemberColor" />
+          </label>
+          <button type="submit">Legg til medlem</button>
+        </form>
+      </section>
+
+      <section class="panel invite-panel">
+        <div class="panel-title">
+          <div>
+            <h2>Send invitasjon</h2>
+            <p>Generer en invitasjon som kan deles via e-post, SMS eller QR-kode.</p>
+          </div>
+        </div>
+
+        <form class="settings-form invite-form" (ngSubmit)="createInvite()">
+          <label>
+            E-post eller telefon
+            <input
+              name="inviteRecipient"
+              type="text"
+              placeholder="navn@epost.no eller telefonnummer"
+              [(ngModel)]="inviteRecipient"
+            />
+          </label>
+          <label>
+            Rolle
+            <select name="inviteRole" [(ngModel)]="inviteRole">
+              <option value="adult">Voksen</option>
+              <option value="child">Barn</option>
+            </select>
+          </label>
+          <button type="submit">Lag invitasjon</button>
+        </form>
+
+        <article class="invite-card" *ngIf="latestInvite">
+          <div>
+            <p class="eyebrow">Invitasjonskode</p>
+            <strong>{{ latestInvite.code }}</strong>
+            <span>Gyldig til {{ formatDateTime(latestInvite.expiresAt) }}</span>
+          </div>
+
+          <img [src]="qrCodeUrl(latestInvite)" alt="QR-kode for familieinvitasjon" />
+
+          <div class="invite-actions">
+            <a [href]="emailInviteLink(latestInvite)">Send e-post</a>
+            <a [href]="smsInviteLink(latestInvite)">Send SMS</a>
+            <a [href]="inviteLink(latestInvite)" target="_blank" rel="noopener">Åpne lenke</a>
+          </div>
+        </article>
+
+        <ul class="invite-list" *ngIf="invites.length">
+          <li *ngFor="let invite of invites.slice(0, 4)">
+            <span>{{ invite.code }}</span>
+            <small>{{ invite.role === 'adult' ? 'Voksen' : 'Barn' }} · {{ formatDateTime(invite.expiresAt) }}</small>
+          </li>
+        </ul>
+      </section>
+
+      <section class="panel launch-checklist">
+        <div class="panel-title">
+          <div>
+            <h2>Lanseringsstatus</h2>
+            <p>Dette må være aktivert før offentlig lansering.</p>
+          </div>
+        </div>
+
+        <ul class="status-list">
+          <li class="done">Lokal prototype</li>
+          <li [class.done]="authService.enabled">Firebase-konfig</li>
+          <li class="done">Familieinvitasjoner</li>
+          <li>Push-varsler</li>
+          <li>Personvern og vilkår</li>
+          <li>GPS-samtykke per bruker</li>
+          <li>Passord-reset og e-postverifisering</li>
+          <li>Foreldre-/barnetilganger</li>
+          <li>Firestore-regeltester</li>
+          <li>Tomtilstander og onboarding</li>
+          <li>Offline- og synkfeil</li>
+          <li>Tilgjengelighet og tastaturnavigasjon</li>
+          <li>Mobil-, nettbrett- og iPad-Safari-test</li>
+          <li>Backup og gjenoppretting</li>
+          <li>Support/kontakt for brukere</li>
+          <li>Lanserings- og rollback-sjekkliste</li>
+        </ul>
+      </section>
+    </section>
+
+    <footer class="workspace-footer">
+      <span>Tadoo</span>
+      <span>Bygget av Robert Filep</span>
+    </footer>
   </main>
-
-  <!-- Modal for full calendar -->
-  <div
-    class="full-calendar-backdrop"
-    *ngIf="showFullCalendar"
-    (click)="closeFullCalendar()"
-  ></div>
-  <div class="full-calendar-modal" *ngIf="showFullCalendar">
-    <button class="close-modal-btn" (click)="closeFullCalendar()">✕</button>
-    <div class="full-calendar-container">
-      <app-calendar class="expanded-calendar"></app-calendar>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="app-footer">
-    <div class="footer-content">
-      <p>&copy; 2025 Tadoo &ndash; utviklet av Robert Filep. Alle rettigheter reservert.</p>
-      <div class="made-with">
-        <span>Made with</span>
-        <img
-          src="images/lockup_angular_gradient_alt01.png"
-          alt="Angular logo"
-          class="angular-logo"
-        />
-      </div>
-    </div>
-  </footer>
 </div>
