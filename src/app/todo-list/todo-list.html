@@ -6,14 +6,14 @@
       type="checkbox"
       [checked]="todo.completed"
       (change)="toggleCompleted(todo)"
-      aria-labelledby="title-{{todo.id}}"
+      [attr.aria-labelledby]="'title-' + todo.id"
     />
 
     <span
       *ngIf="editingId !== todo.id"
       (click)="editingId = todo.id"
       class="todo-title"
-      id="title-{{todo.id}}"
+      [attr.id]="'title-' + todo.id"
     >
       {{ todo.title }}
     </span>
