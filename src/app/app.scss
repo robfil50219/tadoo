@@ -522,6 +522,7 @@ button {
   width: 1.35rem;
   margin-right: 0.35rem;
   text-align: center;
+  transform-origin: 50% 60%;
 }
 
 .sidebar nav button:nth-child(1)::before { content: "⌂"; }
@@ -538,9 +539,32 @@ button {
   transform: translateX(0.14rem);
 }
 
+.sidebar nav button:hover::before,
+.sidebar nav button.active:hover::before {
+  animation: menu-icon-bounce 0.48s ease both;
+  color: #ffc857;
+}
+
 .sidebar nav button.active:hover {
   color: #12343b;
   background: #ffffff;
+}
+
+@keyframes menu-icon-bounce {
+  35% {
+    transform: translateY(-0.16rem) scale(1.16) rotate(-8deg);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar nav button:hover::before,
+  .sidebar nav button.active:hover::before {
+    animation: none;
+    transform: scale(1.08);
+  }
 }
 
 .sidebar-logout {
