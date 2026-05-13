@@ -36,6 +36,7 @@ type TranslationKey =
   | 'launchStatus'
   | 'language'
   | 'builtBy'
+  | 'copyright'
   | 'todo'
   | 'active'
   | 'newTask'
@@ -97,6 +98,7 @@ const translations: Record<AppLanguage, Dictionary> = {
     launchStatus: 'Lanseringsstatus',
     language: 'Språk',
     builtBy: 'Bygget av Robert Filep',
+    copyright: '© 2026 Tadoo. Alle rettigheter reservert.',
     todo: 'To-do',
     active: 'aktive',
     newTask: 'Ny oppgave ...',
@@ -155,6 +157,7 @@ const translations: Record<AppLanguage, Dictionary> = {
     launchStatus: 'Lanseringsstatus',
     language: 'Språk',
     builtBy: 'Byggt av Robert Filep',
+    copyright: '© 2026 Tadoo. Alla rättigheter förbehållna.',
     todo: 'Att göra',
     active: 'aktiva',
     newTask: 'Ny uppgift ...',
@@ -213,6 +216,7 @@ const translations: Record<AppLanguage, Dictionary> = {
     launchStatus: 'Lanceringsstatus',
     language: 'Sprog',
     builtBy: 'Bygget af Robert Filep',
+    copyright: '© 2026 Tadoo. Alle rettigheder forbeholdes.',
     todo: 'To-do',
     active: 'aktive',
     newTask: 'Ny opgave ...',
@@ -271,6 +275,7 @@ const translations: Record<AppLanguage, Dictionary> = {
     launchStatus: 'Julkaisun tila',
     language: 'Kieli',
     builtBy: 'Rakentanut Robert Filep',
+    copyright: '© 2026 Tadoo. Kaikki oikeudet pidätetään.',
     todo: 'Tehtävät',
     active: 'aktiivista',
     newTask: 'Uusi tehtävä ...',
@@ -329,6 +334,7 @@ const translations: Record<AppLanguage, Dictionary> = {
     launchStatus: 'Launch status',
     language: 'Language',
     builtBy: 'Built by Robert Filep',
+    copyright: '© 2026 Tadoo. All rights reserved.',
     todo: 'To-do',
     active: 'active',
     newTask: 'New task ...',
