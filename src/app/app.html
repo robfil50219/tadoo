@@ -13,8 +13,20 @@
   </div>
   <div class="auth-card">
     <img src="images/tadoologo2.png" alt="Tadoo logo" />
-    <p class="eyebrow">Velkommen til Tadoo</p>
-    <h1>{{ authMode === 'login' ? 'Logg inn' : 'Opprett konto' }}</h1>
+    <label class="auth-language">
+      <select
+        name="authLanguage"
+        [attr.aria-label]="language.t('language')"
+        [ngModel]="language.current"
+        (ngModelChange)="setLanguage($event)"
+      >
+        <option *ngFor="let option of language.languages" [value]="option.code">
+          {{ option.flag }} {{ option.label }}
+        </option>
+      </select>
+    </label>
+    <p class="eyebrow">{{ language.t('welcome') }}</p>
+    <h1>{{ authMode === 'login' ? language.t('login') : language.t('register') }}</h1>
     <p>
       Tadoo er en familieapp for felles oppgaver, kalender, beskjeder,
       invitasjoner og etter hvert trygg lokasjonsdeling.
@@ -31,7 +43,7 @@
       <input
         name="email"
         type="email"
-        placeholder="E-post"
+        [placeholder]="language.t('email')"
         autocomplete="email"
         [(ngModel)]="authEmail"
         required
@@ -39,7 +51,7 @@
       <input
         name="password"
         type="password"
-        placeholder="Passord"
+        [placeholder]="language.t('password')"
         [autocomplete]="authMode === 'login' ? 'current-password' : 'new-password'"
         [(ngModel)]="authPassword"
         required
@@ -48,14 +60,14 @@
         *ngIf="authMode === 'register'"
         name="passwordConfirm"
         type="password"
-        placeholder="Gjenta passord"
+        [placeholder]="language.t('confirmPassword')"
         autocomplete="new-password"
         [(ngModel)]="authPasswordConfirm"
         required
       />
       <p class="auth-error" *ngIf="authError">{{ authError }}</p>
       <button type="submit">
-        {{ authMode === 'login' ? 'Logg inn' : 'Opprett konto' }}
+        {{ authMode === 'login' ? language.t('login') : language.t('register') }}
       </button>
     </form>
 
@@ -64,10 +76,10 @@
       type="button"
       (click)="authMode = authMode === 'login' ? 'register' : 'login'"
     >
-      {{ authMode === 'login' ? 'Opprett ny konto' : 'Jeg har konto fra før' }}
+      {{ authMode === 'login' ? language.t('createAccount') : language.t('existingAccount') }}
     </button>
 
-    <p class="creator-credit">Bygget av Robert Filep</p>
+    <p class="creator-credit">{{ language.t('builtBy') }}</p>
   </div>
 </section>
 
@@ -102,8 +114,8 @@
       <button type="submit">Godta invitasjon</button>
     </form>
 
-    <button class="link-button" type="button" (click)="logout()">Logg ut</button>
-    <p class="creator-credit">Bygget av Robert Filep</p>
+    <button class="link-button" type="button" (click)="logout()">{{ language.t('logout') }}</button>
+    <p class="creator-credit">{{ language.t('builtBy') }}</p>
   </div>
 </section>
 
@@ -144,8 +156,8 @@
       <button type="submit">Opprett familie</button>
     </form>
 
-    <button class="link-button" type="button" (click)="logout()">Logg ut</button>
-    <p class="creator-credit">Bygget av Robert Filep</p>
+    <button class="link-button" type="button" (click)="logout()">{{ language.t('logout') }}</button>
+    <p class="creator-credit">{{ language.t('builtBy') }}</p>
   </div>
 </section>
 
@@ -174,9 +186,22 @@
         [class.active]="activeView === item.id"
         (click)="selectView(item.id)"
       >
-        {{ item.label }}
+        {{ language.t(item.labelKey) }}
       </button>
     </nav>
+
+    <div class="language-switcher" [attr.aria-label]="language.t('language')">
+      <button
+        *ngFor="let option of language.languages"
+        type="button"
+        [class.active]="language.current === option.code"
+        [title]="option.label"
+        (click)="setLanguage(option.code)"
+      >
+        <span>{{ option.flag }}</span>
+        <small>{{ option.short }}</small>
+      </button>
+    </div>
 
     <button
       class="sidebar-logout"
@@ -184,16 +209,16 @@
       type="button"
       (click)="logout()"
     >
-      Logg ut
+      {{ language.t('logout') }}
     </button>
 
     <div class="sidebar-card">
       <span>{{ openTasks.length }}</span>
-      <p>åpne oppgaver</p>
+      <p>{{ language.t('openTasks') }}</p>
     </div>
 
     <p class="studio-credit">
-      Bygget av Robert Filep
+      {{ language.t('builtBy') }}
     </p>
   </aside>
 
@@ -201,7 +226,7 @@
     <header class="topbar">
       <button class="menu-button" (click)="showMobileMenu = !showMobileMenu">☰</button>
       <div>
-        <p class="eyebrow">Tadoo familieapp</p>
+        <p class="eyebrow">{{ language.t('appName') }}</p>
         <h1>{{ activeLabel }}</h1>
       </div>
       <div class="member-stack">
@@ -212,7 +237,7 @@
           (click)="logout()"
           [title]="user.email"
         >
-          {{ user.isDemo ? 'Demo' : 'Logg ut' }}
+          {{ user.isDemo ? language.t('demo') : language.t('logout') }}
         </button>
         <span
           *ngFor="let member of members"
@@ -228,19 +253,19 @@
       <div class="metrics-grid">
         <article>
           <span>{{ todayTasks.length }}</span>
-          <p>I dag</p>
+          <p>{{ language.t('today') }}</p>
         </article>
         <article>
           <span>{{ childTasks.length }}</span>
-          <p>Barneoppgaver</p>
+          <p>{{ language.t('childTasks') }}</p>
         </article>
         <article>
           <span>{{ approvalQueue.length }}</span>
-          <p>Til godkjenning</p>
+          <p>{{ language.t('approval') }}</p>
         </article>
         <article>
           <span>{{ messages.length }}</span>
-          <p>Meldinger</p>
+          <p>{{ language.t('messages') }}</p>
         </article>
       </div>
 
@@ -250,8 +275,8 @@
         <div class="stacked-panels">
           <section class="panel">
             <div class="panel-title">
-              <h2>Neste påminnelser</h2>
-              <button (click)="selectView('calendar')">Kalender</button>
+              <h2>{{ language.t('nextReminders') }}</h2>
+              <button (click)="selectView('calendar')">{{ language.t('calendar') }}</button>
             </div>
             <ul class="compact-list" *ngIf="upcomingReminders.length; else noReminders">
               <li *ngFor="let task of upcomingReminders">
@@ -266,8 +291,8 @@
 
           <section class="panel">
             <div class="panel-title">
-              <h2>Siste meldinger</h2>
-              <button (click)="selectView('chat')">Chat</button>
+              <h2>{{ language.t('latestMessages') }}</h2>
+              <button (click)="selectView('chat')">{{ language.t('chat') }}</button>
             </div>
             <ul class="message-preview">
               <li *ngFor="let message of messages.slice(-3)">
@@ -294,8 +319,8 @@
 
     <section *ngIf="activeView === 'calendar'" class="panel calendar-page">
       <div class="panel-title">
-        <h2>Familiekalender</h2>
-        <p>Oppgaver med frist vises automatisk i kalenderen.</p>
+        <h2>{{ language.t('familyCalendar') }}</h2>
+        <p>{{ language.t('calendarDescription') }}</p>
       </div>
       <app-calendar></app-calendar>
     </section>
@@ -464,7 +489,7 @@
       <section class="panel">
         <div class="panel-title">
           <div>
-            <h2>Familieinnstillinger</h2>
+            <h2>{{ language.t('familySettings') }}</h2>
             <p>Dette blir grunnlaget for familieoppretting og invitasjoner når Firebase er koblet inn.</p>
           </div>
         </div>
@@ -481,7 +506,7 @@
       <section class="panel">
         <div class="panel-title">
           <div>
-            <h2>Legg til familiemedlem</h2>
+            <h2>{{ language.t('addFamilyMember') }}</h2>
             <p>Bruk dette for lokale profiler. Bruk invitasjon for ekte innloggede familiemedlemmer.</p>
           </div>
         </div>
@@ -509,7 +534,7 @@
       <section class="panel invite-panel">
         <div class="panel-title">
           <div>
-            <h2>Send invitasjon</h2>
+            <h2>{{ language.t('sendInvite') }}</h2>
             <p>Generer en invitasjon som kan deles via e-post, SMS eller QR-kode.</p>
           </div>
         </div>
@@ -561,7 +586,7 @@
       <section class="panel launch-checklist">
         <div class="panel-title">
           <div>
-            <h2>Lanseringsstatus</h2>
+            <h2>{{ language.t('launchStatus') }}</h2>
             <p>Dette må være aktivert før offentlig lansering.</p>
           </div>
         </div>
@@ -589,7 +614,7 @@
 
     <footer class="workspace-footer">
       <span>Tadoo</span>
-      <span>Bygget av Robert Filep</span>
+      <span>{{ language.t('builtBy') }}</span>
     </footer>
   </main>
 </div>

@@ -1,23 +1,23 @@
 <section class="task-panel">
   <div class="panel-heading">
     <div>
-      <p class="eyebrow">Familieoppgaver</p>
-      <h2>To-do</h2>
+      <p class="eyebrow">{{ language.t('tasks') }}</p>
+      <h2>{{ language.t('todo') }}</h2>
     </div>
-    <span class="task-count">{{ todos.length }} aktive</span>
+    <span class="task-count">{{ todos.length }} {{ language.t('active') }}</span>
   </div>
 
   <form class="add-form" (ngSubmit)="addTodo()">
     <input
       type="text"
       name="title"
-      placeholder="Ny oppgave ..."
+      [placeholder]="language.t('newTask')"
       [(ngModel)]="newTitle"
     />
 
     <div class="form-grid">
       <label>
-        Til
+        {{ language.t('assignee') }}
         <select name="assignee" [(ngModel)]="newAssigneeId">
           <option *ngFor="let member of members" [value]="member.id">
             {{ member.name }}
@@ -29,22 +29,22 @@
         Kategori
         <select name="category" [(ngModel)]="newCategory">
           <option *ngFor="let category of categories" [value]="category.value">
-            {{ category.label }}
+            {{ language.t(category.labelKey) }}
           </option>
         </select>
       </label>
 
       <label>
-        Prioritet
+        {{ language.t('priority') }}
         <select name="priority" [(ngModel)]="newPriority">
           <option *ngFor="let priority of priorities" [value]="priority.value">
-            {{ priority.label }}
+            {{ language.t(priority.labelKey) }}
           </option>
         </select>
       </label>
 
       <label>
-        Frist
+        {{ language.t('due') }}
         <input
           type="datetime-local"
           name="due"
@@ -60,11 +60,11 @@
           name="requiresApproval"
           [(ngModel)]="newRequiresApproval"
         />
-        Krev voksen-godkjenning
+        {{ language.t('requireApproval') }}
       </label>
 
       <label class="reminder-control">
-        Påminn
+        {{ language.t('remind') }}
         <select name="reminder" [(ngModel)]="newReminderMinutesBefore">
           <option [ngValue]="15">15 min før</option>
           <option [ngValue]="30">30 min før</option>
@@ -73,7 +73,7 @@
         </select>
       </label>
 
-      <button type="submit">Legg til</button>
+      <button type="submit">{{ language.t('add') }}</button>
     </div>
   </form>
 
@@ -118,10 +118,10 @@
           <span>{{ memberFor(todo.assigneeId)?.name }}</span>
           <span>{{ formatDue(todo.dueDateTime) }}</span>
           <span class="priority" [class.high]="todo.priority === 'high'">
-            {{ todo.priority }}
+            {{ language.t(todo.priority) }}
           </span>
           <span *ngIf="todo.requiresApproval">
-            {{ todo.approvedById ? 'Godkjent' : 'Mangler godkjenning' }}
+            {{ todo.approvedById ? language.t('approved') : language.t('needsApproval') }}
           </span>
         </div>
       </div>
@@ -131,10 +131,10 @@
         class="approve-btn"
         (click)="approve(todo)"
       >
-        Godkjenn
+        {{ language.t('approve') }}
       </button>
 
-      <button class="delete-btn" (click)="deleteTodo(todo.id)">Slett</button>
+      <button class="delete-btn" (click)="deleteTodo(todo.id)">{{ language.t('delete') }}</button>
     </li>
   </ul>
 </section>

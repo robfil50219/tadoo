@@ -9,6 +9,7 @@ import {
     TodoItem,
     TodoService
 } from '../services/todo';
+import { LanguageService } from '../services/language';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -35,21 +36,24 @@ export class TodoListComponent implements OnInit, OnDestroy {
     editingId: string | null = null;
     private sub?: Subscription;
 
-    categories: { value: TaskCategory; label: string }[] = [
-        { value: 'home', label: 'Hjem' },
-        { value: 'school', label: 'Skole' },
-        { value: 'activity', label: 'Aktivitet' },
-        { value: 'health', label: 'Helse' },
-        { value: 'shopping', label: 'Handling' }
+    categories: { value: TaskCategory; labelKey: 'home' | 'school' | 'activity' | 'health' | 'shopping' }[] = [
+        { value: 'home', labelKey: 'home' },
+        { value: 'school', labelKey: 'school' },
+        { value: 'activity', labelKey: 'activity' },
+        { value: 'health', labelKey: 'health' },
+        { value: 'shopping', labelKey: 'shopping' }
     ];
 
-    priorities: { value: TaskPriority; label: string }[] = [
-        { value: 'low', label: 'Lav' },
-        { value: 'normal', label: 'Normal' },
-        { value: 'high', label: 'Haster' }
+    priorities: { value: TaskPriority; labelKey: 'low' | 'normal' | 'high' }[] = [
+        { value: 'low', labelKey: 'low' },
+        { value: 'normal', labelKey: 'normal' },
+        { value: 'high', labelKey: 'high' }
     ];
 
-    constructor(private todoService: TodoService) { }
+    constructor(
+        private todoService: TodoService,
+        public language: LanguageService
+    ) { }
 
     ngOnInit(): void {
         this.sub = this.todoService.hentState().subscribe(state => {
@@ -125,8 +129,8 @@ export class TodoListComponent implements OnInit, OnDestroy {
     }
 
     formatDue(value?: string): string {
-        if (!value) return 'Ingen frist';
-        return new Intl.DateTimeFormat('nb-NO', {
+        if (!value) return this.language.t('noDue');
+        return new Intl.DateTimeFormat(this.language.locale, {
             weekday: 'short',
             day: '2-digit',
             month: 'short',

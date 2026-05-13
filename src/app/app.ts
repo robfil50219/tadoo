@@ -17,9 +17,11 @@ import {
   TodoItem,
   TodoService
 } from './services/todo';
+import { AppLanguage, LanguageService } from './services/language';
 import { Subscription } from 'rxjs';
 
 type AppView = 'dashboard' | 'tasks' | 'calendar' | 'family' | 'chat' | 'location' | 'settings';
+type NavLabelKey = 'dashboard' | 'tasks' | 'calendar' | 'family' | 'chat' | 'location' | 'settings';
 
 @Component({
   selector: 'app-root',
@@ -65,19 +67,20 @@ export class App implements OnInit, OnDestroy {
   private sub?: Subscription;
   private authSub?: Subscription;
 
-  navItems: { id: AppView; label: string }[] = [
-    { id: 'dashboard', label: 'Oversikt' },
-    { id: 'tasks', label: 'Oppgaver' },
-    { id: 'calendar', label: 'Kalender' },
-    { id: 'family', label: 'Familie' },
-    { id: 'chat', label: 'Chat' },
-    { id: 'location', label: 'Lokasjon' },
-    { id: 'settings', label: 'Innstillinger' }
+  navItems: { id: AppView; labelKey: NavLabelKey }[] = [
+    { id: 'dashboard', labelKey: 'dashboard' },
+    { id: 'tasks', labelKey: 'tasks' },
+    { id: 'calendar', labelKey: 'calendar' },
+    { id: 'family', labelKey: 'family' },
+    { id: 'chat', labelKey: 'chat' },
+    { id: 'location', labelKey: 'location' },
+    { id: 'settings', labelKey: 'settings' }
   ];
 
   constructor(
     private todoService: TodoService,
-    public authService: AuthService
+    public authService: AuthService,
+    public language: LanguageService
   ) { }
 
   ngOnInit(): void {
@@ -124,7 +127,7 @@ export class App implements OnInit, OnDestroy {
   }
 
   get activeLabel(): string {
-    return this.navItems.find(item => item.id === this.activeView)?.label || 'Oversikt';
+    return this.language.t(this.navItems.find(item => item.id === this.activeView)?.labelKey || 'dashboard');
   }
 
   get needsFamilySetup(): boolean {
@@ -216,6 +219,10 @@ export class App implements OnInit, OnDestroy {
 
   async logout() {
     await this.authService.logout();
+  }
+
+  setLanguage(language: AppLanguage) {
+    this.language.setLanguage(language);
   }
 
   private authMessage(error: unknown): string {
@@ -316,8 +323,8 @@ export class App implements OnInit, OnDestroy {
   }
 
   formatDateTime(value?: string): string {
-    if (!value) return 'Ikke satt';
-    return new Intl.DateTimeFormat('nb-NO', {
+    if (!value) return '';
+    return new Intl.DateTimeFormat(this.language.locale, {
       day: '2-digit',
       month: 'short',
       hour: '2-digit',
@@ -326,7 +333,7 @@ export class App implements OnInit, OnDestroy {
   }
 
   formatTime(value: string): string {
-    return new Intl.DateTimeFormat('nb-NO', {
+    return new Intl.DateTimeFormat(this.language.locale, {
       hour: '2-digit',
       minute: '2-digit'
     }).format(new Date(value));
