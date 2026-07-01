@@ -1,117 +1,193 @@
-Tadoo
+# Tadoo - Family Task Manager (Next.js Version)
+
+> A modern family task management app built with Next.js, React, and Firebase.
 
 ![Tadoo Screenshot](public/images/Tadoo.png)
 
-Tadoo is a simple family To-Do app built with Angular. All tasks are stored locally in the browser’s localStorage. You can add, edit, and check off tasks without any external database. This was my very first Angular project, and it helped me learn the core concepts—components, services, and two-way data binding with ngModel—while structuring a basic application from scratch. It’s still a work in progress, and I’ll be adding more changes and features as I continue learning.
+## Features
 
-Features
+- ✅ **Add Tasks**: Create tasks and assign them to family members
+- ✅ **Edit Tasks**: Click to edit task titles inline
+- ✅ **Mark Complete**: Check off completed tasks
+- ✅ **Delete Tasks**: Remove tasks you no longer need
+- ✅ **Family Management**: Add family members with different roles (adult/child)
+- ✅ **Task Assignments**: Assign tasks to specific family members
+- ✅ **Local Storage**: Tasks persist in browser storage
+- ✅ **Multi-language**: Support for English, Norwegian, Swedish, and Danish
+- ✅ **Responsive Design**: Works on desktop, tablet, and mobile
+- 🚀 **Real-time Sync**: Firebase integration for cloud sync (coming soon)
+- 📱 **Location Tracking**: Family location sharing (coming soon)
+- 💬 **Family Chat**: In-app messaging (coming soon)
+- 📅 **Calendar View**: Task calendar integration (coming soon)
 
-• Add Tasks: Enter a task title and click “Add” or press Enter to create a new task.
-• Edit Tasks: Click on a task title to edit inline; press Enter or click outside to save.
-• Mark Complete: Check or uncheck the checkbox to toggle a task’s completed state.
-• Delete Tasks: Remove tasks by clicking the “×” button or by clearing the text in edit mode.
-• Local Storage: All tasks persist in localStorage so they remain after page reload or browser restart.
-• Responsive Layout: Simple header, main content, and footer layout that adapts to most screen widths.
+## Tech Stack
 
-Demo
+- **Frontend**: React 18, Next.js 14, TypeScript
+- **State Management**: Zustand
+- **Styling**: SCSS
+- **Backend**: Firebase (Firestore, Authentication)
+- **Deployment**: Vercel, Firebase Hosting, or Docker
 
-Currently no live demo deployed. You can run the app locally following the instructions below.
-Getting Started
-Prerequisites
-• Node.js (version ≥ 16.x recommended)
-• npm (version ≥ 8.x)
-• Angular CLI (version ≥ 16):
-  
-  npm install -g @angular/cli
+## Getting Started
 
-Installation
+### Prerequisites
 
-Clone this repository:
-  git clone https://github.com/robfil50219/tadoo.git
-  cd tadoo
+- Node.js 18+ 
+- npm 9+
 
-Install dependencies:
+### Installation
 
-  npm install
+```bash
+# Clone the repository
+git clone https://github.com/robfil50219/tadoo.git
+cd tadoo
 
-Running the App Locally
+# Install dependencies
+npm install
 
-Build and serve:
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your Firebase config (optional for demo mode)
 
-  ng serve
+# Run development server
+npm run dev
+```
 
-Open in Browser:
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-  Navigate to http://localhost:4200 to view the app.
+### Build for Production
 
-The development server will automatically reload if you change any source files.
+```bash
+npm run build
+npm start
+```
 
-Usage
+## Project Structure
 
-Add a Task:
+```
+app/                    # Next.js app directory
+├── layout.tsx         # Root layout
+├── page.tsx           # Main app page
+├── page.scss          # App styles
+├── globals.scss       # Global styles
 
-  - Type your task in the “New task…” input field and press Enter or click the “Add” button. The task appears in the list and is saved to localStorage.
+components/            # React components
+├── Navigation.tsx     # Navigation sidebar
+├── AuthModal.tsx      # Auth UI
+└── views/             # Page views
+    ├── Dashboard.tsx
+    ├── TasksList.tsx
+    ├── Calendar.tsx
+    ├── Family.tsx
+    ├── Chat.tsx
+    ├── Location.tsx
+    └── Settings.tsx
 
-Edit a Task:
+lib/                   # Utilities and hooks
+├── config/
+│   └── firebase.ts    # Firebase config
+├── store/
+│   └── todoStore.ts   # Zustand store
+└── hooks/
+    ├── useAuth.ts     # Auth hook
+    └── useLanguage.ts # Language hook
+```
 
-  - Click on a task’s title. The title becomes editable. Modify the text, then press Enter or click outside the input to save. If you clear all text and save, the task is deleted.
+## Usage
 
-Toggle Completion:
+### Add a Task
 
-  - Click the checkbox to mark a task as completed or uncompleted. Completed tasks display with a line-through style.
+1. Go to the **Tasks** section
+2. Enter a task title
+3. Select the assignee
+4. Click "Add Task"
 
-Delete a Task:
+### Edit a Task
 
-  - Click the red “×” on the right side of a task to delete it immediately.
+Click the task title to edit it inline. Press Enter or click outside to save.
 
-Project Structure
+### Complete a Task
 
-tadoo/
-├── dist/                      # Compiled output (after ng build)
-├── node_modules/              # npm dependencies
-├── src/
-│   ├── app/
-│   │   ├── app.html            # Root component template
-│   │   ├── app.scss            # Root component styles
-│   │   ├── app.ts              # Root standalone component
-│   │   ├── services/
-│   │   │   └── todo.ts         # TodoService (stores tasks in localStorage)
-│   │   └── todo-list/
-│   │       ├── todo-list.html  # TodoList component template
-│   │       ├── todo-list.scss  # TodoList component styles
-│   │       └── todo-list.ts    # TodoList standalone component logic
-│   ├── assets/                 # Static assets (images, fonts, etc.)
-│   ├── environments/           # Environment configuration files
-│   │   ├── environment.ts
-│   │   └── environment.prod.ts
-│   ├── index.html              # Main HTML file
-│   ├── main.ts                 # Bootstraps the root component
-│   ├── polyfills.ts            # Polyfills needed by Angular
-│   ├── styles.scss             # Global styles (reset + defaults)
-│   └── test.ts                 # Test setup (unused in this simple project)
-├── angular.json                # Angular CLI configuration
-├── package.json                # npm scripts & dependencies
-├── tsconfig.json               # TypeScript configuration
-└── README.md                   # This file
+Click the checkbox next to the task to mark it as complete.
 
-Technologies Used
+### Delete a Task
 
-• Angular (v20.0.0)
-• TypeScript
-• RxJS (for BehaviorSubject and Observable)
-• SCSS (component and global styling)
-• LocalStorage (browser API for persisting tasks)
-• Angular CLI (project scaffolding, build, serve)
+Click the "×" button on the right side of the task.
 
-Future Improvements
+## Migration from Angular
 
-• Category tags: Assign categories (e.g., Shopping, Chores) to tasks and filter by category.
-• Due dates & reminders: Add date picker support so tasks can have deadlines.
-• Import/Export JSON: Allow users to export the entire task list as a JSON file and import it on another device.
-• User authentication & cloud sync: Integrate Firebase (or another backend) to enable multiple family members to sync tasks in real time.
-• Responsive design enhancements: Fine-tune CSS/SCSS to improve layout on tablets and small mobile screens.
-• Unit & integration tests: Add Angular testing (Karma/Jasmine) for components and services.
+This project has been migrated from Angular to Next.js. See [MIGRATION.md](./MIGRATION.md) for detailed information about the changes and architectural differences.
 
-License
+## Demo Mode
+
+The app runs in **demo mode** by default with sample family data:
+- Family: "Familien Filep"
+- Members: Robert (adult), Maria (adult), Emma (child), Leo (child)
+- Sample tasks demonstrating different categories and priorities
+
+Data is stored locally in your browser's localStorage.
+
+## Firebase Setup (Optional)
+
+To enable cloud sync and real authentication:
+
+1. Create a Firebase project at https://console.firebase.google.com
+2. Copy your Firebase config
+3. Add to `.env.local`:
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=your_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
+4. Restart the dev server
+
+## Future Enhancements
+
+- 🔐 Firebase Authentication integration
+- ☁️ Cloud synchronization (Firestore)
+- 📍 Real-time location tracking
+- 💬 Family chat/messaging
+- 📅 Calendar integration
+- 🔔 Task reminders and notifications
+- 📊 Task statistics and analytics
+- 🎨 Theme customization
+- 📱 Progressive Web App (PWA)
+
+## Deployment
+
+### Vercel (Recommended)
+
+```bash
+npm i -g vercel
+vercel
+```
+
+### Netlify
+
+```bash
+npm run build
+npm install -g netlify-cli
+netlify deploy --prod --dir=.next
+```
+
+### Firebase Hosting
+
+```bash
+npm run build
+firebase deploy
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
 
 This project is released under the MIT License.
+
+## Support
+
+For issues, feature requests, or questions, please open a GitHub issue.
