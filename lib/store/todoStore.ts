@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { subscribeWithSelector } from 'zustand/middleware';
+import { createJSONStorage, persist, subscribeWithSelector } from 'zustand/middleware';
 
 export type FamilyRole = 'adult' | 'child';
 export type TaskPriority = 'low' | 'normal' | 'high';
@@ -151,167 +151,179 @@ interface TodoStoreState {
   setState: (newState: FamilyState) => void;
 }
 
-export const useTodoStore = create<TodoStoreState>()(subscribeWithSelector((set, get) => ({
-  state: initialState,
+export const useTodoStore = create<TodoStoreState>()(
+  subscribeWithSelector(
+    persist(
+      (set, get) => ({
+        state: initialState,
 
-  setState: (newState) => set({ state: newState }),
+        setState: (newState) => set({ state: newState }),
 
-  addTodo: (title, assigneeId, dueDateTime, category = 'home', priority = 'normal', requiresApproval = false, reminderMinutesBefore) => {
-    const state = get().state;
-    const creator = state.members.find(m => m.role === 'adult') || state.members[0];
-    const newTodo: TodoItem = {
-      id: crypto.randomUUID(),
-      title,
-      completed: false,
-      assigneeId: assigneeId || state.members[0]?.id || 'robert',
-      createdById: creator?.id || 'robert',
-      category,
-      priority,
-      requiresApproval,
-      reminderMinutesBefore,
-      dueDateTime,
-    };
-    set({ state: { ...state, todos: [...state.todos, newTodo] } });
-  },
+        addTodo: (title, assigneeId, dueDateTime, category = 'home', priority = 'normal', requiresApproval = false, reminderMinutesBefore) => {
+          const state = get().state;
+          const creator = state.members.find(m => m.role === 'adult') || state.members[0];
+          const newTodo: TodoItem = {
+            id: crypto.randomUUID(),
+            title,
+            completed: false,
+            assigneeId: assigneeId || state.members[0]?.id || 'robert',
+            createdById: creator?.id || 'robert',
+            category,
+            priority,
+            requiresApproval,
+            reminderMinutesBefore,
+            dueDateTime,
+          };
+          set({ state: { ...state, todos: [...state.todos, newTodo] } });
+        },
 
-  updateTodo: (updated) => {
-    const state = get().state;
-    const todos = state.todos.map(todo => (todo.id === updated.id ? updated : todo));
-    set({ state: { ...state, todos } });
-  },
+        updateTodo: (updated) => {
+          const state = get().state;
+          const todos = state.todos.map(todo => (todo.id === updated.id ? updated : todo));
+          set({ state: { ...state, todos } });
+        },
 
-  toggleTodo: (todo) => {
-    get().updateTodo({
-      ...todo,
-      completed: !todo.completed,
-      approvedById: !todo.completed && todo.requiresApproval ? undefined : todo.approvedById,
-    });
-  },
+        toggleTodo: (todo) => {
+          get().updateTodo({
+            ...todo,
+            completed: !todo.completed,
+            approvedById: !todo.completed && todo.requiresApproval ? undefined : todo.approvedById,
+          });
+        },
 
-  deleteTodo: (id) => {
-    const state = get().state;
-    const todos = state.todos.filter(todo => todo.id !== id);
-    set({ state: { ...state, todos } });
-  },
+        deleteTodo: (id) => {
+          const state = get().state;
+          const todos = state.todos.filter(todo => todo.id !== id);
+          set({ state: { ...state, todos } });
+        },
 
-  approveTodo: (taskId, adultId) => {
-    const state = get().state;
-    const todo = state.todos.find(item => item.id === taskId);
-    if (!todo) return;
-    get().updateTodo({ ...todo, completed: true, approvedById: adultId });
-  },
+        approveTodo: (taskId, adultId) => {
+          const state = get().state;
+          const todo = state.todos.find(item => item.id === taskId);
+          if (!todo) return;
+          get().updateTodo({ ...todo, completed: true, approvedById: adultId });
+        },
 
-  addMessage: (senderId, text, linkedTaskId) => {
-    const state = get().state;
-    const trimmed = text.trim();
-    if (!trimmed) return;
-    const message: FamilyMessage = {
-      id: crypto.randomUUID(),
-      senderId,
-      text: trimmed,
-      linkedTaskId,
-      sentAt: new Date().toISOString(),
-    };
-    set({ state: { ...state, messages: [...state.messages, message] } });
-  },
+        addMessage: (senderId, text, linkedTaskId) => {
+          const state = get().state;
+          const trimmed = text.trim();
+          if (!trimmed) return;
+          const message: FamilyMessage = {
+            id: crypto.randomUUID(),
+            senderId,
+            text: trimmed,
+            linkedTaskId,
+            sentAt: new Date().toISOString(),
+          };
+          set({ state: { ...state, messages: [...state.messages, message] } });
+        },
 
-  addMember: (name, role, color) => {
-    const state = get().state;
-    const trimmed = name.trim();
-    if (!trimmed) return;
-    const member: FamilyMember = {
-      id: crypto.randomUUID(),
-      accountStatus: 'local',
-      name: trimmed,
-      role,
-      color,
-      avatar: name.split(/\s+/).map(p => p[0]).join('').slice(0, 3).toUpperCase(),
-      status: role === 'adult' ? 'Tilgjengelig' : 'Hjemme',
-      locationLabel: 'Ikke delt',
-      locationUpdatedAt: new Date().toISOString(),
-      latitude: 59.9139,
-      longitude: 10.7522,
-    };
-    set({ state: { ...state, members: [...state.members, member] } });
-  },
+        addMember: (name, role, color) => {
+          const state = get().state;
+          const trimmed = name.trim();
+          if (!trimmed) return;
+          const member: FamilyMember = {
+            id: crypto.randomUUID(),
+            accountStatus: 'local',
+            name: trimmed,
+            role,
+            color,
+            avatar: trimmed.split(/\s+/).map(p => p[0]).join('').slice(0, 3).toUpperCase(),
+            status: role === 'adult' ? 'Tilgjengelig' : 'Hjemme',
+            locationLabel: 'Ikke delt',
+            locationUpdatedAt: new Date().toISOString(),
+            latitude: 59.9139,
+            longitude: 10.7522,
+          };
+          set({ state: { ...state, members: [...state.members, member] } });
+        },
 
-  updateMember: (updated) => {
-    const state = get().state;
-    const members = state.members.map(member =>
-      member.id === updated.id ? updated : member
-    );
-    set({ state: { ...state, members } });
-  },
+        updateMember: (updated) => {
+          const state = get().state;
+          const members = state.members.map(member =>
+            member.id === updated.id ? updated : member
+          );
+          set({ state: { ...state, members } });
+        },
 
-  updateMemberLocation: (memberId, locationLabel) => {
-    const state = get().state;
-    const members = state.members.map(member =>
-      member.id === memberId
-        ? { ...member, locationLabel, locationUpdatedAt: new Date().toISOString() }
-        : member
-    );
-    set({ state: { ...state, members } });
-  },
+        updateMemberLocation: (memberId, locationLabel) => {
+          const state = get().state;
+          const members = state.members.map(member =>
+            member.id === memberId
+              ? { ...member, locationLabel, locationUpdatedAt: new Date().toISOString() }
+              : member
+          );
+          set({ state: { ...state, members } });
+        },
 
-  createFamily: (familyName, adultName) => {
-    const trimmedFamilyName = familyName.trim();
-    const trimmedAdultName = adultName.trim();
-    if (!trimmedFamilyName || !trimmedAdultName) return;
+        createFamily: (familyName, adultName) => {
+          const trimmedFamilyName = familyName.trim();
+          const trimmedAdultName = adultName.trim();
+          if (!trimmedFamilyName || !trimmedAdultName) return;
 
-    const ownerMember: FamilyMember = {
-      id: 'demo-user',
-      name: trimmedAdultName,
-      role: 'adult',
-      color: '#007c89',
-      avatar: trimmedAdultName.split(/\s+/).map(p => p[0]).join('').slice(0, 3).toUpperCase(),
-      accountStatus: 'local',
-      status: 'Tilgjengelig',
-      locationLabel: 'Ikke delt',
-      locationUpdatedAt: new Date().toISOString(),
-      latitude: 59.9139,
-      longitude: 10.7522,
-    };
+          const ownerMember: FamilyMember = {
+            id: 'demo-user',
+            name: trimmedAdultName,
+            role: 'adult',
+            color: '#007c89',
+            avatar: trimmedAdultName.split(/\s+/).map(p => p[0]).join('').slice(0, 3).toUpperCase(),
+            accountStatus: 'local',
+            status: 'Tilgjengelig',
+            locationLabel: 'Ikke delt',
+            locationUpdatedAt: new Date().toISOString(),
+            latitude: 59.9139,
+            longitude: 10.7522,
+          };
 
-    set({
-      state: {
-        familyId: 'demo-family',
-        familyName: trimmedFamilyName,
-        isSetupComplete: true,
-        ownerUid: 'demo-user',
-        memberUids: { 'demo-user': true },
-        adultUids: { 'demo-user': true },
-        members: [ownerMember],
-        todos: [],
-        messages: [],
-        invites: [],
-      },
-    });
-  },
+          set({
+            state: {
+              familyId: 'demo-family',
+              familyName: trimmedFamilyName,
+              isSetupComplete: true,
+              ownerUid: 'demo-user',
+              memberUids: { 'demo-user': true },
+              adultUids: { 'demo-user': true },
+              members: [ownerMember],
+              todos: [],
+              messages: [],
+              invites: [],
+            },
+          });
+        },
 
-  updateFamilyName: (familyName) => {
-    const trimmed = familyName.trim();
-    if (!trimmed) return;
-    const state = get().state;
-    set({ state: { ...state, familyName: trimmed } });
-  },
+        updateFamilyName: (familyName) => {
+          const trimmed = familyName.trim();
+          if (!trimmed) return;
+          const state = get().state;
+          set({ state: { ...state, familyName: trimmed } });
+        },
 
-  createInvite: (role, recipient = '') => {
-    const state = get().state;
-    const now = new Date();
-    const expires = new Date(now);
-    expires.setDate(expires.getDate() + 7);
+        createInvite: (role, recipient = '') => {
+          const state = get().state;
+          const now = new Date();
+          const expires = new Date(now);
+          expires.setDate(expires.getDate() + 7);
 
-    const invite: FamilyInvite = {
-      id: crypto.randomUUID(),
-      code: Array.from({ length: 8 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 31)]).join(''),
-      familyId: state.familyId || 'demo-family',
-      role,
-      recipient: recipient.trim() || undefined,
-      createdAt: now.toISOString(),
-      expiresAt: expires.toISOString(),
-    };
+          const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+          const invite: FamilyInvite = {
+            id: crypto.randomUUID(),
+            code: Array.from({ length: 8 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join(''),
+            familyId: state.familyId || 'demo-family',
+            role,
+            recipient: recipient.trim() || undefined,
+            createdAt: now.toISOString(),
+            expiresAt: expires.toISOString(),
+          };
 
-    set({ state: { ...state, invites: [invite, ...state.invites] } });
-    return invite;
-  },
-})));
+          set({ state: { ...state, invites: [invite, ...state.invites] } });
+          return invite;
+        },
+      }),
+      {
+        name: 'tadoo-family-state',
+        storage: createJSONStorage(() => localStorage),
+        partialize: (store) => ({ state: store.state }),
+      }
+    )
+  )
+);

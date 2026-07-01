@@ -1,30 +1,27 @@
 'use client';
 
-import { useState } from 'react';
 import './Navigation.scss';
 
-interface NavItem {
-  id: string;
-  labelKey: string;
+interface NavItem<TView extends string = string> {
+  id: TView;
+  label: string;
 }
 
-interface NavigationProps {
-  navItems: NavItem[];
-  activeView: string;
-  onSelectView: (view: string) => void;
+interface NavigationProps<TView extends string = string> {
+  navItems: NavItem<TView>[];
+  activeView: TView;
+  onSelectView: (view: TView) => void;
   showMobileMenu: boolean;
   onToggleMobileMenu: () => void;
-  activeLabel: string;
 }
 
-export default function Navigation({
+export default function Navigation<TView extends string>({
   navItems,
   activeView,
   onSelectView,
   showMobileMenu,
   onToggleMobileMenu,
-  activeLabel,
-}: NavigationProps) {
+}: NavigationProps<TView>) {
   return (
     <nav className="navigation">
       <div className="nav-header">
@@ -40,7 +37,7 @@ export default function Navigation({
               className={`nav-item ${activeView === item.id ? 'active' : ''}`}
               onClick={() => onSelectView(item.id)}
             >
-              {item.labelKey}
+              {item.label}
             </button>
           </li>
         ))}

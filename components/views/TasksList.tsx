@@ -1,34 +1,86 @@
 'use client';
 
-import { useState } from 'react';
-import { useTodoStore } from '@/lib/store/todoStore';
+import { useEffect, useState } from 'react';
+import { TaskCategory, TaskPriority, TodoItem, useTodoStore } from '@/lib/store/todoStore';
 import { useLanguage } from '@/lib/hooks/useLanguage';
 import './TasksList.scss';
 
 export default function TasksList() {
-  const { state, addTodo, toggleTodo, deleteTodo } = useTodoStore();
+  const { state, addTodo, updateTodo, toggleTodo, deleteTodo, approveTodo } = useTodoStore();
   const { t } = useLanguage();
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [selectedAssignee, setSelectedAssignee] = useState(state.members[0]?.id || '');
+  const [dueDateTime, setDueDateTime] = useState('');
+  const [category, setCategory] = useState<TaskCategory>('home');
+  const [priority, setPriority] = useState<TaskPriority>('normal');
+  const [requiresApproval, setRequiresApproval] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
+
+  useEffect(() => {
+    if (!selectedAssignee || !state.members.some((member) => member.id === selectedAssignee)) {
+      setSelectedAssignee(state.members[0]?.id || '');
+    }
+  }, [selectedAssignee, state.members]);
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
     if (newTaskTitle.trim()) {
-      addTodo(newTaskTitle, selectedAssignee);
+      addTodo(
+        newTaskTitle.trim(),
+        selectedAssignee,
+        dueDateTime ? new Date(dueDateTime).toISOString() : undefined,
+        category,
+        priority,
+        requiresApproval
+      );
       setNewTaskTitle('');
+      setDueDateTime('');
+      setCategory('home');
+      setPriority('normal');
+      setRequiresApproval(false);
     }
   };
+
+  const beginEdit = (task: TodoItem) => {
+    setEditingId(task.id);
+    setEditingTitle(task.title);
+  };
+
+  const finishEdit = (task: TodoItem) => {
+    const title = editingTitle.trim();
+    if (!title) {
+      deleteTodo(task.id);
+    } else {
+      updateTodo({ ...task, title });
+    }
+    setEditingId(null);
+    setEditingTitle('');
+  };
+
+  const formatDue = (value?: string) => {
+    if (!value) return 'No due date';
+    return new Intl.DateTimeFormat('nb-NO', {
+      weekday: 'short',
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(value));
+  };
+
+  const adultMember = state.members.find((member) => member.role === 'adult');
 
   return (
     <div className="tasks-list">
       <div className="tasks-header">
         <h2>Tasks</h2>
-        <p className="subtitle">Manage your family's to-do list</p>
+        <p className="subtitle">{"Manage your family's to-do list"}</p>
       </div>
 
       <div className="add-task-form">
         <form onSubmit={handleAddTask}>
-          <div className="form-group">
+          <div className="form-grid">
             <input
               type="text"
               value={newTaskTitle}
@@ -47,6 +99,40 @@ export default function TasksList() {
                 </option>
               ))}
             </select>
+            <input
+              type="datetime-local"
+              value={dueDateTime}
+              onChange={(e) => setDueDateTime(e.target.value)}
+              className="due-input"
+            />
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value as TaskCategory)}
+              className="category-select"
+            >
+              <option value="home">Home</option>
+              <option value="school">School</option>
+              <option value="activity">Activity</option>
+              <option value="health">Health</option>
+              <option value="shopping">Shopping</option>
+            </select>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as TaskPriority)}
+              className="priority-select"
+            >
+              <option value="low">Low</option>
+              <option value="normal">Normal</option>
+              <option value="high">High</option>
+            </select>
+            <label className="approval-toggle">
+              <input
+                type="checkbox"
+                checked={requiresApproval}
+                onChange={(e) => setRequiresApproval(e.target.checked)}
+              />
+              Approval
+            </label>
             <button type="submit" className="add-button">
               {t('add-task')}
             </button>
@@ -93,7 +179,47 @@ export default function TasksList() {
                           onChange={() => toggleTodo(task)}
                           className="task-checkbox"
                         />
-                        <span className="task-title">{task.title}</span>
+                        <div className="task-body">
+                          {editingId === task.id ? (
+                            <input
+                              value={editingTitle}
+                              onChange={(e) => setEditingTitle(e.target.value)}
+                              onBlur={() => finishEdit(task)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') finishEdit(task);
+                                if (e.key === 'Escape') setEditingId(null);
+                              }}
+                              className="edit-input"
+                              autoFocus
+                            />
+                          ) : (
+                            <button
+                              type="button"
+                              className="task-title"
+                              onClick={() => beginEdit(task)}
+                              title={t('edit-task')}
+                            >
+                              {task.title}
+                            </button>
+                          )}
+                          <div className="task-meta">
+                            <span>{formatDue(task.dueDateTime)}</span>
+                            <span className={`priority priority-${task.priority}`}>{task.priority}</span>
+                            <span>{task.category}</span>
+                            {task.requiresApproval && (
+                              <span>{task.approvedById ? 'Approved' : 'Needs approval'}</span>
+                            )}
+                          </div>
+                        </div>
+                        {task.requiresApproval && task.completed && !task.approvedById && adultMember && (
+                          <button
+                            type="button"
+                            className="approve-button"
+                            onClick={() => approveTodo(task.id, adultMember.id)}
+                          >
+                            Approve
+                          </button>
+                        )}
                         <button
                           onClick={() => deleteTodo(task.id)}
                           className="delete-button"

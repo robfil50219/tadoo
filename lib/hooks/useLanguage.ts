@@ -1,6 +1,8 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 export type AppLanguage = 'en' | 'no' | 'sv' | 'da';
 
@@ -63,8 +65,27 @@ const translations: Record<AppLanguage, Record<string, string>> = {
   },
 };
 
+interface LanguageStoreState {
+  language: AppLanguage;
+  setLanguage: (language: AppLanguage) => void;
+}
+
+const useLanguageStore = create<LanguageStoreState>()(
+  persist(
+    (set) => ({
+      language: 'no',
+      setLanguage: (language) => set({ language }),
+    }),
+    {
+      name: 'tadoo-language',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
 export function useLanguage() {
-  const [language, setLanguage] = useState<AppLanguage>('no');
+  const language = useLanguageStore((state) => state.language);
+  const setLanguage = useLanguageStore((state) => state.setLanguage);
 
   const t = useCallback(
     (key: string): string => {

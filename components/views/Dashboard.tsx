@@ -34,12 +34,12 @@ export default function Dashboard() {
     <div className="dashboard">
       <div className="dashboard-header">
         <h2>Welcome to {state.familyName}</h2>
-        <p className="subtitle">Here's what's happening with your family</p>
+        <p className="subtitle">{"Here's what's happening with your family"}</p>
       </div>
 
       <div className="dashboard-grid">
         <div className="card">
-          <h3>Today's Tasks</h3>
+          <h3>{"Today's Tasks"}</h3>
           <p className="card-number">{todayTasks.length}</p>
           <div className="card-list">
             {todayTasks.length === 0 ? (
@@ -62,13 +62,13 @@ export default function Dashboard() {
           <p className="card-number">{openTasks.length}</p>
           <div className="card-list">
             {openTasks.length === 0 ? (
-              <p className="empty">All tasks completed!</p>
+              <p className="empty">{"All tasks completed!"}</p>
             ) : (
               <ul>
                 {openTasks.slice(0, 3).map((task) => (
                   <li key={task.id}>
                     <span className="task-title">{task.title}</span>
-                    <span className="task-priority priority-{task.priority}">{task.priority}</span>
+                    <span className={`task-priority priority-${task.priority}`}>{task.priority}</span>
                   </li>
                 ))}
               </ul>

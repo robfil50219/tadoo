@@ -1,21 +1,157 @@
 .family-view {
   padding: 30px;
-  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  .family-header,
+  .family-section {
+    margin-bottom: 24px;
+  }
 
   h2 {
+    font-size: 28px;
+    color: #333;
+    margin: 0 0 5px;
+  }
+
+  h3 {
     color: #007c89;
-    margin-bottom: 10px;
+    margin: 0 0 12px;
   }
 
-  p {
+  .subtitle {
     color: #999;
+    margin: 0;
+    font-size: 14px;
   }
 
-  .feature-coming {
-    font-size: 14px;
-    margin-top: 20px;
-    padding: 15px;
-    background: #f0f0f0;
+  .family-name-form,
+  .family-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .inline-form,
+  .member-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  input,
+  select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
     border-radius: 6px;
+    background: #fff;
+  }
+
+  input:not([type='color']) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  input[type='color'] {
+    width: 46px;
+    height: 40px;
+    padding: 4px;
+  }
+
+  button {
+    padding: 10px 18px;
+    background: #007c89;
+    color: #fff;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  .member-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .member-card {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+
+    h4 {
+      margin: 0 0 4px;
+      color: #333;
+    }
+
+    p,
+    span {
+      display: block;
+      margin: 0;
+      color: #777;
+      font-size: 13px;
+      text-transform: capitalize;
+    }
+  }
+
+  .member-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .invite-list {
+    margin-top: 14px;
+    display: grid;
+    gap: 8px;
+  }
+
+  .invite-item {
+    display: grid;
+    grid-template-columns: 110px 80px 1fr;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #f8fafa;
+    border-radius: 6px;
+    color: #555;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .family-view {
+    padding: 20px;
+    margin-bottom: 60px;
+
+    .inline-form,
+    .member-form {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    input,
+    select,
+    button {
+      width: 100%;
+    }
+
+    .invite-item {
+      grid-template-columns: 1fr;
+    }
   }
 }

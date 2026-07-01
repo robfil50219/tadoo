@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useTodoStore } from '@/lib/store/todoStore';
+import { useState } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/lib/hooks/useLanguage';
 import Navigation from '@/components/Navigation';
@@ -20,18 +19,17 @@ type AppView = 'dashboard' | 'tasks' | 'calendar' | 'family' | 'chat' | 'locatio
 export default function Home() {
   const [activeView, setActiveView] = useState<AppView>('dashboard');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const { user } = useAuth();
-  const { state } = useTodoStore();
-  const { t, locale } = useLanguage();
+  const { user, loading } = useAuth();
+  const { t } = useLanguage();
 
-  const navItems: { id: AppView; labelKey: string }[] = [
-    { id: 'dashboard', labelKey: 'dashboard' },
-    { id: 'tasks', labelKey: 'tasks' },
-    { id: 'calendar', labelKey: 'calendar' },
-    { id: 'family', labelKey: 'family' },
-    { id: 'chat', labelKey: 'chat' },
-    { id: 'location', labelKey: 'location' },
-    { id: 'settings', labelKey: 'settings' },
+  const navItems: { id: AppView; label: string }[] = [
+    { id: 'dashboard', label: t('dashboard') },
+    { id: 'tasks', label: t('tasks') },
+    { id: 'calendar', label: t('calendar') },
+    { id: 'family', label: t('family') },
+    { id: 'chat', label: t('chat') },
+    { id: 'location', label: t('location') },
+    { id: 'settings', label: t('settings') },
   ];
 
   const selectView = (view: AppView) => {
@@ -60,6 +58,10 @@ export default function Home() {
     }
   };
 
+  if (loading) {
+    return <div className="app-loading">Loading...</div>;
+  }
+
   if (!user) {
     return <AuthModal />;
   }
@@ -72,7 +74,6 @@ export default function Home() {
         onSelectView={selectView}
         showMobileMenu={showMobileMenu}
         onToggleMobileMenu={() => setShowMobileMenu(!showMobileMenu)}
-        activeLabel={t(navItems.find(item => item.id === activeView)?.labelKey || 'dashboard')}
       />
       <main className="app-main">
         {renderView()}

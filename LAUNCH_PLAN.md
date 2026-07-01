@@ -4,10 +4,10 @@ This is the practical path from the current prototype to a launchable family app
 
 ## Current State
 
-- Angular frontend with dashboard, tasks, calendar, family profiles, chat, and location prototype.
+- Next.js frontend with dashboard, tasks, calendar, family profiles, chat, and location prototype.
 - Local demo mode works without Firebase configuration.
-- Firebase-ready Auth and Firestore wiring has been added.
-- Firebase Hosting, Firestore rules, Storage rules, and deploy script are scaffolded.
+- Firebase-ready Auth wiring has been added.
+- Firebase Hosting, Netlify, Firestore rules, and Storage rules are scaffolded.
 
 ## Firebase Setup
 
@@ -15,9 +15,9 @@ This is the practical path from the current prototype to a launchable family app
 2. Enable Authentication with Email/Password.
 3. Create a Firestore database.
 4. Enable Firebase Storage.
-5. Copy the web app config into `src/app/config/firebase.ts`.
-6. Run `npm run build:prod`.
-7. Deploy with `npm run deploy:firebase`.
+5. Copy the web app config into `.env.local` using the `NEXT_PUBLIC_FIREBASE_*` variables from `README.md`.
+6. Run `npm run build`.
+7. Deploy with the Firebase CLI.
 
 ## Before Public Launch
 
