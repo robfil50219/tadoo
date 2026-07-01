@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
+import type { Circle as LeafletCircle, Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
 import { type FamilyMember, useTodoStore } from '@/lib/store/todoStore';
 import './Location.scss';
 
@@ -72,11 +72,38 @@ const gpsUnavailableMessage = () =>
 const isPreciseEnough = (accuracy: number) =>
   Number.isFinite(accuracy) && accuracy <= REQUIRED_GPS_ACCURACY_METERS;
 
+type MeasuredGpsMember = FamilyMember & { locationAccuracyMeters: number };
+
+const hasMeasuredGps = (member?: FamilyMember): member is MeasuredGpsMember =>
+  Boolean(
+    member &&
+      isValidCoordinate(member.latitude) &&
+      isValidCoordinate(member.longitude) &&
+      typeof member.locationAccuracyMeters === 'number' &&
+      Number.isFinite(member.locationAccuracyMeters)
+  );
+
+const hasVerifiedGps = (member?: FamilyMember) =>
+  hasMeasuredGps(member) && isPreciseEnough(member.locationAccuracyMeters);
+
+const formatGpsPosition = (member?: FamilyMember) =>
+  hasMeasuredGps(member)
+    ? `${formatCoordinate(member.latitude)}, ${formatCoordinate(member.longitude)}`
+    : 'No GPS reading yet';
+
+const formatGpsAccuracy = (member?: FamilyMember) => {
+  if (!member) return '';
+  if (!hasMeasuredGps(member)) return 'Start GPS to get a real position';
+  if (hasVerifiedGps(member)) return `${formatAccuracy(member.locationAccuracyMeters)} - verified`;
+  return `${formatAccuracy(member.locationAccuracyMeters)} - needs 1.0 m`;
+};
+
 export default function Location() {
   const { state, updateMemberLocation } = useTodoStore();
   const mapRef = useRef<HTMLDivElement | null>(null);
   const leafletMapRef = useRef<LeafletMap | null>(null);
   const markerRefs = useRef<Map<string, LeafletMarker>>(new Map());
+  const circleRefs = useRef<Map<string, LeafletCircle>>(new Map());
   const hasFittedMapRef = useRef(false);
   const fittedMemberCountRef = useRef(0);
   const watchIdRef = useRef<number | null>(null);
@@ -90,10 +117,7 @@ export default function Location() {
 
   const selectedMember = state.members.find((member) => member.id === memberId) || state.members[0];
   const mappableMembers = useMemo(
-    () =>
-      state.members.filter(
-        (member) => isValidCoordinate(member.latitude) && isValidCoordinate(member.longitude)
-      ),
+    () => state.members.filter(hasMeasuredGps),
     [state.members]
   );
 
@@ -111,12 +135,14 @@ export default function Location() {
   const selectedMemberId = selectedMember?.id;
   const selectedMemberLatitude = selectedMember?.latitude;
   const selectedMemberLongitude = selectedMember?.longitude;
+  const selectedMemberHasMeasuredGps = hasMeasuredGps(selectedMember);
 
   useEffect(() => {
     const mapElement = mapRef.current;
     if (!mapElement) return;
     let cancelled = false;
     const currentMarkers = markerRefs.current;
+    const currentCircles = circleRefs.current;
 
     const setupMap = async () => {
       const L = await import('leaflet');
@@ -153,6 +179,8 @@ export default function Location() {
       resizeObserver.disconnect();
       currentMarkers.forEach((marker) => marker.remove());
       currentMarkers.clear();
+      currentCircles.forEach((circle) => circle.remove());
+      currentCircles.clear();
       leafletMapRef.current?.remove();
       leafletMapRef.current = null;
       setMapReady(false);
@@ -171,10 +199,24 @@ export default function Location() {
 
       markerRefs.current.forEach((marker) => marker.remove());
       markerRefs.current.clear();
+      circleRefs.current.forEach((circle) => circle.remove());
+      circleRefs.current.clear();
 
       mappableMembers.forEach((member) => {
+        const isVerified = hasVerifiedGps(member);
+        const circle = L.circle([member.latitude, member.longitude], {
+          radius: Math.max(member.locationAccuracyMeters, REQUIRED_GPS_ACCURACY_METERS),
+          color: member.color,
+          fillColor: member.color,
+          fillOpacity: isVerified ? 0.08 : 0.13,
+          opacity: isVerified ? 0.45 : 0.7,
+          weight: isVerified ? 1 : 2,
+          dashArray: isVerified ? undefined : '5 5',
+        }).addTo(map);
         const icon = L.divIcon({
-          className: `family-map-marker-icon ${member.id === memberId ? 'selected' : ''}`,
+          className: `family-map-marker-icon ${member.id === memberId ? 'selected' : ''} ${
+            isVerified ? 'verified' : 'estimated'
+          }`,
           html: `<span>${escapeHtml(member.avatar)}</span>`,
           iconSize: [42, 42],
           iconAnchor: [21, 42],
@@ -185,10 +227,11 @@ export default function Location() {
           title: member.name,
         })
           .addTo(map)
-          .bindTooltip(`${member.name}: ${member.locationLabel}`);
+          .bindTooltip(`${member.name}: ${member.locationLabel} (${formatGpsAccuracy(member)})`);
 
         marker.on('click', () => setMemberId(member.id));
         marker.getElement()?.style.setProperty('--member-color', member.color);
+        circleRefs.current.set(member.id, circle);
         markerRefs.current.set(member.id, marker);
       });
     };
@@ -221,11 +264,18 @@ export default function Location() {
   useEffect(() => {
     const map = leafletMapRef.current;
     if (!mapReady || !map || !selectedMemberId) return;
+    if (!selectedMemberHasMeasuredGps) return;
     if (selectedMemberLatitude === undefined || selectedMemberLongitude === undefined) return;
     if (!isValidCoordinate(selectedMemberLatitude) || !isValidCoordinate(selectedMemberLongitude)) return;
 
     map.panTo([selectedMemberLatitude, selectedMemberLongitude], { animate: false });
-  }, [mapReady, selectedMemberId, selectedMemberLatitude, selectedMemberLongitude]);
+  }, [
+    mapReady,
+    selectedMemberId,
+    selectedMemberLatitude,
+    selectedMemberLongitude,
+    selectedMemberHasMeasuredGps,
+  ]);
 
   useEffect(() => {
     if (!memberId && state.members[0]) {
@@ -274,15 +324,13 @@ export default function Location() {
         const accuracy = position.coords.accuracy;
         const nextLabel = locationLabel.trim() || 'Current GPS location';
 
-        if (!isPreciseEnough(accuracy)) {
-          setGpsStatus(`Current GPS reading is ${formatAccuracy(accuracy)}.`);
-          setLocationError('Waiting for 1.0 m accuracy before saving this location.');
-          return;
-        }
-
         setLocationLabel(nextLabel);
         updateMemberLocation(memberId, nextLabel, nextLatitude, nextLongitude, accuracy);
-        setGpsStatus(`Saved GPS position with ${formatAccuracy(accuracy)}.`);
+        setGpsStatus(
+          isPreciseEnough(accuracy)
+            ? `Saved verified GPS position with ${formatAccuracy(accuracy)}.`
+            : `Saved estimated GPS position with ${formatAccuracy(accuracy)}. Keep live GPS on for 1.0 m verification.`
+        );
         setLocationError('');
       },
       () => setLocationError('Could not read GPS location. Check browser permissions.'),
@@ -320,13 +368,12 @@ export default function Location() {
         const nextLongitude = position.coords.longitude;
         const accuracy = position.coords.accuracy;
 
-        if (!isPreciseEnough(accuracy)) {
-          setGpsStatus(`Waiting for 1.0 m accuracy. Current reading is ${formatAccuracy(accuracy)}.`);
-          return;
-        }
-
         updateMemberLocation(trackedMemberId, nextLabel, nextLatitude, nextLongitude, accuracy);
-        setGpsStatus(`Live GPS saved with ${formatAccuracy(accuracy)}.`);
+        setGpsStatus(
+          isPreciseEnough(accuracy)
+            ? `Live GPS verified with ${formatAccuracy(accuracy)}.`
+            : `Live GPS updated with ${formatAccuracy(accuracy)}. Waiting for 1.0 m verification.`
+        );
         setLocationError('');
       },
       (error) => {
@@ -368,6 +415,9 @@ export default function Location() {
       <section className="location-map-section">
         <div className="map-shell" ref={mapRef}>
           {!mapReady && <div className="map-loading">Loading map...</div>}
+          {mapReady && mappableMembers.length === 0 && (
+            <div className="map-empty-state">Start GPS to show live positions</div>
+          )}
         </div>
 
         <aside className="map-details">
@@ -386,10 +436,8 @@ export default function Location() {
                 <span>
                   <strong>{member.name}</strong>
                   <small>{member.locationLabel}</small>
-                  <small>
-                    {formatCoordinate(member.latitude)}, {formatCoordinate(member.longitude)}
-                  </small>
-                  <small>{formatAccuracy(member.locationAccuracyMeters)}</small>
+                  <small>{formatGpsPosition(member)}</small>
+                  <small>{formatGpsAccuracy(member)}</small>
                 </span>
               </button>
             ))}
@@ -413,7 +461,7 @@ export default function Location() {
               <h3>{member.name}</h3>
               <p>{member.locationLabel}</p>
               <span>{formatTime(member.locationUpdatedAt)}</span>
-              <span>{formatAccuracy(member.locationAccuracyMeters)}</span>
+              <span>{formatGpsAccuracy(member)}</span>
             </div>
           </article>
         ))}
@@ -445,12 +493,8 @@ export default function Location() {
         <div className="form-row coordinate-row">
           <div className="coordinate-display">
             <span>Coordinates</span>
-            <strong>
-              {selectedMember
-                ? `${formatCoordinate(selectedMember.latitude)}, ${formatCoordinate(selectedMember.longitude)}`
-                : 'No GPS position'}
-            </strong>
-            <small>{selectedMember ? formatAccuracy(selectedMember.locationAccuracyMeters) : ''}</small>
+            <strong>{formatGpsPosition(selectedMember)}</strong>
+            <small>{formatGpsAccuracy(selectedMember)}</small>
           </div>
           <button type="button" className="secondary-button" onClick={useCurrentGps}>
             Update once

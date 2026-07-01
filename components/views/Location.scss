@@ -51,6 +51,22 @@
     font-weight: 700;
   }
 
+  .map-empty-state {
+    position: absolute;
+    left: 50%;
+    top: 16px;
+    z-index: 500;
+    transform: translateX(-50%);
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.94);
+    color: #516060;
+    font-size: 12px;
+    font-weight: 700;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
   .leaflet-control-attribution {
     font-size: 11px;
   }
@@ -84,6 +100,10 @@
     &.selected {
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
       z-index: 3;
+    }
+
+    &.estimated {
+      border-style: dashed;
     }
 
     span {
