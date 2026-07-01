@@ -1,0 +1,130 @@
+.navigation {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  background: linear-gradient(135deg, #007c89 0%, #005a63 100%);
+  color: white;
+  padding: 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  min-height: 100vh;
+
+  .nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .nav-logo {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .nav-toggle {
+      display: none;
+      background: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      border: none;
+    }
+  }
+
+  .nav-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+
+    li {
+      margin: 0;
+
+      .nav-item {
+        width: 100%;
+        padding: 15px 20px;
+        background: none;
+        color: white;
+        border: none;
+        text-align: left;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+          border-left-color: white;
+        }
+
+        &.active {
+          background-color: rgba(255, 255, 255, 0.2);
+          border-left-color: white;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .navigation {
+    width: 100%;
+    flex-direction: row;
+    min-height: auto;
+    height: 60px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    .nav-header {
+      flex: 1;
+      border-bottom: none;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 15px;
+
+      .nav-logo {
+        font-size: 18px;
+      }
+
+      .nav-toggle {
+        display: block;
+      }
+    }
+
+    .nav-items {
+      display: none;
+      flex-direction: row;
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #007c89 0%, #005a63 100%);
+      flex-wrap: wrap;
+
+      &.mobile-open {
+        display: flex;
+      }
+
+      li {
+        flex: 1;
+        min-width: 100px;
+
+        .nav-item {
+          padding: 10px 5px;
+          font-size: 12px;
+          border-left: none;
+          border-bottom: 3px solid transparent;
+
+          &:hover,
+          &.active {
+            border-left: none;
+            border-bottom-color: white;
+          }
+        }
+      }
+    }
+  }
+}
