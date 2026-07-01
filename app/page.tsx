@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/lib/hooks/useLanguage';
@@ -76,7 +77,18 @@ export default function Home() {
         onToggleMobileMenu={() => setShowMobileMenu(!showMobileMenu)}
       />
       <main className="app-main">
-        {renderView()}
+        <div className="app-content">
+          {renderView()}
+        </div>
+        <footer className="app-footer">
+          <Image
+            src="/images/tadoologo2.png"
+            alt="Tadoo"
+            width={180}
+            height={60}
+            className="app-footer-logo"
+          />
+        </footer>
       </main>
     </div>
   );
