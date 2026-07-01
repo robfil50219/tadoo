@@ -19,7 +19,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
@@ -27,6 +26,7 @@
     },
     "allowJs": true,
     "incremental": true,
+    "forceConsistentCasingInFileNames": true,
     "moduleResolution": "bundler",
     "plugins": [
       {

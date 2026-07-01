@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { TodoItem, useTodoStore } from '@/lib/store/todoStore';
 import { useLanguage } from '@/lib/hooks/useLanguage';
+import { memberColorClassName } from '@/lib/memberColors';
 import './Calendar.scss';
 
 const startOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1);
@@ -85,7 +86,7 @@ export default function Calendar() {
 
   const memberName = (id: string) => memberById(id)?.name || 'Unassigned';
 
-  const memberColor = (id: string) => memberById(id)?.color || '#007c89';
+  const memberColorClass = (id: string) => memberColorClassName(memberById(id)?.color);
 
   const formatMonth = (date: Date) =>
     new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(date);
@@ -162,8 +163,7 @@ export default function Calendar() {
         <h4>{task.title}</h4>
         <div className="agenda-meta">
           <span
-            className="member-dot"
-            style={{ backgroundColor: memberColor(task.assigneeId) }}
+            className={`member-dot ${memberColorClass(task.assigneeId)}`}
             aria-hidden="true"
           />
           <span>{memberName(task.assigneeId)}</span>
@@ -220,8 +220,9 @@ export default function Calendar() {
                   key={key}
                   className={dayClassName(day, tasks.length)}
                   onClick={() => selectDay(day)}
-                  aria-pressed={key === selectedKey}
-                  aria-label={`${formatSelectedDate(day)}, ${tasks.length} tasks`}
+                  aria-label={`${key === selectedKey ? 'Selected, ' : ''}${formatSelectedDate(
+                    day
+                  )}, ${tasks.length} tasks`}
                 >
                   <span className="day-number">{day.getDate()}</span>
                   {tasks.length > 0 && (

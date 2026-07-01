@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Circle as LeafletCircle, Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
 import { type FamilyMember, useTodoStore } from '@/lib/store/todoStore';
+import { memberColorClassName } from '@/lib/memberColors';
 import './Location.scss';
 
 interface MapBounds {
@@ -74,11 +75,16 @@ const isPreciseEnough = (accuracy: number) =>
 
 type MeasuredGpsMember = FamilyMember & { locationAccuracyMeters: number };
 
-const hasMeasuredGps = (member?: FamilyMember): member is MeasuredGpsMember =>
+const hasMapPosition = (member?: FamilyMember): member is FamilyMember =>
   Boolean(
     member &&
       isValidCoordinate(member.latitude) &&
-      isValidCoordinate(member.longitude) &&
+      isValidCoordinate(member.longitude)
+  );
+
+const hasMeasuredGps = (member?: FamilyMember): member is MeasuredGpsMember =>
+  Boolean(
+    hasMapPosition(member) &&
       typeof member.locationAccuracyMeters === 'number' &&
       Number.isFinite(member.locationAccuracyMeters)
   );
@@ -89,11 +95,14 @@ const hasVerifiedGps = (member?: FamilyMember) =>
 const formatGpsPosition = (member?: FamilyMember) =>
   hasMeasuredGps(member)
     ? `${formatCoordinate(member.latitude)}, ${formatCoordinate(member.longitude)}`
-    : 'No GPS reading yet';
+    : hasMapPosition(member)
+      ? `${formatCoordinate(member.latitude)}, ${formatCoordinate(member.longitude)}`
+      : 'No position yet';
 
 const formatGpsAccuracy = (member?: FamilyMember) => {
   if (!member) return '';
-  if (!hasMeasuredGps(member)) return 'Start GPS to get a real position';
+  if (!hasMapPosition(member)) return 'No position saved';
+  if (!hasMeasuredGps(member)) return 'Saved place - start GPS for live accuracy';
   if (hasVerifiedGps(member)) return `${formatAccuracy(member.locationAccuracyMeters)} - verified`;
   return `${formatAccuracy(member.locationAccuracyMeters)} - needs 1.0 m`;
 };
@@ -117,7 +126,7 @@ export default function Location() {
 
   const selectedMember = state.members.find((member) => member.id === memberId) || state.members[0];
   const mappableMembers = useMemo(
-    () => state.members.filter(hasMeasuredGps),
+    () => state.members.filter(hasMapPosition),
     [state.members]
   );
 
@@ -135,7 +144,7 @@ export default function Location() {
   const selectedMemberId = selectedMember?.id;
   const selectedMemberLatitude = selectedMember?.latitude;
   const selectedMemberLongitude = selectedMember?.longitude;
-  const selectedMemberHasMeasuredGps = hasMeasuredGps(selectedMember);
+  const selectedMemberHasMapPosition = hasMapPosition(selectedMember);
 
   useEffect(() => {
     const mapElement = mapRef.current;
@@ -204,19 +213,23 @@ export default function Location() {
 
       mappableMembers.forEach((member) => {
         const isVerified = hasVerifiedGps(member);
-        const circle = L.circle([member.latitude, member.longitude], {
-          radius: Math.max(member.locationAccuracyMeters, REQUIRED_GPS_ACCURACY_METERS),
-          color: member.color,
-          fillColor: member.color,
-          fillOpacity: isVerified ? 0.08 : 0.13,
-          opacity: isVerified ? 0.45 : 0.7,
-          weight: isVerified ? 1 : 2,
-          dashArray: isVerified ? undefined : '5 5',
-        }).addTo(map);
+        const isMeasured = hasMeasuredGps(member);
+        if (isMeasured) {
+          const circle = L.circle([member.latitude, member.longitude], {
+            radius: Math.max(member.locationAccuracyMeters, REQUIRED_GPS_ACCURACY_METERS),
+            color: member.color,
+            fillColor: member.color,
+            fillOpacity: isVerified ? 0.08 : 0.13,
+            opacity: isVerified ? 0.45 : 0.7,
+            weight: isVerified ? 1 : 2,
+            dashArray: isVerified ? undefined : '5 5',
+          }).addTo(map);
+          circleRefs.current.set(member.id, circle);
+        }
         const icon = L.divIcon({
           className: `family-map-marker-icon ${member.id === memberId ? 'selected' : ''} ${
-            isVerified ? 'verified' : 'estimated'
-          }`,
+            isVerified ? 'verified' : isMeasured ? 'estimated' : 'saved'
+          } ${memberColorClassName(member.color)}`,
           html: `<span>${escapeHtml(member.avatar)}</span>`,
           iconSize: [42, 42],
           iconAnchor: [21, 42],
@@ -230,8 +243,6 @@ export default function Location() {
           .bindTooltip(`${member.name}: ${member.locationLabel} (${formatGpsAccuracy(member)})`);
 
         marker.on('click', () => setMemberId(member.id));
-        marker.getElement()?.style.setProperty('--member-color', member.color);
-        circleRefs.current.set(member.id, circle);
         markerRefs.current.set(member.id, marker);
       });
     };
@@ -264,7 +275,7 @@ export default function Location() {
   useEffect(() => {
     const map = leafletMapRef.current;
     if (!mapReady || !map || !selectedMemberId) return;
-    if (!selectedMemberHasMeasuredGps) return;
+    if (!selectedMemberHasMapPosition) return;
     if (selectedMemberLatitude === undefined || selectedMemberLongitude === undefined) return;
     if (!isValidCoordinate(selectedMemberLatitude) || !isValidCoordinate(selectedMemberLongitude)) return;
 
@@ -274,7 +285,7 @@ export default function Location() {
     selectedMemberId,
     selectedMemberLatitude,
     selectedMemberLongitude,
-    selectedMemberHasMeasuredGps,
+    selectedMemberHasMapPosition,
   ]);
 
   useEffect(() => {
@@ -416,12 +427,12 @@ export default function Location() {
         <div className="map-shell" ref={mapRef}>
           {!mapReady && <div className="map-loading">Loading map...</div>}
           {mapReady && mappableMembers.length === 0 && (
-            <div className="map-empty-state">Start GPS to show live positions</div>
+            <div className="map-empty-state">No map positions yet</div>
           )}
         </div>
 
         <aside className="map-details">
-          <h3>GPS positions</h3>
+          <h3>Map positions</h3>
           <div className="location-list">
             {state.members.map((member) => (
               <button
@@ -430,7 +441,7 @@ export default function Location() {
                 key={member.id}
                 onClick={() => setMemberId(member.id)}
               >
-                <span className="member-avatar" style={{ backgroundColor: member.color }}>
+                <span className={`member-avatar ${memberColorClassName(member.color)}`}>
                   {member.avatar}
                 </span>
                 <span>
@@ -454,7 +465,7 @@ export default function Location() {
       <div className="location-grid">
         {state.members.map((member) => (
           <article className="location-card" key={member.id}>
-            <div className="member-avatar" style={{ backgroundColor: member.color }}>
+            <div className={`member-avatar ${memberColorClassName(member.color)}`}>
               {member.avatar}
             </div>
             <div>
