@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import './Navigation.scss';
 
 interface NavItem<TView extends string = string> {
@@ -26,16 +25,7 @@ export default function Navigation<TView extends string>({
   return (
     <nav className="navigation">
       <div className="nav-header">
-        <h1 className="nav-logo">
-          <Image
-            src="/images/tadoologo2.png"
-            alt="Tadoo"
-            width={150}
-            height={50}
-            className="nav-logo-image"
-            priority
-          />
-        </h1>
+        <h1 className="nav-logo">Tadoo</h1>
         <button className="nav-toggle" onClick={onToggleMobileMenu}>
           ☰
         </button>
