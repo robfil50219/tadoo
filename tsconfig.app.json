@@ -5,7 +5,6 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "rootDir": "./src",
-    "module": "ES2020",
     "types": [],
     "forceConsistentCasingInFileNames": true
   },
