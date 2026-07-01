@@ -19,6 +19,7 @@ export interface FamilyMember {
   locationUpdatedAt: string;
   latitude: number;
   longitude: number;
+  locationAccuracyMeters?: number;
 }
 
 export interface TodoItem {
@@ -144,7 +145,7 @@ interface TodoStoreState {
   addMessage: (senderId: string, text: string, linkedTaskId?: string) => void;
   addMember: (name: string, role: FamilyRole, color: string) => void;
   updateMember: (member: FamilyMember) => void;
-  updateMemberLocation: (memberId: string, locationLabel: string) => void;
+  updateMemberLocation: (memberId: string, locationLabel: string, latitude?: number, longitude?: number, accuracyMeters?: number) => void;
   createFamily: (familyName: string, adultName: string) => void;
   updateFamilyName: (familyName: string) => void;
   createInvite: (role: FamilyRole, recipient?: string) => FamilyInvite;
@@ -246,11 +247,21 @@ export const useTodoStore = create<TodoStoreState>()(
           set({ state: { ...state, members } });
         },
 
-        updateMemberLocation: (memberId, locationLabel) => {
+        updateMemberLocation: (memberId, locationLabel, latitude, longitude, accuracyMeters) => {
           const state = get().state;
+          const hasLatitude = typeof latitude === 'number' && Number.isFinite(latitude);
+          const hasLongitude = typeof longitude === 'number' && Number.isFinite(longitude);
+          const hasAccuracy = typeof accuracyMeters === 'number' && Number.isFinite(accuracyMeters);
           const members = state.members.map(member =>
             member.id === memberId
-              ? { ...member, locationLabel, locationUpdatedAt: new Date().toISOString() }
+              ? {
+                  ...member,
+                  locationLabel,
+                  locationUpdatedAt: new Date().toISOString(),
+                  latitude: hasLatitude ? latitude : member.latitude,
+                  longitude: hasLongitude ? longitude : member.longitude,
+                  locationAccuracyMeters: hasAccuracy ? accuracyMeters : member.locationAccuracyMeters,
+                }
               : member
           );
           set({ state: { ...state, members } });

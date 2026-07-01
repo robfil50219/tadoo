@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/lib/hooks/useLanguage';
 import Navigation from '@/components/Navigation';
@@ -15,6 +15,13 @@ import AuthModal from '@/components/AuthModal';
 import './page.scss';
 
 type AppView = 'dashboard' | 'tasks' | 'calendar' | 'family' | 'chat' | 'location' | 'settings';
+
+const appViews: AppView[] = ['dashboard', 'tasks', 'calendar', 'family', 'chat', 'location', 'settings'];
+
+const getViewFromHash = (): AppView | null => {
+  const hash = window.location.hash.replace('#', '');
+  return appViews.includes(hash as AppView) ? (hash as AppView) : null;
+};
 
 export default function Home() {
   const [activeView, setActiveView] = useState<AppView>('dashboard');
@@ -31,6 +38,19 @@ export default function Home() {
     { id: 'location', label: t('location') },
     { id: 'settings', label: t('settings') },
   ];
+
+  useEffect(() => {
+    const syncHashView = () => {
+      const hashView = getViewFromHash();
+      if (hashView) {
+        setActiveView(hashView);
+      }
+    };
+
+    syncHashView();
+    window.addEventListener('hashchange', syncHashView);
+    return () => window.removeEventListener('hashchange', syncHashView);
+  }, []);
 
   const selectView = (view: AppView) => {
     setActiveView(view);

@@ -7,6 +7,9 @@
   padding: 0;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
   min-height: 100vh;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 20;
 
   .nav-header {
     display: flex;
@@ -42,6 +45,7 @@
       margin: 0;
 
       .nav-item {
+        display: block;
         width: 100%;
         padding: 15px 20px;
         background: none;
@@ -78,6 +82,7 @@
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 1000;
 
     .nav-header {
       flex: 1;
@@ -103,6 +108,7 @@
       right: 0;
       background: linear-gradient(135deg, #007c89 0%, #005a63 100%);
       flex-wrap: wrap;
+      z-index: 1001;
 
       &.mobile-open {
         display: flex;

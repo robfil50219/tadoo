@@ -33,12 +33,14 @@ export default function Navigation<TView extends string>({
       <ul className={`nav-items ${showMobileMenu ? 'mobile-open' : ''}`}>
         {navItems.map((item) => (
           <li key={item.id}>
-            <button
+            <a
+              href={`#${item.id}`}
               className={`nav-item ${activeView === item.id ? 'active' : ''}`}
+              aria-current={activeView === item.id ? 'page' : undefined}
               onClick={() => onSelectView(item.id)}
             >
               {item.label}
-            </button>
+            </a>
           </li>
         ))}
       </ul>
