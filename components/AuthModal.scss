@@ -228,9 +228,90 @@
     gap: 18px;
     border: 1px solid #d9e2e5;
     border-radius: 8px;
-    padding: 28px;
+    padding: 28px 28px 72px;
     background: #ffffff;
     box-shadow: 0 24px 70px rgba(18, 52, 59, 0.13);
+
+    .language-menu {
+      position: absolute;
+      right: 20px;
+      bottom: 18px;
+      z-index: 3;
+      display: grid;
+      justify-items: end;
+      gap: 8px;
+
+      .language-trigger,
+      .language-options button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border: 1px solid #d9e2e5;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #49656c;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1;
+        cursor: pointer;
+        transition:
+          background 160ms ease,
+          color 160ms ease,
+          box-shadow 160ms ease,
+          transform 160ms ease;
+
+        .flag {
+          font-size: 17px;
+          line-height: 1;
+        }
+
+        &:hover {
+          background: #e8f3f0;
+          color: #17343b;
+        }
+
+        &:focus-visible {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(0, 124, 137, 0.16);
+        }
+      }
+
+      .language-trigger {
+        min-width: 104px;
+        padding: 9px 11px;
+        background: #f5faf8;
+        box-shadow: 0 5px 14px rgba(18, 52, 59, 0.1);
+      }
+
+      .language-options {
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 8px);
+        display: grid;
+        min-width: 132px;
+        gap: 4px;
+        padding: 6px;
+        border: 1px solid #d9e2e5;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 14px 34px rgba(18, 52, 59, 0.16);
+
+        button {
+          justify-content: flex-start;
+          width: 100%;
+          padding: 9px 10px;
+          border: 0;
+          background: transparent;
+
+          &.active {
+            background: #f5faf8;
+            color: #007c89;
+          }
+        }
+      }
+    }
 
     .auth-header {
       display: grid;
@@ -362,10 +443,14 @@
     }
 
     .creator-credit {
+      position: absolute;
+      left: 20px;
+      bottom: 18px;
       margin: 0;
       color: #007c89;
       font-size: 14px;
       font-weight: 800;
+      line-height: 32px;
     }
   }
 }
@@ -491,7 +576,17 @@
     }
 
     .auth-container {
-      padding: 22px;
+      padding: 22px 22px 70px;
+
+      .language-menu {
+        right: 16px;
+        bottom: 16px;
+      }
+
+      .creator-credit {
+        left: 16px;
+        bottom: 16px;
+      }
 
       .auth-header {
         img {

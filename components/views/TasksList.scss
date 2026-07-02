@@ -141,10 +141,11 @@
 
         .task-items {
           .task-item {
+            position: relative;
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 20px;
+            padding: 12px 56px 12px 20px;
             border-bottom: 1px solid #f0f0f0;
             transition: background-color 0.2s;
 
@@ -221,32 +222,70 @@
               }
             }
 
-            .approve-button {
-              padding: 6px 10px;
-              background: #e8f5e9;
-              color: #2e7d32;
-              border-radius: 6px;
-              font-size: 12px;
-              font-weight: 600;
+            .task-menu {
+              position: absolute;
+              right: 14px;
+              bottom: 10px;
+              z-index: 2;
             }
 
-            .delete-button {
-              background: none;
-              border: none;
-              color: #ccc;
-              font-size: 18px;
-              cursor: pointer;
-              padding: 0;
-              width: 24px;
-              height: 24px;
+            .task-menu-button {
+              width: 30px;
+              height: 30px;
               display: flex;
               align-items: center;
               justify-content: center;
-              transition: color 0.2s;
-              flex-shrink: 0;
+              border: 1px solid #d8e3e3;
+              border-radius: 50%;
+              background: #fff;
+              color: #007c89;
+              font-family: Georgia, serif;
+              font-size: 15px;
+              font-weight: 700;
+              line-height: 1;
+              cursor: pointer;
+              box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+              transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
 
-              &:hover {
-                color: #ff6b6b;
+              &:hover,
+              &[aria-expanded='true'] {
+                background: #f0fafa;
+                border-color: #007c89;
+                transform: translateY(-1px);
+              }
+            }
+
+            .task-menu-panel {
+              position: absolute;
+              right: 0;
+              bottom: 36px;
+              min-width: 132px;
+              padding: 6px;
+              background: #fff;
+              border: 1px solid #e3eeee;
+              border-radius: 8px;
+              box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+
+              button {
+                width: 100%;
+                padding: 8px 10px;
+                border-radius: 6px;
+                color: #345;
+                font-size: 13px;
+                font-weight: 600;
+                text-align: left;
+
+                &:hover {
+                  background: #f3f7f7;
+                }
+
+                &.danger-menu-item {
+                  color: #c62828;
+
+                  &:hover {
+                    background: #ffebee;
+                  }
+                }
               }
             }
           }
