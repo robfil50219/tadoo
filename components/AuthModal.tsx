@@ -24,6 +24,8 @@ const authCopy: Record<AppLanguage, {
   createAccount: string;
   demoNotice: string;
   credit: string;
+  dayMode: string;
+  nightMode: string;
 }> = {
   en: {
     welcome: 'Welcome to Tadoo',
@@ -42,6 +44,8 @@ const authCopy: Record<AppLanguage, {
     createAccount: 'Create account',
     demoNotice: 'Demo mode active: using local storage only.',
     credit: 'Built by Robert Filep',
+    dayMode: 'Day mode',
+    nightMode: 'Night mode',
   },
   no: {
     welcome: 'Velkommen til Tadoo',
@@ -60,6 +64,8 @@ const authCopy: Record<AppLanguage, {
     createAccount: 'Opprett konto',
     demoNotice: 'Demo-modus aktiv: bruker kun lokal lagring.',
     credit: 'Bygget av Robert Filep',
+    dayMode: 'Dagmodus',
+    nightMode: 'Nattmodus',
   },
   sv: {
     welcome: 'Välkommen till Tadoo',
@@ -78,6 +84,8 @@ const authCopy: Record<AppLanguage, {
     createAccount: 'Skapa konto',
     demoNotice: 'Demoläge aktivt: använder endast lokal lagring.',
     credit: 'Byggt av Robert Filep',
+    dayMode: 'Dagläge',
+    nightMode: 'Nattläge',
   },
   da: {
     welcome: 'Velkommen til Tadoo',
@@ -96,6 +104,8 @@ const authCopy: Record<AppLanguage, {
     createAccount: 'Opret konto',
     demoNotice: 'Demo-tilstand aktiv: bruger kun lokal lagring.',
     credit: 'Bygget af Robert Filep',
+    dayMode: 'Dagtilstand',
+    nightMode: 'Nattilstand',
   },
 };
 
@@ -108,6 +118,7 @@ const languageOptions: Array<{ value: AppLanguage; label: string; flag: string }
 
 export default function AuthModal() {
   const [isLogin, setIsLogin] = useState(true);
+  const [isNight, setIsNight] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -143,19 +154,75 @@ export default function AuthModal() {
   };
 
   return (
-    <div className="auth-modal">
+    <div className={`auth-modal ${isNight ? 'night-mode' : 'day-mode'}`}>
       <div className="auth-scene" aria-hidden="true">
         <span className="sun"></span>
+        <span className="moon"></span>
+        <span className="starfield starfield-one"></span>
+        <span className="starfield starfield-two"></span>
+        <span className="starfield starfield-three"></span>
+        <span className="constellation constellation-orion">
+          <span className="constellation-point orion-star-one"></span>
+          <span className="constellation-point orion-star-two"></span>
+          <span className="constellation-point orion-star-three"></span>
+          <span className="constellation-point orion-star-four"></span>
+          <span className="constellation-point orion-star-five"></span>
+          <span className="constellation-point orion-star-six"></span>
+          <span className="constellation-point orion-star-seven"></span>
+        </span>
+        <span className="constellation constellation-cassiopeia">
+          <span className="constellation-point cassiopeia-star-one"></span>
+          <span className="constellation-point cassiopeia-star-two"></span>
+          <span className="constellation-point cassiopeia-star-three"></span>
+          <span className="constellation-point cassiopeia-star-four"></span>
+          <span className="constellation-point cassiopeia-star-five"></span>
+        </span>
+        <span className="constellation constellation-ursa-major">
+          <span className="constellation-point ursa-star-one"></span>
+          <span className="constellation-point ursa-star-two"></span>
+          <span className="constellation-point ursa-star-three"></span>
+          <span className="constellation-point ursa-star-four"></span>
+          <span className="constellation-point ursa-star-five"></span>
+          <span className="constellation-point ursa-star-six"></span>
+          <span className="constellation-point ursa-star-seven"></span>
+        </span>
+        <span className="shooting-star shooting-star-one"></span>
+        <span className="shooting-star shooting-star-two"></span>
         <span className="cloud cloud-one"></span>
         <span className="cloud cloud-two"></span>
-        <span className="balloon"></span>
+        <span className="balloon">
+          <span className="balloon-lantern"></span>
+        </span>
         <span className="ball"></span>
         <span className="person adult-one"></span>
         <span className="person adult-two"></span>
         <span className="person child-one"></span>
         <span className="person child-two"></span>
+        <span className="tent">
+          <span className="tent-light"></span>
+          <span className="tent-door"></span>
+          <span className="lantern lantern-left"></span>
+          <span className="lantern lantern-right"></span>
+        </span>
+        <span className="campfire">
+          <span className="flame flame-back"></span>
+          <span className="flame flame-front"></span>
+          <span className="ember ember-one"></span>
+          <span className="ember ember-two"></span>
+          <span className="ember ember-three"></span>
+        </span>
         <span className="ground"></span>
       </div>
+
+      <button
+        type="button"
+        className="scene-mode-toggle"
+        aria-pressed={isNight}
+        onClick={() => setIsNight((current) => !current)}
+      >
+        <span className="mode-indicator" aria-hidden="true"></span>
+        {isNight ? copy.dayMode : copy.nightMode}
+      </button>
 
       <div className="auth-container">
         <div className="language-menu">
