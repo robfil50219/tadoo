@@ -16,6 +16,7 @@ export default function TasksList() {
   const [requiresApproval, setRequiresApproval] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!selectedAssignee || !state.members.some((member) => member.id === selectedAssignee)) {
@@ -45,6 +46,7 @@ export default function TasksList() {
   const beginEdit = (task: TodoItem) => {
     setEditingId(task.id);
     setEditingTitle(task.title);
+    setOpenMenuId(null);
   };
 
   const finishEdit = (task: TodoItem) => {
@@ -211,22 +213,51 @@ export default function TasksList() {
                             )}
                           </div>
                         </div>
-                        {task.requiresApproval && task.completed && !task.approvedById && adultMember && (
+                        <div className="task-menu">
                           <button
                             type="button"
-                            className="approve-button"
-                            onClick={() => approveTodo(task.id, adultMember.id)}
+                            className="task-menu-button"
+                            aria-label="Open task menu"
+                            aria-expanded={openMenuId === task.id}
+                            onClick={() => setOpenMenuId(openMenuId === task.id ? null : task.id)}
                           >
-                            Approve
+                            i
                           </button>
-                        )}
-                        <button
-                          onClick={() => deleteTodo(task.id)}
-                          className="delete-button"
-                          title={t('delete-task')}
-                        >
-                          ✕
-                        </button>
+                          {openMenuId === task.id && (
+                            <div className="task-menu-panel" role="menu">
+                              <button
+                                type="button"
+                                role="menuitem"
+                                onClick={() => beginEdit(task)}
+                              >
+                                Edit
+                              </button>
+                              {task.requiresApproval && task.completed && !task.approvedById && adultMember && (
+                                <button
+                                  type="button"
+                                  role="menuitem"
+                                  onClick={() => {
+                                    approveTodo(task.id, adultMember.id);
+                                    setOpenMenuId(null);
+                                  }}
+                                >
+                                  Approve
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                role="menuitem"
+                                className="danger-menu-item"
+                                onClick={() => {
+                                  deleteTodo(task.id);
+                                  setOpenMenuId(null);
+                                }}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
