@@ -1,0 +1,507 @@
+.auth-modal {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 24px;
+  background: linear-gradient(180deg, #eaf7f4 0%, #f7fbf9 58%, #e6f1ec 100%);
+  color: #17343b;
+
+  .auth-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+
+    span {
+      position: absolute;
+      display: block;
+    }
+  }
+
+  .sun {
+    top: 8%;
+    right: 12%;
+    width: 5.2rem;
+    height: 5.2rem;
+    border-radius: 50%;
+    background: #ffc857;
+    box-shadow:
+      0 0 2.2rem rgba(255, 200, 87, 0.68),
+      0 0 5rem rgba(255, 171, 64, 0.38);
+    animation: float-gentle 7s ease-in-out infinite;
+  }
+
+  .cloud {
+    width: 8rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0.7rem;
+      border-radius: 50%;
+      background: inherit;
+    }
+
+    &::before {
+      left: 1rem;
+      width: 2.6rem;
+      height: 2.6rem;
+    }
+
+    &::after {
+      right: 1.2rem;
+      width: 3.1rem;
+      height: 3.1rem;
+    }
+  }
+
+  .cloud-one {
+    top: 18%;
+    left: 0;
+    animation: cloud-drift 42s linear infinite;
+  }
+
+  .cloud-two {
+    top: 32%;
+    left: 0;
+    animation: cloud-drift 52s linear infinite;
+    animation-delay: -24s;
+  }
+
+  .balloon {
+    top: 18%;
+    left: 76%;
+    width: 3.7rem;
+    height: 4.8rem;
+    border-radius: 50% 50% 46% 46%;
+    background: linear-gradient(90deg, #ff7a3d 0 33%, #ffd45c 33% 66%, #2fbfb2 66%);
+    box-shadow: 0 0.5rem 1.4rem rgba(18, 52, 59, 0.12);
+    animation: balloon-drift 24s ease-in-out infinite;
+    animation-delay: -7s;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -1.1rem;
+      width: 1.25rem;
+      height: 0.85rem;
+      border-radius: 0.2rem;
+      background: #8d5b35;
+      transform: translateX(-50%);
+    }
+  }
+
+  .ground {
+    left: -5%;
+    right: -5%;
+    bottom: -7rem;
+    height: 16rem;
+    border-radius: 50% 50% 0 0;
+    background: #cbe6d5;
+  }
+
+  .person {
+    bottom: 5.4rem;
+    width: 4.3rem;
+    height: 8.2rem;
+    transform-origin: 50% 100%;
+    --skin: #ffd7b0;
+    --hair: #6b4a35;
+    --shirt: #20b8aa;
+    --pants: #31515a;
+    background:
+      linear-gradient(var(--pants), var(--pants)) 1.05rem 6.4rem / 0.9rem 1.9rem no-repeat,
+      linear-gradient(var(--pants), var(--pants)) 2.35rem 6.4rem / 0.9rem 1.9rem no-repeat;
+    animation: adult-wave 3.4s ease-in-out infinite;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      background:
+        radial-gradient(ellipse 1.45rem 0.78rem at 50% 18%, var(--hair) 0 98%, transparent 100%),
+        var(--skin);
+      transform: translateX(-50%);
+      box-shadow: 0 0.18rem 0 rgba(255, 255, 255, 0.25) inset;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 2.5rem;
+      left: 50%;
+      width: 3.4rem;
+      height: 4.5rem;
+      border-radius: 1.4rem 1.4rem 0.8rem 0.8rem;
+      background: var(--shirt);
+      transform: translateX(-50%);
+    }
+  }
+
+  .adult-one {
+    left: 12%;
+    --shirt: #007c89;
+    --hair: #7b573e;
+  }
+
+  .adult-two {
+    right: 21%;
+    --shirt: #7c3aed;
+    --skin: #f2c39b;
+    --hair: #8a5f42;
+    --pants: #244653;
+    animation: adult-cheer 3.8s ease-in-out infinite;
+  }
+
+  .child-one {
+    left: 20%;
+    width: 3.4rem;
+    height: 6.6rem;
+    --shirt: #f59e0b;
+    --hair: #b87835;
+    --pants: #2f5d7c;
+    animation: kid-hop 1.8s ease-in-out infinite;
+
+    &::before {
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+
+    &::after {
+      top: 2.1rem;
+      width: 2.7rem;
+      height: 3.5rem;
+    }
+  }
+
+  .child-two {
+    right: 13%;
+    width: 3.6rem;
+    height: 6.8rem;
+    --shirt: #ea5b3a;
+    --skin: #f0bd96;
+    --hair: #5b3b2a;
+    --pants: #5646a8;
+    animation: kid-dance 2.2s ease-in-out infinite;
+
+    &::before {
+      width: 1.85rem;
+      height: 1.85rem;
+    }
+
+    &::after {
+      top: 2.15rem;
+      width: 2.8rem;
+      height: 3.7rem;
+    }
+  }
+
+  .ball {
+    left: 19%;
+    bottom: 9rem;
+    width: 2.7rem;
+    height: 2.7rem;
+    border-radius: 50%;
+    background:
+      linear-gradient(90deg, transparent 45%, rgba(255, 255, 255, 0.75) 46%, rgba(255, 255, 255, 0.75) 54%, transparent 55%),
+      linear-gradient(#ffcf4d, #ff7a3d);
+    box-shadow: 0 0.6rem 1.5rem rgba(18, 52, 59, 0.18);
+    animation: ball-pass 8.8s linear infinite;
+  }
+
+  .auth-container {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 430px);
+    display: grid;
+    gap: 18px;
+    border: 1px solid #d9e2e5;
+    border-radius: 8px;
+    padding: 28px;
+    background: #ffffff;
+    box-shadow: 0 24px 70px rgba(18, 52, 59, 0.13);
+
+    .auth-header {
+      display: grid;
+      gap: 8px;
+
+      img {
+        width: 128px;
+        height: auto;
+      }
+
+      .eyebrow {
+        margin: 2px 0 0;
+        color: #60747a;
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        color: #17343b;
+        font-size: 38px;
+        line-height: 1.05;
+      }
+
+      p {
+        margin: 0;
+        color: #60747a;
+        font-size: 16px;
+        line-height: 1.35;
+      }
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 13px;
+
+      .form-group {
+        display: grid;
+        gap: 6px;
+
+        label {
+          color: #17343b;
+          font-size: 14px;
+          font-weight: 800;
+        }
+
+        input {
+          width: 100%;
+          border: 1px solid #cfdadd;
+          border-radius: 6px;
+          padding: 11px 12px;
+          background: #ffffff;
+          color: #17343b;
+          font: inherit;
+
+          &:focus {
+            outline: none;
+            border-color: #007c89;
+            box-shadow: 0 0 0 3px rgba(0, 124, 137, 0.12);
+          }
+        }
+      }
+
+      .error-message {
+        border: 1px solid #f2c7c7;
+        border-radius: 6px;
+        padding: 10px 12px;
+        background: #fff2f2;
+        color: #a12d2d;
+        font-size: 14px;
+      }
+    }
+
+    .auth-button {
+      border: 0;
+      border-radius: 6px;
+      padding: 12px;
+      background: #007c89;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 800;
+
+      &:hover:not(:disabled) {
+        background: #006d78;
+      }
+
+      &:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
+    }
+
+    .auth-toggle {
+      text-align: center;
+
+      p {
+        margin: 0;
+        color: #60747a;
+        font-size: 14px;
+      }
+
+      .toggle-button {
+        border: 0;
+        background: transparent;
+        color: #007c89;
+        font-weight: 800;
+        margin-left: 6px;
+        padding: 0;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .demo-notice {
+      border: 1px solid #f0e68c;
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: #fffacd;
+      text-align: center;
+
+      p {
+        margin: 0;
+        color: #6e661b;
+        font-size: 12px;
+      }
+    }
+
+    .creator-credit {
+      margin: 0;
+      color: #007c89;
+      font-size: 14px;
+      font-weight: 800;
+    }
+  }
+}
+
+@keyframes adult-wave {
+  0%, 100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-0.45rem) rotate(1deg);
+  }
+}
+
+@keyframes adult-cheer {
+  0%, 100% {
+    transform: translateY(0) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-0.6rem) rotate(-2deg);
+  }
+}
+
+@keyframes kid-hop {
+  0%, 100% {
+    transform: translateY(0) rotate(2deg);
+  }
+  45% {
+    transform: translateY(-1.25rem) rotate(-4deg);
+  }
+}
+
+@keyframes kid-dance {
+  0%, 100% {
+    transform: translateY(0) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(-0.65rem) rotate(6deg);
+  }
+}
+
+@keyframes ball-pass {
+  0%, 100% {
+    left: 13%;
+    bottom: 9rem;
+    transform: rotate(0deg);
+  }
+  16% {
+    left: 29%;
+    bottom: 13.1rem;
+    transform: rotate(120deg);
+  }
+  34% {
+    left: 58%;
+    bottom: 14rem;
+    transform: rotate(220deg);
+  }
+  50% {
+    left: 86%;
+    bottom: 9.3rem;
+    transform: rotate(360deg);
+  }
+  66% {
+    left: 58%;
+    bottom: 14rem;
+    transform: rotate(500deg);
+  }
+  84% {
+    left: 29%;
+    bottom: 13.1rem;
+    transform: rotate(620deg);
+  }
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(0.8rem);
+  }
+}
+
+@keyframes cloud-drift {
+  0% {
+    transform: translateX(-14rem);
+  }
+  100% {
+    transform: translateX(calc(100vw + 14rem));
+  }
+}
+
+@keyframes balloon-drift {
+  0%, 100% {
+    transform: translate(-4vw, 0);
+  }
+  30% {
+    transform: translate(-12vw, 1.2rem);
+  }
+  62% {
+    transform: translate(-22vw, -0.8rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .auth-modal {
+    padding: 18px;
+
+    .sun {
+      width: 4rem;
+      height: 4rem;
+    }
+
+    .balloon {
+      top: 12%;
+      left: 72%;
+      width: 2.8rem;
+      height: 3.7rem;
+    }
+
+    .person,
+    .ball {
+      transform: scale(0.78);
+    }
+
+    .auth-container {
+      padding: 22px;
+
+      .auth-header {
+        img {
+          width: 112px;
+        }
+
+        h1 {
+          font-size: 32px;
+        }
+      }
+    }
+  }
+}
