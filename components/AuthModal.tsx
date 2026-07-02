@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { firebaseEnabled } from '@/lib/config/firebase';
 import { AppLanguage, useLanguage } from '@/lib/hooks/useLanguage';
+import AuthSceneCanvas from './AuthSceneCanvas';
 import './AuthModal.scss';
 
 const authCopy: Record<AppLanguage, {
@@ -155,6 +156,7 @@ export default function AuthModal() {
 
   return (
     <div className={`auth-modal ${isNight ? 'night-mode' : 'day-mode'}`}>
+      <AuthSceneCanvas isNight={isNight} />
       <div className="auth-scene" aria-hidden="true">
         <span className="sun"></span>
         <span className="moon"></span>
