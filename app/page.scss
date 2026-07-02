@@ -19,6 +19,22 @@
   font-weight: 600;
 }
 
+.app-banner {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  z-index: 20;
+  max-width: min(92vw, 640px);
+  transform: translateX(-50%);
+  border: 1px solid #f2c7c7;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #fff2f2;
+  color: #a12d2d;
+  box-shadow: 0 12px 30px rgba(18, 52, 59, 0.14);
+  font-size: 14px;
+}
+
 @media (max-width: 768px) {
   .app-container {
     flex-direction: column;

@@ -123,13 +123,20 @@
 
   .invite-item {
     display: grid;
-    grid-template-columns: 110px 80px 1fr;
+    grid-template-columns: 110px 80px 1fr 2fr;
     gap: 10px;
     padding: 10px 12px;
     background: #f8fafa;
     border-radius: 6px;
     color: #555;
     font-size: 14px;
+  }
+
+  .invite-link {
+    overflow: hidden;
+    color: #007c89;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

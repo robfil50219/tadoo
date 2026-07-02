@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useFamilySync } from '@/lib/hooks/useFamilySync';
 import { useLanguage } from '@/lib/hooks/useLanguage';
 import Navigation from '@/components/Navigation';
 import Dashboard from '@/components/views/Dashboard';
@@ -12,6 +13,7 @@ import Chat from '@/components/views/Chat';
 import Location from '@/components/views/Location';
 import Settings from '@/components/views/Settings';
 import AuthModal from '@/components/AuthModal';
+import FamilySetup from '@/components/FamilySetup';
 import './page.scss';
 
 type AppView = 'dashboard' | 'tasks' | 'calendar' | 'family' | 'chat' | 'location' | 'settings';
@@ -27,6 +29,7 @@ export default function Home() {
   const [activeView, setActiveView] = useState<AppView>('dashboard');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { user, loading } = useAuth();
+  const { familyLoading, familyError, needsFamilySetup } = useFamilySync(user);
   const { t } = useLanguage();
 
   const navItems: { id: AppView; label: string }[] = [
@@ -78,7 +81,7 @@ export default function Home() {
     }
   };
 
-  if (loading) {
+  if (loading || (user && familyLoading)) {
     return <div className="app-loading">Loading...</div>;
   }
 
@@ -86,8 +89,13 @@ export default function Home() {
     return <AuthModal />;
   }
 
+  if (needsFamilySetup) {
+    return <FamilySetup user={user} />;
+  }
+
   return (
     <div className="app-container">
+      {familyError && <div className="app-banner">{familyError}</div>}
       <Navigation
         navItems={navItems}
         activeView={activeView}

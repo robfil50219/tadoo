@@ -23,11 +23,7 @@ service cloud.firestore {
     }
 
     match /families/{familyId} {
-      allow read: if isFamilyMember(familyId)
-        || signedIn()
-        || (signedIn()
-          && familyId == 'demo-family'
-          && !exists(/databases/$(database)/documents/families/$(familyId)));
+      allow read: if isFamilyMember(familyId);
       allow create: if signedIn()
         && request.resource.data.ownerUid == request.auth.uid
         && request.resource.data.memberUids[request.auth.uid] == true
@@ -68,7 +64,10 @@ service cloud.firestore {
 
     match /inviteCodes/{code} {
       allow read: if signedIn();
-      allow create, update: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.createdByUid == request.auth.uid;
+      allow update: if signedIn()
+        && request.resource.data.usedByUid == request.auth.uid;
       allow delete: if false;
     }
   }

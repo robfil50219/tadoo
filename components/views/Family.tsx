@@ -12,10 +12,15 @@ export default function Family() {
   const [memberColor, setMemberColor] = useState('#007c89');
   const [inviteRole, setInviteRole] = useState<FamilyRole>('adult');
   const [inviteRecipient, setInviteRecipient] = useState('');
+  const [origin, setOrigin] = useState('');
 
   useEffect(() => {
     setFamilyName(state.familyName);
   }, [state.familyName]);
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
 
   const saveFamilyName = (event: React.FormEvent) => {
     event.preventDefault();
@@ -123,6 +128,11 @@ export default function Family() {
                 <strong>{invite.code}</strong>
                 <span>{invite.role}</span>
                 <span>{invite.recipient || 'No recipient'}</span>
+                {origin && (
+                  <span className="invite-link">
+                    {`${origin}/?invite=${invite.code}`}
+                  </span>
+                )}
               </div>
             ))}
           </div>
