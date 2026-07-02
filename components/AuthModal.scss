@@ -347,6 +347,20 @@
       }
     }
 
+    .setup-family-button {
+      border: 1px solid #b9ded7;
+      border-radius: 6px;
+      padding: 11px 12px;
+      background: #eaf8f3;
+      color: #007c89;
+      font-weight: 800;
+
+      &:hover {
+        border-color: #007c89;
+        background: #ddf3ee;
+      }
+    }
+
     .demo-notice {
       border: 1px solid #f0e68c;
       border-radius: 6px;

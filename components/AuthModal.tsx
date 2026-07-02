@@ -14,6 +14,11 @@ export default function AuthModal() {
   const [localError, setLocalError] = useState('');
   const { signIn, register, loading, error } = useAuth();
 
+  const switchMode = (nextIsLogin: boolean) => {
+    setLocalError('');
+    setIsLogin(nextIsLogin);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError('');
@@ -102,16 +107,23 @@ export default function AuthModal() {
             {isLogin ? 'Har du ikke konto?' : 'Har du konto fra før?'}
             <button
               type="button"
-              onClick={() => {
-                setLocalError('');
-                setIsLogin(!isLogin);
-              }}
+              onClick={() => switchMode(!isLogin)}
               className="toggle-button"
             >
               {isLogin ? 'Opprett konto' : 'Logg inn'}
             </button>
           </p>
         </div>
+
+        {isLogin && (
+          <button
+            type="button"
+            className="setup-family-button"
+            onClick={() => switchMode(false)}
+          >
+            Sett opp ny familie
+          </button>
+        )}
 
         {!firebaseEnabled && (
           <div className="demo-notice">
