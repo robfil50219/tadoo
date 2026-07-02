@@ -193,6 +193,13 @@ export default function AuthModal() {
         <span className="balloon">
           <span className="balloon-lantern"></span>
         </span>
+        <span className="tree tree-right">
+          <span className="tree-trunk"></span>
+          <span className="tree-canopy canopy-back"></span>
+          <span className="tree-canopy canopy-left"></span>
+          <span className="tree-canopy canopy-center"></span>
+          <span className="tree-canopy canopy-right"></span>
+        </span>
         <span className="ball"></span>
         <span className="person adult-one"></span>
         <span className="person adult-two"></span>
