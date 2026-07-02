@@ -115,16 +115,6 @@ export default function AuthModal() {
           </p>
         </div>
 
-        {isLogin && (
-          <button
-            type="button"
-            className="setup-family-button"
-            onClick={() => switchMode(false)}
-          >
-            Sett opp ny familie
-          </button>
-        )}
-
         {!firebaseEnabled && (
           <div className="demo-notice">
             <p>Demo-modus aktiv: bruker kun lokal lagring.</p>
