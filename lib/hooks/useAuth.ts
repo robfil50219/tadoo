@@ -53,7 +53,7 @@ const userFromFirebase = (user: User): AppUser => ({
 });
 
 const useAuthStore = create<AuthStoreState>((set) => ({
-  user: firebaseEnabled ? null : demoUser,
+  user: null,
   loading: firebaseEnabled,
   error: null,
 
