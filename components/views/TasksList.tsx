@@ -94,6 +94,7 @@ export default function TasksList() {
               value={selectedAssignee}
               onChange={(e) => setSelectedAssignee(e.target.value)}
               className="assignee-select"
+              aria-label="Task assignee"
             >
               {state.members.map((member) => (
                 <option key={member.id} value={member.id}>
@@ -106,11 +107,13 @@ export default function TasksList() {
               value={dueDateTime}
               onChange={(e) => setDueDateTime(e.target.value)}
               className="due-input"
+              aria-label="Task due date and time"
             />
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as TaskCategory)}
               className="category-select"
+              aria-label="Task category"
             >
               <option value="home">Home</option>
               <option value="school">School</option>
@@ -122,6 +125,7 @@ export default function TasksList() {
               value={priority}
               onChange={(e) => setPriority(e.target.value as TaskPriority)}
               className="priority-select"
+              aria-label="Task priority"
             >
               <option value="low">Low</option>
               <option value="normal">Normal</option>
@@ -157,11 +161,9 @@ export default function TasksList() {
                 <div key={member.id} className="task-group">
                   <div
                     className="group-header"
-                    style={{ borderLeftColor: member.color }}
                   >
                     <div
                       className="member-avatar"
-                      style={{ backgroundColor: member.color }}
                     >
                       {member.avatar}
                     </div>
@@ -180,6 +182,7 @@ export default function TasksList() {
                           checked={task.completed}
                           onChange={() => toggleTodo(task)}
                           className="task-checkbox"
+                          aria-label="Toggle task completion"
                         />
                         <div className="task-body">
                           {editingId === task.id ? (
@@ -192,6 +195,7 @@ export default function TasksList() {
                                 if (e.key === 'Escape') setEditingId(null);
                               }}
                               className="edit-input"
+                              aria-label="Edit task title"
                               autoFocus
                             />
                           ) : (
@@ -218,7 +222,7 @@ export default function TasksList() {
                             type="button"
                             className="task-menu-button"
                             aria-label="Open task menu"
-                            aria-expanded={openMenuId === task.id}
+                            {...(openMenuId === task.id ? { 'aria-expanded': 'true' } : { 'aria-expanded': 'false' })}
                             onClick={() => setOpenMenuId(openMenuId === task.id ? null : task.id)}
                           >
                             i

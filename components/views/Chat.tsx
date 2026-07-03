@@ -51,7 +51,12 @@ export default function Chat() {
       </div>
 
       <form className="chat-form" onSubmit={sendMessage}>
-        <select value={senderId} onChange={(event) => setSenderId(event.target.value)}>
+        <select
+          value={senderId}
+          onChange={(event) => setSenderId(event.target.value)}
+          aria-label="Message sender"
+          title="Message sender"
+        >
           {state.members.map((member) => (
             <option key={member.id} value={member.id}>
               {member.name}

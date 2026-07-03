@@ -72,7 +72,7 @@ export default function FamilySetup({ user }: FamilySetupProps) {
           Data lagres trygt i Firebase og synkroniseres mellom familiemedlemmer.
         </p>
 
-        <div className="setup-tabs" role="tablist" aria-label="Velg oppsett">
+        <div className="setup-tabs">
           <button
             type="button"
             className={mode === 'create' ? 'active' : ''}

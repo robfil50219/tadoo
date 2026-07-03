@@ -104,6 +104,7 @@
   }
 
   .member-avatar {
+    position: relative;
     width: 42px;
     height: 42px;
     border-radius: 50%;
@@ -113,6 +114,19 @@
     color: #fff;
     font-weight: 700;
     flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .member-avatar-background {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .member-avatar-initials {
+    position: relative;
+    z-index: 1;
   }
 
   .invite-list {

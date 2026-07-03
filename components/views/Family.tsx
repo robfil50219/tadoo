@@ -64,8 +64,11 @@ export default function Family() {
         <div className="member-grid">
           {state.members.map((member) => (
             <article className="member-card" key={member.id}>
-              <div className="member-avatar" style={{ backgroundColor: member.color }}>
-                {member.avatar}
+              <div className="member-avatar" aria-hidden="true">
+                <svg className="member-avatar-background" viewBox="0 0 42 42" focusable="false">
+                  <circle cx="21" cy="21" r="21" fill={member.color} />
+                </svg>
+                <span className="member-avatar-initials">{member.avatar}</span>
               </div>
               <div>
                 <h4>{member.name}</h4>
@@ -89,6 +92,7 @@ export default function Family() {
           <select
             value={memberRole}
             onChange={(event) => setMemberRole(event.target.value as FamilyRole)}
+            aria-label="Member role"
           >
             <option value="adult">Adult</option>
             <option value="child">Child</option>
@@ -114,6 +118,7 @@ export default function Family() {
           <select
             value={inviteRole}
             onChange={(event) => setInviteRole(event.target.value as FamilyRole)}
+            aria-label="Invite role"
           >
             <option value="adult">Adult</option>
             <option value="child">Child</option>

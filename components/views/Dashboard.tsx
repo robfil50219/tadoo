@@ -30,6 +30,11 @@ export default function Dashboard() {
     }).format(new Date(value));
   };
 
+  const getMemberBadgeClass = (color: string) => {
+    const sanitizedColor = color.replace(/[^a-z0-9_-]/gi, '').toLowerCase();
+    return `member-badge member-badge--${sanitizedColor}`;
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -83,8 +88,7 @@ export default function Dashboard() {
             {state.members.map((member) => (
               <div
                 key={member.id}
-                className="member-badge"
-                style={{ backgroundColor: member.color }}
+                className={getMemberBadgeClass(member.color)}
                 title={member.name}
               >
                 {member.avatar}

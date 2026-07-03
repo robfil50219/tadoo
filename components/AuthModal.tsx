@@ -226,7 +226,7 @@ export default function AuthModal() {
       <button
         type="button"
         className="scene-mode-toggle"
-        aria-pressed={isNight}
+        {...(isNight ? { 'aria-pressed': 'true' } : { 'aria-pressed': 'false' })}
         onClick={() => setIsNight((current) => !current)}
       >
         <span className="mode-indicator" aria-hidden="true"></span>
@@ -239,7 +239,7 @@ export default function AuthModal() {
             type="button"
             className="language-trigger"
             onClick={() => setIsLanguageMenuOpen((isOpen) => !isOpen)}
-            aria-expanded={isLanguageMenuOpen}
+            {...(isLanguageMenuOpen ? { 'aria-expanded': 'true' } : { 'aria-expanded': 'false' })}
             aria-haspopup="menu"
             aria-label="Choose language"
           >
@@ -250,17 +250,30 @@ export default function AuthModal() {
           {isLanguageMenuOpen && (
             <div className="language-options" role="menu" aria-label="Choose language">
               {languageOptions.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  className={language === option.value ? 'active' : ''}
-                  onClick={() => chooseLanguage(option.value)}
-                  role="menuitemradio"
-                  aria-checked={language === option.value}
-                >
-                  <span className="flag" aria-hidden="true">{option.flag}</span>
-                  <span>{option.label}</span>
-                </button>
+                language === option.value ? (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className="active"
+                    onClick={() => chooseLanguage(option.value)}
+                    role="menuitemradio"
+                    aria-checked="true"
+                  >
+                    <span className="flag" aria-hidden="true">{option.flag}</span>
+                    <span>{option.label}</span>
+                  </button>
+                ) : (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => chooseLanguage(option.value)}
+                    role="menuitemradio"
+                    aria-checked="false"
+                  >
+                    <span className="flag" aria-hidden="true">{option.flag}</span>
+                    <span>{option.label}</span>
+                  </button>
+                )
               ))}
             </div>
           )}
