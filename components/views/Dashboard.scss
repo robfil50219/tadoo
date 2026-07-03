@@ -1,38 +1,47 @@
 .dashboard {
-  padding: 30px;
-  max-width: 1200px;
+  padding: 32px;
+  max-width: 1180px;
   margin: 0 auto;
+  color: #17343b;
 
   .dashboard-header {
-    margin-bottom: 30px;
+    margin-bottom: 26px;
 
     h2 {
-      font-size: 28px;
-      color: #333;
-      margin: 0 0 5px 0;
+      margin: 0 0 6px;
+      color: #17343b;
+      font-size: 30px;
+      line-height: 1.1;
     }
 
     .subtitle {
-      color: #999;
+      color: #60747a;
       margin: 0;
-      font-size: 14px;
+      font-size: 15px;
     }
   }
 
   .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    gap: 18px;
 
     .card {
-      background: white;
+      border: 1px solid #dbe7e6;
       border-radius: 8px;
       padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      transition: all 0.3s ease;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(245, 250, 248, 0.9)),
+        #ffffff;
+      box-shadow: 0 16px 38px rgba(18, 52, 59, 0.08);
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
 
       &:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        border-color: #c8dcda;
+        box-shadow: 0 20px 44px rgba(18, 52, 59, 0.12);
         transform: translateY(-2px);
       }
 
@@ -47,14 +56,17 @@
         font-size: 32px;
         font-weight: bold;
         color: #007c89;
-        margin: 10px 0;
+        margin: 10px 0 12px;
       }
 
       .card-list {
         margin-top: 15px;
 
         .empty {
-          color: #999;
+          border-radius: 6px;
+          padding: 10px 12px;
+          background: #f5faf8;
+          color: #60747a;
           font-size: 13px;
           margin: 0;
         }
@@ -72,7 +84,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #e9f0ef;
             font-size: 13px;
 
             &:last-child {
@@ -80,21 +92,22 @@
             }
 
             .task-title {
-              color: #333;
+              color: #17343b;
               flex: 1;
+              font-weight: 700;
             }
 
             .task-time {
-              color: #999;
+              color: #60747a;
               font-size: 12px;
               margin-left: 10px;
             }
 
             .task-priority {
               font-size: 11px;
-              padding: 2px 6px;
-              border-radius: 3px;
-              font-weight: 600;
+              padding: 4px 7px;
+              border-radius: 999px;
+              font-weight: 800;
 
               &.priority-high {
                 background-color: #ffebee;
@@ -132,7 +145,8 @@
           font-weight: bold;
           font-size: 12px;
           cursor: pointer;
-          transition: transform 0.2s;
+          box-shadow: 0 8px 18px rgba(18, 52, 59, 0.14);
+          transition: transform 0.2s ease;
 
           &:hover {
             transform: scale(1.1);

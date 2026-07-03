@@ -1,11 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { TaskCategory, TaskPriority, TodoItem, useTodoStore } from '@/lib/store/todoStore';
 import { useLanguage } from '@/lib/hooks/useLanguage';
+import { memberColorClassName } from '@/lib/memberColors';
+import {
+  fadeInUpVariants,
+  menuVariants,
+  subtleButtonHover,
+  subtleButtonTap,
+  subtleCardHover,
+  taskItemVariants,
+} from '@/lib/animations';
 import './TasksList.scss';
 
 export default function TasksList() {
+  const shouldReduceMotion = useReducedMotion() ?? false;
   const { state, addTodo, updateTodo, toggleTodo, deleteTodo, approveTodo } = useTodoStore();
   const { t } = useLanguage();
   const [newTaskTitle, setNewTaskTitle] = useState('');
@@ -74,13 +85,22 @@ export default function TasksList() {
   const adultMember = state.members.find((member) => member.role === 'adult');
 
   return (
-    <div className="tasks-list">
-      <div className="tasks-header">
+    <motion.div
+      className="tasks-list"
+      variants={fadeInUpVariants(shouldReduceMotion)}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div className="tasks-header" layout>
         <h2>Tasks</h2>
         <p className="subtitle">{"Manage your family's to-do list"}</p>
-      </div>
+      </motion.div>
 
-      <div className="add-task-form">
+      <motion.div
+        className="add-task-form"
+        layout
+        whileHover={subtleCardHover(shouldReduceMotion)}
+      >
         <form onSubmit={handleAddTask}>
           <div className="form-grid">
             <input
@@ -139,138 +159,185 @@ export default function TasksList() {
               />
               Approval
             </label>
-            <button type="submit" className="add-button">
+            <motion.button
+              type="submit"
+              className="add-button"
+              whileTap={subtleButtonTap(shouldReduceMotion)}
+              whileHover={subtleButtonHover(shouldReduceMotion)}
+            >
               {t('add-task')}
-            </button>
+            </motion.button>
           </div>
         </form>
-      </div>
+      </motion.div>
 
       <div className="tasks-container">
-        {state.todos.length === 0 ? (
-          <div className="empty-state">
-            <p>No tasks yet. Add one to get started!</p>
-          </div>
-        ) : (
-          <div className="task-groups">
-            {state.members.map((member) => {
-              const memberTasks = state.todos.filter((t) => t.assigneeId === member.id);
-              if (memberTasks.length === 0) return null;
+        <AnimatePresence mode="popLayout" initial={false}>
+          {state.todos.length === 0 ? (
+            <motion.div
+              key="empty-tasks"
+              className="empty-state"
+              variants={fadeInUpVariants(shouldReduceMotion)}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              layout
+            >
+              <p>No tasks yet - add the first family mission!</p>
+            </motion.div>
+          ) : (
+            <motion.div key="task-groups" className="task-groups" layout>
+              {state.members.map((member) => {
+                const memberTasks = state.todos.filter((t) => t.assigneeId === member.id);
+                if (memberTasks.length === 0) return null;
 
-              return (
-                <div key={member.id} className="task-group">
-                  <div
-                    className="group-header"
+                return (
+                  <motion.div
+                    key={member.id}
+                    className={`task-group ${memberColorClassName(member.color)}`}
+                    layout
+                    variants={fadeInUpVariants(shouldReduceMotion)}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
                   >
                     <div
-                      className="member-avatar"
+                      className="group-header"
                     >
-                      {member.avatar}
-                    </div>
-                    <h3>{member.name}</h3>
-                    <span className="task-count">{memberTasks.length}</span>
-                  </div>
-
-                  <div className="task-items">
-                    {memberTasks.map((task) => (
                       <div
-                        key={task.id}
-                        className={`task-item ${task.completed ? 'completed' : ''}`}
+                        className="member-avatar"
                       >
-                        <input
-                          type="checkbox"
-                          checked={task.completed}
-                          onChange={() => toggleTodo(task)}
-                          className="task-checkbox"
-                          aria-label="Toggle task completion"
-                        />
-                        <div className="task-body">
-                          {editingId === task.id ? (
-                            <input
-                              value={editingTitle}
-                              onChange={(e) => setEditingTitle(e.target.value)}
-                              onBlur={() => finishEdit(task)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') finishEdit(task);
-                                if (e.key === 'Escape') setEditingId(null);
-                              }}
-                              className="edit-input"
-                              aria-label="Edit task title"
-                              autoFocus
-                            />
-                          ) : (
-                            <button
-                              type="button"
-                              className="task-title"
-                              onClick={() => beginEdit(task)}
-                              title={t('edit-task')}
-                            >
-                              {task.title}
-                            </button>
-                          )}
-                          <div className="task-meta">
-                            <span>{formatDue(task.dueDateTime)}</span>
-                            <span className={`priority priority-${task.priority}`}>{task.priority}</span>
-                            <span>{task.category}</span>
-                            {task.requiresApproval && (
-                              <span>{task.approvedById ? 'Approved' : 'Needs approval'}</span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="task-menu">
-                          <button
-                            type="button"
-                            className="task-menu-button"
-                            aria-label="Open task menu"
-                            {...(openMenuId === task.id ? { 'aria-expanded': 'true' } : { 'aria-expanded': 'false' })}
-                            onClick={() => setOpenMenuId(openMenuId === task.id ? null : task.id)}
-                          >
-                            i
-                          </button>
-                          {openMenuId === task.id && (
-                            <div className="task-menu-panel" role="menu">
-                              <button
-                                type="button"
-                                role="menuitem"
-                                onClick={() => beginEdit(task)}
-                              >
-                                Edit
-                              </button>
-                              {task.requiresApproval && task.completed && !task.approvedById && adultMember && (
-                                <button
-                                  type="button"
-                                  role="menuitem"
-                                  onClick={() => {
-                                    approveTodo(task.id, adultMember.id);
-                                    setOpenMenuId(null);
-                                  }}
-                                >
-                                  Approve
-                                </button>
-                              )}
-                              <button
-                                type="button"
-                                role="menuitem"
-                                className="danger-menu-item"
-                                onClick={() => {
-                                  deleteTodo(task.id);
-                                  setOpenMenuId(null);
-                                }}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          )}
-                        </div>
+                        {member.avatar}
                       </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                      <h3>{member.name}</h3>
+                      <span className="task-count">{memberTasks.length}</span>
+                    </div>
+
+                    <div className="task-items">
+                      <AnimatePresence mode="popLayout" initial={false}>
+                        {memberTasks.map((task) => (
+                          <motion.div
+                            key={task.id}
+                            layout
+                            variants={taskItemVariants(shouldReduceMotion)}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            whileHover={subtleCardHover(shouldReduceMotion)}
+                            className={`task-item ${task.completed ? 'completed' : ''}`}
+                          >
+                            <motion.input
+                              type="checkbox"
+                              checked={task.completed}
+                              onChange={() => toggleTodo(task)}
+                              className="task-checkbox"
+                              aria-label={`Mark ${task.title} as ${task.completed ? 'not completed' : 'completed'}`}
+                              whileTap={subtleButtonTap(shouldReduceMotion)}
+                            />
+                            <div className="task-body">
+                              {editingId === task.id ? (
+                                <input
+                                  value={editingTitle}
+                                  onChange={(e) => setEditingTitle(e.target.value)}
+                                  onBlur={() => finishEdit(task)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') finishEdit(task);
+                                    if (e.key === 'Escape') setEditingId(null);
+                                  }}
+                                  className="edit-input"
+                                  aria-label="Edit task title"
+                                  autoFocus
+                                />
+                              ) : (
+                                <motion.button
+                                  type="button"
+                                  className="task-title"
+                                  onClick={() => beginEdit(task)}
+                                  title={t('edit-task')}
+                                  whileTap={subtleButtonTap(shouldReduceMotion)}
+                                >
+                                  {task.title}
+                                </motion.button>
+                              )}
+                              <div className="task-meta">
+                                <span>{formatDue(task.dueDateTime)}</span>
+                                <span className={`priority priority-${task.priority}`}>{task.priority}</span>
+                                <span>{task.category}</span>
+                                {task.completed && <span className="complete-label">Done</span>}
+                                {task.requiresApproval && (
+                                  <span>{task.approvedById ? 'Approved' : 'Needs approval'}</span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="task-menu">
+                              <motion.button
+                                type="button"
+                                className="task-menu-button"
+                                aria-label="Open task menu"
+                                {...(openMenuId === task.id ? { 'aria-expanded': 'true' } : { 'aria-expanded': 'false' })}
+                                onClick={() => setOpenMenuId(openMenuId === task.id ? null : task.id)}
+                                whileTap={subtleButtonTap(shouldReduceMotion)}
+                              >
+                                i
+                              </motion.button>
+                              <AnimatePresence>
+                                {openMenuId === task.id && (
+                                  <motion.div
+                                    className="task-menu-panel"
+                                    role="menu"
+                                    variants={menuVariants(shouldReduceMotion)}
+                                    initial="hidden"
+                                    animate="visible"
+                                    exit="exit"
+                                  >
+                                    <motion.button
+                                      type="button"
+                                      role="menuitem"
+                                      onClick={() => beginEdit(task)}
+                                      whileTap={subtleButtonTap(shouldReduceMotion)}
+                                    >
+                                      Edit
+                                    </motion.button>
+                                    {task.requiresApproval && task.completed && !task.approvedById && adultMember && (
+                                      <motion.button
+                                        type="button"
+                                        role="menuitem"
+                                        onClick={() => {
+                                          approveTodo(task.id, adultMember.id);
+                                          setOpenMenuId(null);
+                                        }}
+                                        whileTap={subtleButtonTap(shouldReduceMotion)}
+                                      >
+                                        Approve
+                                      </motion.button>
+                                    )}
+                                    <motion.button
+                                      type="button"
+                                      role="menuitem"
+                                      className="danger-menu-item"
+                                      onClick={() => {
+                                        deleteTodo(task.id);
+                                        setOpenMenuId(null);
+                                      }}
+                                      whileTap={subtleButtonTap(shouldReduceMotion)}
+                                    >
+                                      Delete
+                                    </motion.button>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 }

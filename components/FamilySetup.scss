@@ -3,7 +3,9 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: linear-gradient(180deg, #eaf7f4 0%, #f7fbf9 60%, #e6f1ec 100%);
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 200, 87, 0.22), transparent 30%),
+    linear-gradient(180deg, #eaf7f4 0%, #f7fbf9 60%, #fff8e4 100%);
 }
 
 .setup-card {
@@ -13,7 +15,9 @@
   padding: 28px;
   border: 1px solid #d9e2e5;
   border-radius: 8px;
-  background: #ffffff;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(245, 250, 248, 0.92)),
+    #ffffff;
   box-shadow: 0 24px 70px rgba(18, 52, 59, 0.13);
 
   img {
@@ -64,6 +68,11 @@
       color: #007c89;
       box-shadow: 0 1px 5px rgba(18, 52, 59, 0.12);
     }
+
+    &:focus-visible {
+      outline: 3px solid rgba(255, 200, 87, 0.5);
+      outline-offset: 2px;
+    }
   }
 }
 
@@ -96,9 +105,17 @@
     border: 0;
     border-radius: 6px;
     padding: 12px;
-    background: #007c89;
+    background: linear-gradient(135deg, #007c89 0%, #0b5f69 100%);
     color: #ffffff;
     font-weight: 800;
+    box-shadow: 0 10px 22px rgba(0, 124, 137, 0.22);
+
+    &:focus-visible {
+      outline: none;
+      box-shadow:
+        0 10px 22px rgba(0, 124, 137, 0.22),
+        0 0 0 3px rgba(255, 200, 87, 0.5);
+    }
 
     &:disabled {
       opacity: 0.65;

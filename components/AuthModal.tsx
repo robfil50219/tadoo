@@ -2,9 +2,18 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { firebaseEnabled } from '@/lib/config/firebase';
 import { AppLanguage, useLanguage } from '@/lib/hooks/useLanguage';
+import {
+  fadeInUpVariants,
+  menuVariants,
+  modalBackdropVariants,
+  modalPanelVariants,
+  subtleButtonHover,
+  subtleButtonTap,
+} from '@/lib/animations';
 import AuthSceneCanvas from './AuthSceneCanvas';
 import './AuthModal.scss';
 
@@ -118,6 +127,7 @@ const languageOptions: Array<{ value: AppLanguage; label: string; flag: string }
 ];
 
 export default function AuthModal() {
+  const shouldReduceMotion = useReducedMotion() ?? false;
   const [isLogin, setIsLogin] = useState(true);
   const [isNight, setIsNight] = useState(false);
   const [email, setEmail] = useState('');
@@ -155,7 +165,13 @@ export default function AuthModal() {
   };
 
   return (
-    <div className={`auth-modal ${isNight ? 'night-mode' : 'day-mode'}`}>
+    <motion.div
+      className={`auth-modal ${isNight ? 'night-mode' : 'day-mode'}`}
+      variants={modalBackdropVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <AuthSceneCanvas isNight={isNight} />
       <div className="auth-scene" aria-hidden="true">
         <span className="sun"></span>
@@ -223,66 +239,97 @@ export default function AuthModal() {
         <span className="ground"></span>
       </div>
 
-      <button
+      <motion.button
         type="button"
         className="scene-mode-toggle"
         {...(isNight ? { 'aria-pressed': 'true' } : { 'aria-pressed': 'false' })}
         onClick={() => setIsNight((current) => !current)}
+        whileTap={subtleButtonTap(shouldReduceMotion)}
+        whileHover={subtleButtonHover(shouldReduceMotion)}
       >
         <span className="mode-indicator" aria-hidden="true"></span>
         {isNight ? copy.dayMode : copy.nightMode}
-      </button>
+      </motion.button>
 
-      <div className="auth-container">
+      <motion.div
+        className="auth-container"
+        variants={modalPanelVariants(shouldReduceMotion)}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
         <div className="language-menu">
-          <button
+          <motion.button
             type="button"
             className="language-trigger"
             onClick={() => setIsLanguageMenuOpen((isOpen) => !isOpen)}
             {...(isLanguageMenuOpen ? { 'aria-expanded': 'true' } : { 'aria-expanded': 'false' })}
             aria-haspopup="menu"
             aria-label="Choose language"
+            whileTap={subtleButtonTap(shouldReduceMotion)}
           >
             <span className="flag" aria-hidden="true">{selectedLanguage.flag}</span>
             <span>{selectedLanguage.label}</span>
-          </button>
+          </motion.button>
 
-          {isLanguageMenuOpen && (
-            <div className="language-options" role="menu" aria-label="Choose language">
-              {languageOptions.map((option) => (
-                language === option.value ? (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className="active"
-                    onClick={() => chooseLanguage(option.value)}
-                    role="menuitemradio"
-                    aria-checked="true"
-                  >
-                    <span className="flag" aria-hidden="true">{option.flag}</span>
-                    <span>{option.label}</span>
-                  </button>
-                ) : (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => chooseLanguage(option.value)}
-                    role="menuitemradio"
-                    aria-checked="false"
-                  >
-                    <span className="flag" aria-hidden="true">{option.flag}</span>
-                    <span>{option.label}</span>
-                  </button>
-                )
-              ))}
-            </div>
-          )}
+          <AnimatePresence>
+            {isLanguageMenuOpen && (
+              <motion.div
+                className="language-options"
+                role="menu"
+                aria-label="Choose language"
+                variants={menuVariants(shouldReduceMotion)}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                {languageOptions.map((option) => (
+                  language === option.value ? (
+                    <motion.button
+                      key={option.value}
+                      type="button"
+                      className="active"
+                      onClick={() => chooseLanguage(option.value)}
+                      role="menuitemradio"
+                      aria-checked="true"
+                      whileTap={subtleButtonTap(shouldReduceMotion)}
+                    >
+                      <span className="flag" aria-hidden="true">{option.flag}</span>
+                      <span>{option.label}</span>
+                    </motion.button>
+                  ) : (
+                    <motion.button
+                      key={option.value}
+                      type="button"
+                      onClick={() => chooseLanguage(option.value)}
+                      role="menuitemradio"
+                      aria-checked="false"
+                      whileTap={subtleButtonTap(shouldReduceMotion)}
+                    >
+                      <span className="flag" aria-hidden="true">{option.flag}</span>
+                      <span>{option.label}</span>
+                    </motion.button>
+                  )
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className="auth-header">
           <Image src="/images/tadoologo2.png" alt="Tadoo logo" width={128} height={128} priority />
           <p className="eyebrow">{copy.welcome}</p>
-          <h1>{isLogin ? copy.loginTitle : copy.registerTitle}</h1>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.h1
+              key={isLogin ? 'login-title' : 'register-title'}
+              variants={fadeInUpVariants(shouldReduceMotion)}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {isLogin ? copy.loginTitle : copy.registerTitle}
+            </motion.h1>
+          </AnimatePresence>
           <p>{copy.subtitle}</p>
         </div>
 
@@ -311,37 +358,64 @@ export default function AuthModal() {
             />
           </div>
 
-          {!isLogin && (
-            <div className="form-group">
-              <label htmlFor="confirmPassword">{copy.confirmPassword}</label>
-              <input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-              />
-            </div>
-          )}
+          <AnimatePresence initial={false}>
+            {!isLogin && (
+              <motion.div
+                className="form-group"
+                variants={fadeInUpVariants(shouldReduceMotion)}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <label htmlFor="confirmPassword">{copy.confirmPassword}</label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {(localError || error) && <div className="error-message">{localError || error}</div>}
+          <AnimatePresence initial={false}>
+            {(localError || error) && (
+              <motion.div
+                className="error-message"
+                variants={fadeInUpVariants(shouldReduceMotion)}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                {localError || error}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <button type="submit" className="auth-button" disabled={loading}>
+          <motion.button
+            type="submit"
+            className="auth-button"
+            disabled={loading}
+            whileTap={loading ? undefined : subtleButtonTap(shouldReduceMotion)}
+            whileHover={loading ? undefined : subtleButtonHover(shouldReduceMotion)}
+          >
             {loading ? copy.loading : isLogin ? copy.loginButton : copy.registerButton}
-          </button>
+          </motion.button>
         </form>
 
         <div className="auth-toggle">
           <p>
             {isLogin ? copy.noAccount : copy.hasAccount}
-            <button
+            <motion.button
               type="button"
               onClick={() => switchMode(!isLogin)}
               className="toggle-button"
+              whileTap={subtleButtonTap(shouldReduceMotion)}
             >
               {isLogin ? copy.createAccount : copy.loginButton}
-            </button>
+            </motion.button>
           </p>
         </div>
 
@@ -352,7 +426,7 @@ export default function AuthModal() {
         )}
 
         <p className="creator-credit">{copy.credit}</p>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
