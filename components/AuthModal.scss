@@ -99,11 +99,11 @@
     box-shadow:
       0 0 2.2rem rgba(255, 200, 87, 0.68),
       0 0 5rem rgba(255, 171, 64, 0.38);
-    animation: float-gentle 7s ease-in-out infinite;
+    transform: translateY(0) scale(1);
     transition:
-      top 5.85s cubic-bezier(0.44, 0, 0.2, 1),
+      top 5.85s linear,
       opacity 5.6s linear,
-      transform 5.85s cubic-bezier(0.44, 0, 0.2, 1),
+      transform 5.85s linear,
       box-shadow 3.2s ease;
   }
 
@@ -1015,7 +1015,6 @@
     .sun {
       top: 94%;
       opacity: 0;
-      animation: none;
       transform: translateY(7.5rem) scale(0.52);
     }
 
@@ -1827,15 +1826,6 @@
     left: 29%;
     bottom: 13.1rem;
     transform: rotate(620deg);
-  }
-}
-
-@keyframes float-gentle {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(0.8rem);
   }
 }
 
