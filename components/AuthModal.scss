@@ -91,7 +91,7 @@
   .sun {
     top: 8%;
     right: 12%;
-    z-index: 1;
+    z-index: 0;
     width: 5.2rem;
     height: 5.2rem;
     border-radius: 50%;
@@ -108,16 +108,16 @@
   }
 
   .moon {
-    top: 15%;
+    top: 94%;
     right: 12.5%;
-    z-index: 1;
+    z-index: 0;
     width: 4.6rem;
     height: 4.6rem;
     border-radius: 50%;
     background: #f6f0c6;
     opacity: 0;
     overflow: hidden;
-    transform: translateY(4rem) scale(0.74);
+    transform: translateY(7.5rem) scale(0.52);
     box-shadow:
       0 0 1.8rem rgba(246, 240, 198, 0.46),
       0 0 4rem rgba(136, 161, 255, 0.22);
@@ -548,7 +548,7 @@
   .tree {
     right: 12.8%;
     bottom: 7.45rem;
-    z-index: 1;
+    z-index: 2;
     width: 12.4rem;
     height: 17rem;
     transform-origin: 50% 100%;
@@ -623,7 +623,7 @@
     left: -5%;
     right: -5%;
     bottom: -7rem;
-    z-index: 0;
+    z-index: 1;
     height: 16rem;
     border-radius: 50% 50% 0 0;
     background: #cbe6d5;
@@ -632,7 +632,7 @@
 
   .person {
     bottom: 5.4rem;
-    z-index: 1;
+    z-index: 2;
     width: 4.3rem;
     height: 8.2rem;
     transform-origin: 50% 100%;
@@ -789,7 +789,7 @@
   .ball {
     left: 19%;
     bottom: 9rem;
-    z-index: 1;
+    z-index: 2;
     width: 2.7rem;
     height: 2.7rem;
     border-radius: 50%;
@@ -2150,6 +2150,12 @@
       .campfire {
         transform: translateY(0) scale(0.86);
       }
+
+      .auth-container {
+        border-color: rgba(255, 255, 255, 0.2);
+        background: rgba(12, 25, 38, 0.74);
+        box-shadow: 0 24px 74px rgba(0, 0, 0, 0.36);
+      }
     }
 
     .person,
@@ -2159,6 +2165,11 @@
 
     .auth-container {
       padding: 22px 22px 70px;
+      border-color: rgba(255, 255, 255, 0.58);
+      background: rgba(255, 255, 255, 0.74);
+      box-shadow: 0 24px 72px rgba(18, 52, 59, 0.18);
+      backdrop-filter: blur(18px) saturate(1.08);
+      -webkit-backdrop-filter: blur(18px) saturate(1.08);
 
       .language-menu {
         right: 16px;
