@@ -2153,7 +2153,7 @@
 
       .auth-container {
         border-color: rgba(255, 255, 255, 0.2);
-        background: rgba(12, 25, 38, 0.68);
+        background: rgba(12, 25, 38, 0.56);
         box-shadow: 0 24px 74px rgba(0, 0, 0, 0.36);
       }
     }
@@ -2166,7 +2166,7 @@
     .auth-container {
       padding: 22px 22px 70px;
       border-color: rgba(255, 255, 255, 0.58);
-      background: rgba(255, 255, 255, 0.68);
+      background: rgba(255, 255, 255, 0.56);
       box-shadow: 0 24px 72px rgba(18, 52, 59, 0.18);
       backdrop-filter: blur(18px) saturate(1.08);
       -webkit-backdrop-filter: blur(18px) saturate(1.08);
@@ -2195,7 +2195,7 @@
     @supports (-webkit-touch-callout: none) {
       .auth-container {
         border-color: rgba(255, 255, 255, 0.64);
-        background: rgba(255, 255, 255, 0.52);
+        background: rgba(255, 255, 255, 0.38);
         box-shadow: 0 22px 62px rgba(18, 52, 59, 0.14);
         backdrop-filter: blur(4px) saturate(1.02);
         -webkit-backdrop-filter: blur(4px) saturate(1.02);
@@ -2204,7 +2204,7 @@
       &.night-mode {
         .auth-container {
           border-color: rgba(255, 255, 255, 0.24);
-          background: rgba(12, 25, 38, 0.56);
+          background: rgba(12, 25, 38, 0.46);
           box-shadow: 0 22px 68px rgba(0, 0, 0, 0.34);
         }
       }
