@@ -1258,6 +1258,18 @@
       background 2.2s ease,
       box-shadow 2.2s ease;
 
+    &:has(.demo-notice) {
+      padding-bottom: 124px;
+
+      .language-menu {
+        bottom: 64px;
+      }
+
+      .creator-credit {
+        bottom: 64px;
+      }
+    }
+
     .language-menu {
       position: absolute;
       right: 20px;
@@ -1455,9 +1467,14 @@
     }
 
     .demo-notice {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 16px;
+      z-index: 2;
       border: 1px solid #f0e68c;
       border-radius: 6px;
-      padding: 10px 12px;
+      padding: 8px 12px;
       background: #fffacd;
       text-align: center;
 
@@ -2193,6 +2210,19 @@
         -webkit-backdrop-filter: blur(10px) saturate(1.06);
       }
 
+      &:has(.demo-notice) {
+        padding-bottom: 128px;
+
+        &::after {
+          height: 128px;
+        }
+
+        .language-menu,
+        .creator-credit {
+          bottom: 62px;
+        }
+      }
+
       .language-menu {
         right: 16px;
         bottom: 16px;
@@ -2202,6 +2232,12 @@
         left: 16px;
         bottom: 16px;
         z-index: 2;
+      }
+
+      .demo-notice {
+        left: 16px;
+        right: 16px;
+        bottom: 14px;
       }
 
       .auth-header {
