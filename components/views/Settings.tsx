@@ -122,7 +122,7 @@ export default function Settings() {
           <div className="setting-item">
             <div>
               <label>{t('settings.version')}</label>
-              <p>1.0.0</p>
+              <p>0.1.0 beta</p>
             </div>
           </div>
         </section>
