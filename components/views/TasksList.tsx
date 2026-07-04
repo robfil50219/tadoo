@@ -18,7 +18,7 @@ import './TasksList.scss';
 export default function TasksList() {
   const shouldReduceMotion = useReducedMotion() ?? false;
   const { state, addTodo, updateTodo, toggleTodo, deleteTodo, approveTodo } = useTodoStore();
-  const { t } = useLanguage();
+  const { locale, t } = useLanguage();
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [selectedAssignee, setSelectedAssignee] = useState(state.members[0]?.id || '');
   const [dueDateTime, setDueDateTime] = useState('');
@@ -72,8 +72,8 @@ export default function TasksList() {
   };
 
   const formatDue = (value?: string) => {
-    if (!value) return 'No due date';
-    return new Intl.DateTimeFormat('nb-NO', {
+    if (!value) return t('tasks.noDueDate');
+    return new Intl.DateTimeFormat(locale, {
       weekday: 'short',
       day: '2-digit',
       month: 'short',
@@ -92,8 +92,8 @@ export default function TasksList() {
       animate="visible"
     >
       <motion.div className="tasks-header" layout>
-        <h2>Tasks</h2>
-        <p className="subtitle">{"Manage your family's to-do list"}</p>
+        <h2>{t('tasks.title')}</h2>
+        <p className="subtitle">{t('tasks.subtitle')}</p>
       </motion.div>
 
       <motion.div
@@ -107,14 +107,14 @@ export default function TasksList() {
               type="text"
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
-              placeholder={t('new-task')}
+              placeholder={t('tasks.newTask')}
               className="task-input"
             />
             <select
               value={selectedAssignee}
               onChange={(e) => setSelectedAssignee(e.target.value)}
               className="assignee-select"
-              aria-label="Task assignee"
+              aria-label={t('tasks.assignee')}
             >
               {state.members.map((member) => (
                 <option key={member.id} value={member.id}>
@@ -127,29 +127,29 @@ export default function TasksList() {
               value={dueDateTime}
               onChange={(e) => setDueDateTime(e.target.value)}
               className="due-input"
-              aria-label="Task due date and time"
+              aria-label={t('tasks.dueDateTime')}
             />
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as TaskCategory)}
               className="category-select"
-              aria-label="Task category"
+              aria-label={t('tasks.category')}
             >
-              <option value="home">Home</option>
-              <option value="school">School</option>
-              <option value="activity">Activity</option>
-              <option value="health">Health</option>
-              <option value="shopping">Shopping</option>
+              <option value="home">{t('tasks.category.home')}</option>
+              <option value="school">{t('tasks.category.school')}</option>
+              <option value="activity">{t('tasks.category.activity')}</option>
+              <option value="health">{t('tasks.category.health')}</option>
+              <option value="shopping">{t('tasks.category.shopping')}</option>
             </select>
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value as TaskPriority)}
               className="priority-select"
-              aria-label="Task priority"
+              aria-label={t('tasks.priority')}
             >
-              <option value="low">Low</option>
-              <option value="normal">Normal</option>
-              <option value="high">High</option>
+              <option value="low">{t('tasks.priority.low')}</option>
+              <option value="normal">{t('tasks.priority.normal')}</option>
+              <option value="high">{t('tasks.priority.high')}</option>
             </select>
             <label className="approval-toggle">
               <input
@@ -157,7 +157,7 @@ export default function TasksList() {
                 checked={requiresApproval}
                 onChange={(e) => setRequiresApproval(e.target.checked)}
               />
-              Approval
+              {t('tasks.approval')}
             </label>
             <motion.button
               type="submit"
@@ -165,7 +165,7 @@ export default function TasksList() {
               whileTap={subtleButtonTap(shouldReduceMotion)}
               whileHover={subtleButtonHover(shouldReduceMotion)}
             >
-              {t('add-task')}
+              {t('tasks.addTask')}
             </motion.button>
           </div>
         </form>
@@ -183,7 +183,7 @@ export default function TasksList() {
               exit="exit"
               layout
             >
-              <p>No tasks yet - add the first family mission!</p>
+              <p>{t('tasks.noTasks')}</p>
             </motion.div>
           ) : (
             <motion.div key="task-groups" className="task-groups" layout>
@@ -231,7 +231,12 @@ export default function TasksList() {
                               checked={task.completed}
                               onChange={() => toggleTodo(task)}
                               className="task-checkbox"
-                              aria-label={`Mark ${task.title} as ${task.completed ? 'not completed' : 'completed'}`}
+                              aria-label={t('tasks.toggleCompletion', {
+                                task: task.title,
+                                state: task.completed
+                                  ? t('tasks.notCompletedState')
+                                  : t('tasks.completedState'),
+                              })}
                               whileTap={subtleButtonTap(shouldReduceMotion)}
                             />
                             <div className="task-body">
@@ -242,18 +247,18 @@ export default function TasksList() {
                                   onBlur={() => finishEdit(task)}
                                   onKeyDown={(e) => {
                                     if (e.key === 'Enter') finishEdit(task);
-                                    if (e.key === 'Escape') setEditingId(null);
-                                  }}
-                                  className="edit-input"
-                                  aria-label="Edit task title"
-                                  autoFocus
-                                />
+                                  if (e.key === 'Escape') setEditingId(null);
+                                }}
+                                className="edit-input"
+                                aria-label={t('tasks.editTask')}
+                                autoFocus
+                              />
                               ) : (
                                 <motion.button
                                   type="button"
                                   className="task-title"
                                   onClick={() => beginEdit(task)}
-                                  title={t('edit-task')}
+                                  title={t('tasks.editTask')}
                                   whileTap={subtleButtonTap(shouldReduceMotion)}
                                 >
                                   {task.title}
@@ -261,11 +266,13 @@ export default function TasksList() {
                               )}
                               <div className="task-meta">
                                 <span>{formatDue(task.dueDateTime)}</span>
-                                <span className={`priority priority-${task.priority}`}>{task.priority}</span>
-                                <span>{task.category}</span>
-                                {task.completed && <span className="complete-label">Done</span>}
+                                <span className={`priority priority-${task.priority}`}>
+                                  {t(`tasks.priority.${task.priority}`)}
+                                </span>
+                                <span>{t(`tasks.category.${task.category}`)}</span>
+                                {task.completed && <span className="complete-label">{t('common.done')}</span>}
                                 {task.requiresApproval && (
-                                  <span>{task.approvedById ? 'Approved' : 'Needs approval'}</span>
+                                  <span>{task.approvedById ? t('tasks.approved') : t('tasks.needsApproval')}</span>
                                 )}
                               </div>
                             </div>
@@ -273,7 +280,7 @@ export default function TasksList() {
                               <motion.button
                                 type="button"
                                 className="task-menu-button"
-                                aria-label="Open task menu"
+                                aria-label={t('tasks.openMenu')}
                                 {...(openMenuId === task.id ? { 'aria-expanded': 'true' } : { 'aria-expanded': 'false' })}
                                 onClick={() => setOpenMenuId(openMenuId === task.id ? null : task.id)}
                                 whileTap={subtleButtonTap(shouldReduceMotion)}
@@ -296,7 +303,7 @@ export default function TasksList() {
                                       onClick={() => beginEdit(task)}
                                       whileTap={subtleButtonTap(shouldReduceMotion)}
                                     >
-                                      Edit
+                                      {t('common.edit')}
                                     </motion.button>
                                     {task.requiresApproval && task.completed && !task.approvedById && adultMember && (
                                       <motion.button
@@ -308,7 +315,7 @@ export default function TasksList() {
                                         }}
                                         whileTap={subtleButtonTap(shouldReduceMotion)}
                                       >
-                                        Approve
+                                        {t('common.approve')}
                                       </motion.button>
                                     )}
                                     <motion.button
@@ -321,7 +328,7 @@ export default function TasksList() {
                                       }}
                                       whileTap={subtleButtonTap(shouldReduceMotion)}
                                     >
-                                      Delete
+                                      {t('common.delete')}
                                     </motion.button>
                                   </motion.div>
                                 )}

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useTodoStore } from '@/lib/store/todoStore';
 import type { AppUser } from '@/lib/hooks/useAuth';
+import { useLanguage } from '@/lib/hooks/useLanguage';
 import { fadeInUpVariants, subtleButtonHover, subtleButtonTap } from '@/lib/animations';
 import './FamilySetup.scss';
 
@@ -17,6 +18,7 @@ type SetupMode = 'create' | 'join';
 export default function FamilySetup({ user }: FamilySetupProps) {
   const shouldReduceMotion = useReducedMotion() ?? false;
   const { createFamilyForUser, joinFamilyByCode, familyLoading, familyError } = useTodoStore();
+  const { t } = useLanguage();
   const [mode, setMode] = useState<SetupMode>('create');
   const [familyName, setFamilyName] = useState('');
   const [displayName, setDisplayName] = useState(user.name || '');
@@ -37,7 +39,7 @@ export default function FamilySetup({ user }: FamilySetupProps) {
     setLocalError('');
 
     if (!familyName.trim() || !displayName.trim()) {
-      setLocalError('Skriv inn familienavn og ditt navn.');
+      setLocalError(t('familySetup.missingCreateFields'));
       return;
     }
 
@@ -53,7 +55,7 @@ export default function FamilySetup({ user }: FamilySetupProps) {
     setLocalError('');
 
     if (!inviteCode.trim() || !displayName.trim()) {
-      setLocalError('Skriv inn invitasjonskode og ditt navn.');
+      setLocalError(t('familySetup.missingJoinFields'));
       return;
     }
 
@@ -73,12 +75,9 @@ export default function FamilySetup({ user }: FamilySetupProps) {
         animate="visible"
       >
         <Image src="/images/tadoologo2.png" alt="Tadoo logo" width={118} height={118} priority />
-        <p className="eyebrow">Velkommen til Tadoo</p>
-        <h1>Sett opp familien din</h1>
-        <p>
-          Opprett en ny familie eller bli med i en eksisterende familie med invitasjonskode.
-          Data lagres trygt i Firebase og synkroniseres mellom familiemedlemmer.
-        </p>
+        <p className="eyebrow">{t('familySetup.eyebrow')}</p>
+        <h1>{t('familySetup.title')}</h1>
+        <p>{t('familySetup.description')}</p>
 
         <div className="setup-tabs">
           <motion.button
@@ -87,7 +86,7 @@ export default function FamilySetup({ user }: FamilySetupProps) {
             onClick={() => setMode('create')}
             whileTap={subtleButtonTap(shouldReduceMotion)}
           >
-            Opprett familie
+            {t('familySetup.createTab')}
           </motion.button>
           <motion.button
             type="button"
@@ -95,7 +94,7 @@ export default function FamilySetup({ user }: FamilySetupProps) {
             onClick={() => setMode('join')}
             whileTap={subtleButtonTap(shouldReduceMotion)}
           >
-            Bli med
+            {t('familySetup.joinTab')}
           </motion.button>
         </div>
 
@@ -110,21 +109,21 @@ export default function FamilySetup({ user }: FamilySetupProps) {
               animate="visible"
               exit="exit"
             >
-              <label htmlFor="familyName">Familienavn</label>
+              <label htmlFor="familyName">{t('familySetup.familyName')}</label>
               <input
                 id="familyName"
                 value={familyName}
                 onChange={(event) => setFamilyName(event.target.value)}
-                placeholder="F.eks. Familien Hansen"
+                placeholder={t('familySetup.familyNamePlaceholder')}
                 required
               />
 
-              <label htmlFor="displayName">Ditt navn</label>
+              <label htmlFor="displayName">{t('familySetup.displayName')}</label>
               <input
                 id="displayName"
                 value={displayName}
                 onChange={(event) => setDisplayName(event.target.value)}
-                placeholder="Navnet familien ser"
+                placeholder={t('familySetup.displayNamePlaceholder')}
                 required
               />
 
@@ -138,7 +137,7 @@ export default function FamilySetup({ user }: FamilySetupProps) {
                 whileTap={familyLoading ? undefined : subtleButtonTap(shouldReduceMotion)}
                 whileHover={familyLoading ? undefined : subtleButtonHover(shouldReduceMotion)}
               >
-                {familyLoading ? 'Oppretter...' : 'Opprett familie'}
+                {familyLoading ? t('familySetup.creating') : t('familySetup.createButton')}
               </motion.button>
             </motion.form>
           ) : (
@@ -151,21 +150,21 @@ export default function FamilySetup({ user }: FamilySetupProps) {
               animate="visible"
               exit="exit"
             >
-              <label htmlFor="inviteCode">Invitasjonskode</label>
+              <label htmlFor="inviteCode">{t('familySetup.inviteCode')}</label>
               <input
                 id="inviteCode"
                 value={inviteCode}
                 onChange={(event) => setInviteCode(event.target.value.toUpperCase())}
-                placeholder="ABC12345"
+                placeholder={t('familySetup.inviteCodePlaceholder')}
                 required
               />
 
-              <label htmlFor="joinDisplayName">Ditt navn</label>
+              <label htmlFor="joinDisplayName">{t('familySetup.displayName')}</label>
               <input
                 id="joinDisplayName"
                 value={displayName}
                 onChange={(event) => setDisplayName(event.target.value)}
-                placeholder="Navnet familien ser"
+                placeholder={t('familySetup.displayNamePlaceholder')}
                 required
               />
 
@@ -179,7 +178,7 @@ export default function FamilySetup({ user }: FamilySetupProps) {
                 whileTap={familyLoading ? undefined : subtleButtonTap(shouldReduceMotion)}
                 whileHover={familyLoading ? undefined : subtleButtonHover(shouldReduceMotion)}
               >
-                {familyLoading ? 'Kobler til...' : 'Bli med i familie'}
+                {familyLoading ? t('familySetup.joining') : t('familySetup.joinButton')}
               </motion.button>
             </motion.form>
           )}

@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { motion, useReducedMotion } from 'motion/react';
 import { subtleButtonHover, subtleButtonTap } from '@/lib/animations';
+import { useLanguage } from '@/lib/hooks/useLanguage';
+import LanguageSwitcher from './LanguageSwitcher';
 
 import './Navigation.scss';
 
@@ -27,15 +29,17 @@ export default function Navigation<TView extends string>({
   onToggleMobileMenu,
 }: NavigationProps<TView>) {
   const shouldReduceMotion = useReducedMotion() ?? false;
+  const { t } = useLanguage();
 
   return (
     <nav className="navigation">
       <div className="nav-header">
         <Image className="nav-logo" src="/images/tadoologo2.png" alt="Tadoo logo" width={128} height={128} priority />
+        <LanguageSwitcher className="nav-language-switcher" menuPlacement="bottom" />
         <motion.button
           className="nav-toggle"
           onClick={onToggleMobileMenu}
-          aria-label="Toggle navigation menu"
+          aria-label={t('nav.toggleMenu')}
           aria-expanded={showMobileMenu}
           whileTap={subtleButtonTap(shouldReduceMotion)}
         >

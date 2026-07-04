@@ -1,68 +1,45 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import {
+  defaultLanguage,
+  languageLocales,
+  languageOptions,
+  translations,
+  type AppLanguage,
+} from '@/lib/i18n/translations';
 
-export type AppLanguage = 'en' | 'no' | 'sv' | 'da';
+export type { AppLanguage };
 
-const translations: Record<AppLanguage, Record<string, string>> = {
-  en: {
-    dashboard: 'Dashboard',
-    tasks: 'Tasks',
-    calendar: 'Calendar',
-    family: 'Family',
-    chat: 'Chat',
-    location: 'Location',
-    settings: 'Settings',
-    'add-task': 'Add Task',
-    'edit-task': 'Edit Task',
-    'delete-task': 'Delete Task',
-    'mark-complete': 'Mark Complete',
-    'new-task': 'New task...',
-  },
-  no: {
-    dashboard: 'Oversikt',
-    tasks: 'Oppgaver',
-    calendar: 'Kalender',
-    family: 'Familie',
-    chat: 'Chat',
-    location: 'Lokasjon',
-    settings: 'Innstillinger',
-    'add-task': 'Legg til oppgave',
-    'edit-task': 'Rediger oppgave',
-    'delete-task': 'Slett oppgave',
-    'mark-complete': 'Merk som fullført',
-    'new-task': 'Ny oppgave...',
-  },
-  sv: {
-    dashboard: 'Instrumentbräde',
-    tasks: 'Uppgifter',
-    calendar: 'Kalender',
-    family: 'Familj',
-    chat: 'Chatt',
-    location: 'Plats',
-    settings: 'Inställningar',
-    'add-task': 'Lägg till uppgift',
-    'edit-task': 'Redigera uppgift',
-    'delete-task': 'Ta bort uppgift',
-    'mark-complete': 'Markera som färdig',
-    'new-task': 'Ny uppgift...',
-  },
-  da: {
-    dashboard: 'Instrumentbræt',
-    tasks: 'Opgaver',
-    calendar: 'Kalender',
-    family: 'Familie',
-    chat: 'Chat',
-    location: 'Placering',
-    settings: 'Indstillinger',
-    'add-task': 'Tilføj opgave',
-    'edit-task': 'Rediger opgave',
-    'delete-task': 'Slet opgave',
-    'mark-complete': 'Markér som fuldført',
-    'new-task': 'Ny opgave...',
-  },
+type TranslationValues = Record<string, string | number>;
+
+const languageStorageKey = 'tadoo-language';
+
+const isAppLanguage = (value: unknown): value is AppLanguage =>
+  value === 'en' || value === 'no' || value === 'sv' || value === 'da';
+
+const readStoredLanguage = (): AppLanguage | null => {
+  if (typeof window === 'undefined') return null;
+
+  const stored = window.localStorage.getItem(languageStorageKey);
+  if (!stored) return null;
+  if (isAppLanguage(stored)) return stored;
+
+  try {
+    const parsed = JSON.parse(stored) as { state?: { language?: unknown }; language?: unknown };
+    if (isAppLanguage(parsed.language)) return parsed.language;
+    if (isAppLanguage(parsed.state?.language)) return parsed.state.language;
+  } catch {
+    return null;
+  }
+
+  return null;
+};
+
+const writeStoredLanguage = (language: AppLanguage) => {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem(languageStorageKey, language);
 };
 
 interface LanguageStoreState {
@@ -70,36 +47,47 @@ interface LanguageStoreState {
   setLanguage: (language: AppLanguage) => void;
 }
 
-const useLanguageStore = create<LanguageStoreState>()(
-  persist(
-    (set) => ({
-      language: 'no',
-      setLanguage: (language) => set({ language }),
-    }),
-    {
-      name: 'tadoo-language',
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
-);
+const useLanguageStore = create<LanguageStoreState>()((set) => ({
+  language: defaultLanguage,
+  setLanguage: (language) => {
+    writeStoredLanguage(language);
+    set({ language });
+  },
+}));
+
+const interpolate = (value: string, replacements?: TranslationValues) => {
+  if (!replacements) return value;
+
+  return Object.entries(replacements).reduce(
+    (text, [key, replacement]) => text.split(`{{${key}}}`).join(String(replacement)),
+    value
+  );
+};
 
 export function useLanguage() {
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
 
+  useEffect(() => {
+    const storedLanguage = readStoredLanguage();
+    if (storedLanguage && storedLanguage !== useLanguageStore.getState().language) {
+      useLanguageStore.getState().setLanguage(storedLanguage);
+    }
+  }, []);
+
   const t = useCallback(
-    (key: string): string => {
-      return translations[language][key] || translations['en'][key] || key;
+    (key: string, replacements?: TranslationValues): string => {
+      const translated = translations[language][key] || translations.en[key] || key;
+      return interpolate(translated, replacements);
     },
     [language]
   );
 
-  const locale = language === 'no' ? 'nb-NO' : language === 'sv' ? 'sv-SE' : language === 'da' ? 'da-DK' : 'en-US';
-
   return {
     language,
+    languageOptions,
+    locale: languageLocales[language],
     setLanguage,
     t,
-    locale,
   };
 }

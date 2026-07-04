@@ -56,17 +56,8 @@
         font-size: 14px;
       }
 
-      .language-select {
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        font-size: 14px;
-        cursor: pointer;
-
-        &:focus {
-          outline: none;
-          border-color: #007c89;
-        }
+      .settings-language-switcher {
+        min-width: 150px;
       }
 
       .logout-button {

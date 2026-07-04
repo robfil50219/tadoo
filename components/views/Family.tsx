@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { FamilyRole, useTodoStore } from '@/lib/store/todoStore';
+import { useLanguage } from '@/lib/hooks/useLanguage';
 import './Family.scss';
 
 export default function Family() {
   const { state, addMember, updateFamilyName, createInvite } = useTodoStore();
+  const { t } = useLanguage();
   const [familyName, setFamilyName] = useState(state.familyName);
   const [memberName, setMemberName] = useState('');
   const [memberRole, setMemberRole] = useState<FamilyRole>('child');
@@ -43,24 +45,24 @@ export default function Family() {
   return (
     <div className="family-view">
       <div className="family-header">
-        <h2>Family</h2>
-        <p className="subtitle">Manage members and invitations</p>
+        <h2>{t('family.title')}</h2>
+        <p className="subtitle">{t('family.subtitle')}</p>
       </div>
 
       <form className="family-name-form" onSubmit={saveFamilyName}>
-        <label htmlFor="familyName">Family name</label>
+        <label htmlFor="familyName">{t('family.familyName')}</label>
         <div className="inline-form">
           <input
             id="familyName"
             value={familyName}
             onChange={(event) => setFamilyName(event.target.value)}
           />
-          <button type="submit">Save</button>
+          <button type="submit">{t('common.save')}</button>
         </div>
       </form>
 
       <section className="family-section">
-        <h3>Members</h3>
+        <h3>{t('family.members')}</h3>
         <div className="member-grid">
           {state.members.map((member) => (
             <article className="member-card" key={member.id}>
@@ -72,7 +74,7 @@ export default function Family() {
               </div>
               <div>
                 <h4>{member.name}</h4>
-                <p>{member.role}</p>
+                <p>{t(`common.${member.role}`)}</p>
                 <span>{member.locationLabel}</span>
               </div>
             </article>
@@ -81,49 +83,49 @@ export default function Family() {
       </section>
 
       <section className="family-section">
-        <h3>Add member</h3>
+        <h3>{t('family.addMember')}</h3>
         <form className="member-form" onSubmit={submitMember}>
           <input
             value={memberName}
             onChange={(event) => setMemberName(event.target.value)}
-            placeholder="Name"
+            placeholder={t('family.namePlaceholder')}
             required
           />
           <select
             value={memberRole}
             onChange={(event) => setMemberRole(event.target.value as FamilyRole)}
-            aria-label="Member role"
+            aria-label={t('family.memberRole')}
           >
-            <option value="adult">Adult</option>
-            <option value="child">Child</option>
+            <option value="adult">{t('common.adult')}</option>
+            <option value="child">{t('common.child')}</option>
           </select>
           <input
             type="color"
             value={memberColor}
             onChange={(event) => setMemberColor(event.target.value)}
-            aria-label="Member color"
+            aria-label={t('family.memberColor')}
           />
-          <button type="submit">Add</button>
+          <button type="submit">{t('common.add')}</button>
         </form>
       </section>
 
       <section className="family-section">
-        <h3>Invites</h3>
+        <h3>{t('family.invites')}</h3>
         <form className="member-form" onSubmit={submitInvite}>
           <input
             value={inviteRecipient}
             onChange={(event) => setInviteRecipient(event.target.value)}
-            placeholder="Email or phone"
+            placeholder={t('family.inviteRecipientPlaceholder')}
           />
           <select
             value={inviteRole}
             onChange={(event) => setInviteRole(event.target.value as FamilyRole)}
-            aria-label="Invite role"
+            aria-label={t('family.inviteRole')}
           >
-            <option value="adult">Adult</option>
-            <option value="child">Child</option>
+            <option value="adult">{t('common.adult')}</option>
+            <option value="child">{t('common.child')}</option>
           </select>
-          <button type="submit">Create invite</button>
+          <button type="submit">{t('family.createInvite')}</button>
         </form>
 
         {state.invites.length > 0 && (
@@ -131,8 +133,8 @@ export default function Family() {
             {state.invites.map((invite) => (
               <div className="invite-item" key={invite.id}>
                 <strong>{invite.code}</strong>
-                <span>{invite.role}</span>
-                <span>{invite.recipient || 'No recipient'}</span>
+                <span>{t(`common.${invite.role}`)}</span>
+                <span>{invite.recipient || t('common.noRecipient')}</span>
                 {origin && (
                   <span className="invite-link">
                     {`${origin}/?invite=${invite.code}`}

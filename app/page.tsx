@@ -36,13 +36,13 @@ export default function Home() {
   const { t } = useLanguage();
 
   const navItems: { id: AppView; label: string }[] = [
-    { id: 'dashboard', label: t('dashboard') },
-    { id: 'tasks', label: t('tasks') },
-    { id: 'calendar', label: t('calendar') },
-    { id: 'family', label: t('family') },
-    { id: 'chat', label: t('chat') },
-    { id: 'location', label: t('location') },
-    { id: 'settings', label: t('settings') },
+    { id: 'dashboard', label: t('nav.dashboard') },
+    { id: 'tasks', label: t('nav.tasks') },
+    { id: 'calendar', label: t('nav.calendar') },
+    { id: 'family', label: t('nav.family') },
+    { id: 'chat', label: t('nav.chat') },
+    { id: 'location', label: t('nav.location') },
+    { id: 'settings', label: t('nav.settings') },
   ];
 
   useEffect(() => {
@@ -96,7 +96,7 @@ export default function Home() {
         animate="visible"
         exit="exit"
       >
-        Loading...
+        {t('common.loading')}
       </motion.div>
     );
   } else if (!user) {

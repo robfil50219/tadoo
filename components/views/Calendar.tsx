@@ -23,7 +23,7 @@ const isValidDate = (date: Date) => !Number.isNaN(date.getTime());
 
 export default function Calendar() {
   const { state } = useTodoStore();
-  const { locale } = useLanguage();
+  const { locale, t } = useLanguage();
   const [displayMonth, setDisplayMonth] = useState(() => startOfMonth(new Date()));
   const [selectedDate, setSelectedDate] = useState(() => new Date());
 
@@ -84,7 +84,7 @@ export default function Calendar() {
 
   const memberById = (id: string) => state.members.find((member) => member.id === id);
 
-  const memberName = (id: string) => memberById(id)?.name || 'Unassigned';
+  const memberName = (id: string) => memberById(id)?.name || t('common.unassigned');
 
   const memberColorClass = (id: string) => memberColorClassName(memberById(id)?.color);
 
@@ -100,7 +100,7 @@ export default function Calendar() {
     }).format(date);
 
   const formatTime = (value?: string) => {
-    if (!value) return 'No time';
+    if (!value) return t('calendar.noTime');
     return new Intl.DateTimeFormat(locale, {
       hour: '2-digit',
       minute: '2-digit',
@@ -108,7 +108,7 @@ export default function Calendar() {
   };
 
   const formatTaskStamp = (task: TodoItem, showDate: boolean) => {
-    if (!task.dueDateTime) return showDate ? 'No date' : 'No time';
+    if (!task.dueDateTime) return showDate ? t('calendar.noDate') : t('calendar.noTime');
     if (!showDate) return formatTime(task.dueDateTime);
 
     return new Intl.DateTimeFormat(locale, {
@@ -167,10 +167,12 @@ export default function Calendar() {
             aria-hidden="true"
           />
           <span>{memberName(task.assigneeId)}</span>
-          <span>{task.category}</span>
+          <span>{t(`tasks.category.${task.category}`)}</span>
         </div>
       </div>
-      <span className={`priority-badge priority-${task.priority}`}>{task.priority}</span>
+      <span className={`priority-badge priority-${task.priority}`}>
+        {t(`tasks.priority.${task.priority}`)}
+      </span>
     </article>
   );
 
@@ -178,18 +180,18 @@ export default function Calendar() {
     <div className="calendar-view">
       <div className="calendar-header">
         <div>
-          <h2>Calendar</h2>
-          <p className="subtitle">Plan and review family tasks by date</p>
+          <h2>{t('calendar.title')}</h2>
+          <p className="subtitle">{t('calendar.subtitle')}</p>
         </div>
-        <div className="calendar-actions" aria-label="Calendar navigation">
+        <div className="calendar-actions" aria-label={t('calendar.navigation')}>
           <button type="button" onClick={() => moveMonth(-1)}>
-            Previous
+            {t('common.previous')}
           </button>
           <button type="button" onClick={selectToday}>
-            Today
+            {t('common.today')}
           </button>
           <button type="button" onClick={() => moveMonth(1)}>
-            Next
+            {t('common.next')}
           </button>
         </div>
       </div>
@@ -199,7 +201,7 @@ export default function Calendar() {
           <div className="month-header">
             <div>
               <h3>{formatMonth(displayMonth)}</h3>
-              <p>{monthTaskCount} scheduled tasks this month</p>
+              <p>{t('calendar.monthTaskCount', { count: monthTaskCount })}</p>
             </div>
           </div>
 
@@ -220,9 +222,9 @@ export default function Calendar() {
                   key={key}
                   className={dayClassName(day, tasks.length)}
                   onClick={() => selectDay(day)}
-                  aria-label={`${key === selectedKey ? 'Selected, ' : ''}${formatSelectedDate(
+                  aria-label={`${key === selectedKey ? `${t('calendar.selected')}, ` : ''}${formatSelectedDate(
                     day
-                  )}, ${tasks.length} tasks`}
+                  )}, ${t('calendar.dayTaskCount', { count: tasks.length })}`}
                 >
                   <span className="day-number">{day.getDate()}</span>
                   {tasks.length > 0 && (
@@ -240,7 +242,9 @@ export default function Calendar() {
                         {tasks.slice(0, 2).map((task) => (
                           <span key={task.id}>{task.title}</span>
                         ))}
-                        {tasks.length > 2 && <span>+{tasks.length - 2} more</span>}
+                        {tasks.length > 2 && (
+                          <span>{t('calendar.moreTasks', { count: tasks.length - 2 })}</span>
+                        )}
                       </span>
                     </>
                   )}
@@ -256,13 +260,13 @@ export default function Calendar() {
               <time dateTime={selectedKey}>{formatSelectedDate(selectedDate)}</time>
               <p>
                 {selectedTasks.length === 1
-                  ? '1 scheduled task'
-                  : `${selectedTasks.length} scheduled tasks`}
+                  ? t('calendar.oneScheduledTask')
+                  : t('calendar.scheduledTasks', { count: selectedTasks.length })}
               </p>
             </div>
 
             {selectedTasks.length === 0 ? (
-              <p className="empty-state">No tasks scheduled for this day.</p>
+              <p className="empty-state">{t('calendar.noScheduledTasks')}</p>
             ) : (
               <div className="agenda-list">{selectedTasks.map((task) => renderTask(task))}</div>
             )}
@@ -270,16 +274,16 @@ export default function Calendar() {
 
           <section className="agenda-panel">
             <div className="agenda-header">
-              <h3>Unscheduled</h3>
+              <h3>{t('calendar.unscheduled')}</h3>
               <p>
                 {unscheduledTasks.length === 1
-                  ? '1 task without a date'
-                  : `${unscheduledTasks.length} tasks without a date`}
+                  ? t('calendar.oneTaskWithoutDate')
+                  : t('calendar.tasksWithoutDate', { count: unscheduledTasks.length })}
               </p>
             </div>
 
             {unscheduledTasks.length === 0 ? (
-              <p className="empty-state">Every task has a date.</p>
+              <p className="empty-state">{t('calendar.everyTaskHasDate')}</p>
             ) : (
               <div className="agenda-list compact">
                 {unscheduledTasks.slice(0, 5).map((task) => renderTask(task, true))}
