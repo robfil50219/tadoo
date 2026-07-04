@@ -29,42 +29,6 @@
       flex-shrink: 0;
     }
 
-    .nav-language-switcher {
-      justify-items: stretch;
-      width: 100%;
-
-      .language-trigger {
-        width: 100%;
-        min-width: 0;
-        border-color: rgba(255, 255, 255, 0.16);
-        background: rgba(255, 255, 255, 0.12);
-        color: #f4fbfb;
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.18);
-          color: #ffffff;
-        }
-      }
-
-      .language-options {
-        left: 0;
-        right: auto;
-        border-color: rgba(255, 255, 255, 0.16);
-        background: #0e5e68;
-
-        button {
-          color: #f4fbfb;
-
-          &:hover,
-          &.active {
-            background: rgba(255, 255, 255, 0.14);
-            color: #ffffff;
-          }
-        }
-      }
-    }
-
     .nav-toggle {
       display: none;
       background: none;
@@ -151,16 +115,6 @@
       .nav-logo {
         width: 48px;
         height: auto;
-      }
-
-      .nav-language-switcher {
-        width: auto;
-        margin-left: auto;
-
-        .language-trigger {
-          min-width: 94px;
-          padding: 8px 9px;
-        }
       }
 
       .nav-toggle {
