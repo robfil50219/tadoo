@@ -75,6 +75,11 @@ export default function Navigation<TView extends string>({
           </li>
         ))}
       </ul>
+      <div className="nav-footer" aria-label="Tadoo version and credits">
+        <strong>Tadoo Alpha 0.4.0</strong>
+        <span>© 2026 Robert Filep</span>
+        <span>Made with ❤️ in Trondheim, Norway</span>
+      </div>
     </nav>
   );
 }

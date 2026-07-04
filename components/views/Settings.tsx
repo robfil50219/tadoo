@@ -113,16 +113,32 @@ export default function Settings() {
 
         <section className="settings-group">
           <h3>{t('settings.about')}</h3>
-          <div className="setting-item">
+          <div className="setting-item setting-item-stacked about-summary">
             <div>
               <label>{t('settings.appName')}</label>
               <p>{t('settings.appDescription')}</p>
+              <p>{t('settings.aboutFounder')}</p>
+              <p>{t('settings.aboutAlpha')}</p>
             </div>
           </div>
           <div className="setting-item">
             <div>
               <label>{t('settings.version')}</label>
-              <p>v0.4.0-alpha</p>
+              <p>Tadoo Alpha 0.4.0</p>
+            </div>
+          </div>
+          <div className="setting-item setting-item-stacked roadmap-list">
+            <div>
+              <label>{t('settings.roadmapTitle')}</label>
+              <p>{t('settings.roadmapIntro')}</p>
+              <ul>
+                <li>{t('settings.roadmapAi')}</li>
+                <li>{t('settings.roadmapFamily')}</li>
+                <li>{t('settings.roadmapStats')}</li>
+                <li>{t('settings.roadmapRewards')}</li>
+                <li>{t('settings.roadmapDevices')}</li>
+              </ul>
+              <p>{t('settings.aboutThanks')}</p>
             </div>
           </div>
         </section>
