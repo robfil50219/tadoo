@@ -100,6 +100,17 @@ export default function Settings() {
         </section>
 
         <section className="settings-group">
+          <h3>{t('settings.contact')}</h3>
+          <a className="setting-link contact-link" href="mailto:robert@codeforgestudio.no">
+            <span className="contact-copy">
+              <strong>{t('settings.contactEmail')}</strong>
+              <small>robert@codeforgestudio.no</small>
+            </span>
+            <span aria-hidden="true">&rsaquo;</span>
+          </a>
+        </section>
+
+        <section className="settings-group">
           <h3>{t('settings.privacy')}</h3>
           <a className="setting-link" href="/privacy" target="_blank" rel="noreferrer">
             <span>{t('settings.privacyPolicy')}</span>
