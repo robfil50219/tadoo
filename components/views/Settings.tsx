@@ -83,7 +83,7 @@ export default function Settings() {
               onClick={toggleThemeMode}
             >
               <span className="theme-mode-dot" aria-hidden="true" />
-              {isNight ? t('auth.dayMode') : t('auth.nightMode')}
+              {isNight ? t('auth.nightMode') : t('auth.dayMode')}
             </button>
           </div>
         </section>

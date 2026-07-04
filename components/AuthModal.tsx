@@ -132,7 +132,7 @@ export default function AuthModal() {
         whileHover={subtleButtonHover(shouldReduceMotion)}
       >
         <span className="mode-indicator" aria-hidden="true"></span>
-        {isNight ? t('auth.dayMode') : t('auth.nightMode')}
+        {isNight ? t('auth.nightMode') : t('auth.dayMode')}
       </motion.button>
 
       <motion.div
