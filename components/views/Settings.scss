@@ -60,6 +60,51 @@
         min-width: 150px;
       }
 
+      .theme-mode-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 142px;
+        border: 1px solid #d9e2e5;
+        border-radius: 999px;
+        padding: 9px 13px;
+        background: #f5faf8;
+        color: #17343b;
+        font-weight: 800;
+        transition:
+          background 0.2s ease,
+          border-color 0.2s ease,
+          box-shadow 0.2s ease,
+          transform 0.2s ease;
+
+        &:hover {
+          border-color: #007c89;
+          background: #e8f3f0;
+          transform: translateY(-1px);
+        }
+
+        &:focus-visible {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(0, 124, 137, 0.16);
+        }
+
+        &.night-selected .theme-mode-dot {
+          background: #f5f7ff;
+          box-shadow:
+            inset -4px -2px 0 rgba(159, 172, 190, 0.75),
+            0 0 18px rgba(245, 247, 255, 0.58);
+        }
+      }
+
+      .theme-mode-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #ffc857;
+        box-shadow: 0 0 16px rgba(255, 200, 87, 0.56);
+      }
+
       .logout-button {
         padding: 10px 20px;
         background: #ff6b6b;

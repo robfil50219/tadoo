@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useTodoStore } from '@/lib/store/todoStore';
 import type { AppUser } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/lib/hooks/useLanguage';
+import { useThemeMode } from '@/lib/hooks/useThemeMode';
 import { fadeInUpVariants, subtleButtonHover, subtleButtonTap } from '@/lib/animations';
 import './FamilySetup.scss';
 
@@ -19,6 +20,7 @@ export default function FamilySetup({ user }: FamilySetupProps) {
   const shouldReduceMotion = useReducedMotion() ?? false;
   const { createFamilyForUser, joinFamilyByCode, familyLoading, familyError } = useTodoStore();
   const { t } = useLanguage();
+  const { isNight } = useThemeMode();
   const [mode, setMode] = useState<SetupMode>('create');
   const [familyName, setFamilyName] = useState('');
   const [displayName, setDisplayName] = useState(user.name || '');
@@ -67,7 +69,7 @@ export default function FamilySetup({ user }: FamilySetupProps) {
   };
 
   return (
-    <main className="family-setup">
+    <main className={`family-setup ${isNight ? 'night-mode' : 'day-mode'}`}>
       <motion.section
         className="setup-card"
         variants={fadeInUpVariants(shouldReduceMotion)}
