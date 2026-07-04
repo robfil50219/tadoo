@@ -40,7 +40,7 @@ export default function Navigation<TView extends string>({
           <motion.button
             type="button"
             className={`nav-mode-toggle ${isNight ? 'night-selected' : 'day-selected'}`}
-            aria-label={isNight ? t('auth.dayMode') : t('auth.nightMode')}
+            aria-label={isNight ? t('auth.nightMode') : t('auth.dayMode')}
             aria-pressed={isNight}
             onClick={toggleThemeMode}
             whileTap={subtleButtonTap(shouldReduceMotion)}
@@ -75,6 +75,11 @@ export default function Navigation<TView extends string>({
           </li>
         ))}
       </ul>
+      <div className="nav-footer" aria-label="Tadoo version and credits">
+        <strong>Tadoo Alpha 0.4.0</strong>
+        <span>© 2026 Robert Filep</span>
+        <span>Made with ❤️ in Trondheim, Norway</span>
+      </div>
     </nav>
   );
 }
