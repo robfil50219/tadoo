@@ -133,6 +133,67 @@
   font-size: 14px;
 }
 
+.family-setup.night-mode {
+  background:
+    radial-gradient(circle at 84% 12%, rgba(178, 207, 255, 0.15), transparent 30%),
+    radial-gradient(circle at 14% 18%, rgba(255, 200, 87, 0.07), transparent 28%),
+    linear-gradient(145deg, #071720 0%, #0d2631 52%, #142130 100%);
+
+  .setup-card {
+    border-color: rgba(202, 228, 232, 0.16);
+    background:
+      linear-gradient(135deg, rgba(21, 50, 61, 0.94), rgba(8, 27, 38, 0.91)),
+      #102832;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  }
+
+  .eyebrow,
+  p {
+    color: #a7bec4;
+  }
+
+  h1,
+  label {
+    color: #f7fbff;
+  }
+
+  .setup-tabs {
+    background: rgba(5, 19, 28, 0.74);
+
+    button {
+      color: #a7bec4;
+
+      &.active {
+        background: rgba(142, 213, 223, 0.14);
+        color: #a8edf5;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.24);
+      }
+    }
+  }
+
+  .setup-form input {
+    border-color: rgba(202, 228, 232, 0.18);
+    background: rgba(5, 19, 28, 0.78);
+    color: #f7fbff;
+    color-scheme: dark;
+
+    &::placeholder {
+      color: #7d959d;
+    }
+
+    &:focus {
+      border-color: #8ed5df;
+      box-shadow: 0 0 0 3px rgba(142, 213, 223, 0.16);
+    }
+  }
+
+  .setup-error {
+    border-color: rgba(255, 107, 107, 0.38);
+    background: rgba(96, 24, 29, 0.5);
+    color: #ffb5b5 !important;
+  }
+}
+
 @media (max-width: 520px) {
   .setup-card {
     padding: 22px;

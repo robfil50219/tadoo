@@ -2,12 +2,14 @@
 
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/lib/hooks/useLanguage';
+import { useThemeMode } from '@/lib/hooks/useThemeMode';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import './Settings.scss';
 
 export default function Settings() {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
+  const { isNight, toggleThemeMode } = useThemeMode();
 
   return (
     <div className="settings-view">
@@ -34,6 +36,22 @@ export default function Settings() {
         <div className="setting-item">
           <label>{t('language.preferred')}</label>
           <LanguageSwitcher className="settings-language-switcher" menuPlacement="bottom" />
+        </div>
+      </div>
+
+      <div className="settings-group">
+        <h3>{t('settings.appearance')}</h3>
+        <div className="setting-item">
+          <label>{t('settings.theme')}</label>
+          <button
+            type="button"
+            className={`theme-mode-button ${isNight ? 'night-selected' : 'day-selected'}`}
+            aria-pressed={isNight}
+            onClick={toggleThemeMode}
+          >
+            <span className="theme-mode-dot" aria-hidden="true" />
+            {isNight ? t('auth.dayMode') : t('auth.nightMode')}
+          </button>
         </div>
       </div>
     </div>

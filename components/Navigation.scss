@@ -29,13 +29,73 @@
       flex-shrink: 0;
     }
 
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .nav-mode-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+      cursor: pointer;
+      transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.42);
+        background: rgba(255, 255, 255, 0.18);
+      }
+
+      &:focus-visible {
+        outline: 3px solid rgba(255, 200, 87, 0.65);
+        outline-offset: 3px;
+      }
+
+      &.day-selected .nav-mode-icon {
+        background: #f4f7ff;
+        box-shadow:
+          inset -5px 0 0 rgba(24, 52, 67, 0.86),
+          0 0 13px rgba(244, 247, 255, 0.45);
+      }
+
+      &.night-selected .nav-mode-icon {
+        background: #ffc857;
+        box-shadow:
+          0 0 0 3px rgba(255, 200, 87, 0.16),
+          0 0 16px rgba(255, 200, 87, 0.62);
+      }
+    }
+
+    .nav-mode-icon {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: block;
+    }
+
     .nav-toggle {
       display: none;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
       background: none;
       color: white;
-      font-size: 20px;
+      font-size: 24px;
       cursor: pointer;
       border: none;
+      line-height: 1;
 
       &:focus-visible {
         outline: 3px solid rgba(255, 200, 87, 0.65);
@@ -117,8 +177,18 @@
         height: auto;
       }
 
+      .nav-mode-toggle {
+        width: 30px;
+        height: 30px;
+
+        .nav-mode-icon {
+          width: 13px;
+          height: 13px;
+        }
+      }
+
       .nav-toggle {
-        display: block;
+        display: inline-flex;
       }
     }
 

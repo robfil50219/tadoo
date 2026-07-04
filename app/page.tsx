@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useFamilySync } from '@/lib/hooks/useFamilySync';
 import { useLanguage } from '@/lib/hooks/useLanguage';
+import { useThemeMode } from '@/lib/hooks/useThemeMode';
 import { fadeInUpVariants, modalBackdropVariants } from '@/lib/animations';
 import Navigation from '@/components/Navigation';
 import Dashboard from '@/components/views/Dashboard';
@@ -34,6 +35,8 @@ export default function Home() {
   const { user, loading } = useAuth();
   const { familyLoading, familyError, needsFamilySetup } = useFamilySync(user);
   const { t } = useLanguage();
+  const { isNight } = useThemeMode();
+  const themeModeClass = isNight ? 'night-mode' : 'day-mode';
 
   const navItems: { id: AppView; label: string }[] = [
     { id: 'dashboard', label: t('nav.dashboard') },
@@ -90,7 +93,7 @@ export default function Home() {
     pageContent = (
       <motion.div
         key="loading"
-        className="app-loading"
+        className={`app-loading ${themeModeClass}`}
         variants={fadeInUpVariants(shouldReduceMotion)}
         initial="hidden"
         animate="visible"
@@ -117,7 +120,7 @@ export default function Home() {
     pageContent = (
       <motion.div
         key="app"
-        className="app-container"
+        className={`app-container ${themeModeClass}`}
         variants={modalBackdropVariants}
         initial="hidden"
         animate="visible"

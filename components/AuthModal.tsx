@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { firebaseEnabled } from '@/lib/config/firebase';
 import { useLanguage } from '@/lib/hooks/useLanguage';
+import { useThemeMode } from '@/lib/hooks/useThemeMode';
 import {
   fadeInUpVariants,
   modalBackdropVariants,
@@ -20,13 +21,13 @@ import './AuthModal.scss';
 export default function AuthModal() {
   const shouldReduceMotion = useReducedMotion() ?? false;
   const [isLogin, setIsLogin] = useState(true);
-  const [isNight, setIsNight] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [localError, setLocalError] = useState('');
   const { signIn, register, loading, error } = useAuth();
   const { t } = useLanguage();
+  const { isNight, toggleThemeMode } = useThemeMode();
 
   const switchMode = (nextIsLogin: boolean) => {
     setLocalError('');
@@ -126,7 +127,7 @@ export default function AuthModal() {
         type="button"
         className="scene-mode-toggle"
         {...(isNight ? { 'aria-pressed': 'true' } : { 'aria-pressed': 'false' })}
-        onClick={() => setIsNight((current) => !current)}
+        onClick={toggleThemeMode}
         whileTap={subtleButtonTap(shouldReduceMotion)}
         whileHover={subtleButtonHover(shouldReduceMotion)}
       >

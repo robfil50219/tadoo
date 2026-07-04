@@ -201,6 +201,8 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     'settings.email': 'Email',
     'settings.signOut': 'Sign out',
     'settings.language': 'Language',
+    'settings.appearance': 'Appearance',
+    'settings.theme': 'Day/night mode',
   },
   no: {
     'nav.dashboard': 'Oversikt',
@@ -386,6 +388,8 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     'settings.email': 'E-post',
     'settings.signOut': 'Logg ut',
     'settings.language': 'Språk',
+    'settings.appearance': 'Utseende',
+    'settings.theme': 'Dag/nattmodus',
   },
   sv: {
     'nav.dashboard': 'Översikt',
@@ -571,6 +575,8 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     'settings.email': 'E-post',
     'settings.signOut': 'Logga ut',
     'settings.language': 'Språk',
+    'settings.appearance': 'Utseende',
+    'settings.theme': 'Dag/nattläge',
   },
   da: {
     'nav.dashboard': 'Oversigt',
@@ -756,5 +762,7 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     'settings.email': 'E-mail',
     'settings.signOut': 'Log ud',
     'settings.language': 'Sprog',
+    'settings.appearance': 'Udseende',
+    'settings.theme': 'Dag/nattilstand',
   },
 };
