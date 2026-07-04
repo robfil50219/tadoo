@@ -151,6 +151,27 @@
       }
     }
   }
+
+  .nav-footer {
+    display: grid;
+    gap: 5px;
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 11px;
+    line-height: 1.35;
+
+    strong {
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    span {
+      display: block;
+    }
+  }
 }
 
 @media (max-width: 768px) {
@@ -238,6 +259,10 @@
           }
         }
       }
+    }
+
+    .nav-footer {
+      display: none;
     }
   }
 }

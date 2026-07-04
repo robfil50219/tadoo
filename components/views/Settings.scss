@@ -139,6 +139,39 @@
     }
   }
 
+  .setting-item-stacked {
+    align-items: flex-start;
+
+    > div {
+      width: 100%;
+    }
+
+    p + p {
+      margin-top: 10px;
+    }
+  }
+
+  .about-summary p {
+    max-width: 58ch;
+  }
+
+  .roadmap-list {
+    ul {
+      display: grid;
+      gap: 9px;
+      margin: 12px 0;
+      padding: 0;
+      list-style: none;
+      color: var(--settings-ink);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    li {
+      padding-left: 0;
+    }
+  }
+
   .setting-item-action {
     align-items: flex-start;
   }
