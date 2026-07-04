@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useFamilySync } from '@/lib/hooks/useFamilySync';
 import { useLanguage } from '@/lib/hooks/useLanguage';
+import { fadeInUpVariants, modalBackdropVariants } from '@/lib/animations';
 import Navigation from '@/components/Navigation';
 import Dashboard from '@/components/views/Dashboard';
 import TasksList from '@/components/views/TasksList';
@@ -26,6 +28,7 @@ const getViewFromHash = (): AppView | null => {
 };
 
 export default function Home() {
+  const shouldReduceMotion = useReducedMotion() ?? false;
   const [activeView, setActiveView] = useState<AppView>('dashboard');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { user, loading } = useAuth();
@@ -33,13 +36,13 @@ export default function Home() {
   const { t } = useLanguage();
 
   const navItems: { id: AppView; label: string }[] = [
-    { id: 'dashboard', label: t('dashboard') },
-    { id: 'tasks', label: t('tasks') },
-    { id: 'calendar', label: t('calendar') },
-    { id: 'family', label: t('family') },
-    { id: 'chat', label: t('chat') },
-    { id: 'location', label: t('location') },
-    { id: 'settings', label: t('settings') },
+    { id: 'dashboard', label: t('nav.dashboard') },
+    { id: 'tasks', label: t('nav.tasks') },
+    { id: 'calendar', label: t('nav.calendar') },
+    { id: 'family', label: t('nav.family') },
+    { id: 'chat', label: t('nav.chat') },
+    { id: 'location', label: t('nav.location') },
+    { id: 'settings', label: t('nav.settings') },
   ];
 
   useEffect(() => {
@@ -81,31 +84,70 @@ export default function Home() {
     }
   };
 
+  let pageContent;
+
   if (loading || (user && familyLoading)) {
-    return <div className="app-loading">Loading...</div>;
+    pageContent = (
+      <motion.div
+        key="loading"
+        className="app-loading"
+        variants={fadeInUpVariants(shouldReduceMotion)}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        {t('common.loading')}
+      </motion.div>
+    );
+  } else if (!user) {
+    pageContent = <AuthModal key="auth" />;
+  } else if (needsFamilySetup) {
+    pageContent = (
+      <motion.div
+        key="family-setup"
+        variants={modalBackdropVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <FamilySetup user={user} />
+      </motion.div>
+    );
+  } else {
+    pageContent = (
+      <motion.div
+        key="app"
+        className="app-container"
+        variants={modalBackdropVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        {familyError && <div className="app-banner">{familyError}</div>}
+        <Navigation
+          navItems={navItems}
+          activeView={activeView}
+          onSelectView={selectView}
+          showMobileMenu={showMobileMenu}
+          onToggleMobileMenu={() => setShowMobileMenu(!showMobileMenu)}
+        />
+        <main className="app-main">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={activeView}
+              className="app-view-shell"
+              variants={fadeInUpVariants(shouldReduceMotion)}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {renderView()}
+            </motion.div>
+          </AnimatePresence>
+        </main>
+      </motion.div>
+    );
   }
 
-  if (!user) {
-    return <AuthModal />;
-  }
-
-  if (needsFamilySetup) {
-    return <FamilySetup user={user} />;
-  }
-
-  return (
-    <div className="app-container">
-      {familyError && <div className="app-banner">{familyError}</div>}
-      <Navigation
-        navItems={navItems}
-        activeView={activeView}
-        onSelectView={selectView}
-        showMobileMenu={showMobileMenu}
-        onToggleMobileMenu={() => setShowMobileMenu(!showMobileMenu)}
-      />
-      <main className="app-main">
-        {renderView()}
-      </main>
-    </div>
-  );
+  return <AnimatePresence mode="wait">{pageContent}</AnimatePresence>;
 }

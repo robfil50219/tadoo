@@ -38,17 +38,17 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h2>Welcome to {state.familyName}</h2>
-        <p className="subtitle">{"Here's what's happening with your family"}</p>
+        <h2>{t('dashboard.title', { familyName: state.familyName })}</h2>
+        <p className="subtitle">{t('dashboard.subtitle')}</p>
       </div>
 
       <div className="dashboard-grid">
         <div className="card">
-          <h3>{"Today's Tasks"}</h3>
+          <h3>{t('dashboard.todayTasks')}</h3>
           <p className="card-number">{todayTasks.length}</p>
           <div className="card-list">
             {todayTasks.length === 0 ? (
-              <p className="empty">No tasks for today</p>
+              <p className="empty">{t('dashboard.noTodayTasks')}</p>
             ) : (
               <ul>
                 {todayTasks.slice(0, 3).map((task) => (
@@ -63,17 +63,19 @@ export default function Dashboard() {
         </div>
 
         <div className="card">
-          <h3>Open Tasks</h3>
+          <h3>{t('dashboard.openTasks')}</h3>
           <p className="card-number">{openTasks.length}</p>
           <div className="card-list">
             {openTasks.length === 0 ? (
-              <p className="empty">{"All tasks completed!"}</p>
+              <p className="empty">{t('dashboard.allDone')}</p>
             ) : (
               <ul>
                 {openTasks.slice(0, 3).map((task) => (
                   <li key={task.id}>
                     <span className="task-title">{task.title}</span>
-                    <span className={`task-priority priority-${task.priority}`}>{task.priority}</span>
+                    <span className={`task-priority priority-${task.priority}`}>
+                      {t(`tasks.priority.${task.priority}`)}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -82,7 +84,7 @@ export default function Dashboard() {
         </div>
 
         <div className="card">
-          <h3>Family Members</h3>
+          <h3>{t('dashboard.familyMembers')}</h3>
           <p className="card-number">{state.members.length}</p>
           <div className="members-list">
             {state.members.map((member) => (

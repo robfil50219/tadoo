@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Circle as LeafletCircle, Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
 import { type FamilyMember, useTodoStore } from '@/lib/store/todoStore';
+import { useLanguage } from '@/lib/hooks/useLanguage';
 import { memberColorClassName } from '@/lib/memberColors';
 import './Location.scss';
 
@@ -21,9 +22,13 @@ const clampLatitude = (latitude: number) => Math.max(-85, Math.min(85, latitude)
 
 const formatCoordinate = (value: number) => value.toFixed(5);
 
-const formatAccuracy = (value?: number) => {
-  if (typeof value !== 'number' || !Number.isFinite(value)) return 'Unknown accuracy';
-  return value < 10 ? `${value.toFixed(1)} m accuracy` : `${Math.round(value)} m accuracy`;
+type Translate = (key: string, replacements?: Record<string, string | number>) => string;
+
+const formatAccuracy = (value: number | undefined, t: Translate) => {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return t('location.unknownAccuracy');
+  return t('location.meterAccuracy', {
+    value: value < 10 ? value.toFixed(1) : Math.round(value),
+  });
 };
 
 const buildBounds = (members: FamilyMember[]): MapBounds => {
@@ -65,10 +70,10 @@ const escapeHtml = (value: string) =>
     return entities[char];
   });
 
-const gpsUnavailableMessage = () =>
+const gpsUnavailableMessage = (t: Translate) =>
   window.isSecureContext
-    ? 'GPS is not available in this browser.'
-    : 'GPS needs localhost or HTTPS to work in the browser.';
+    ? t('location.gpsUnavailable')
+    : t('location.gpsNeedsSecureContext');
 
 const isPreciseEnough = (accuracy: number) =>
   Number.isFinite(accuracy) && accuracy <= REQUIRED_GPS_ACCURACY_METERS;
@@ -92,23 +97,28 @@ const hasMeasuredGps = (member?: FamilyMember): member is MeasuredGpsMember =>
 const hasVerifiedGps = (member?: FamilyMember) =>
   hasMeasuredGps(member) && isPreciseEnough(member.locationAccuracyMeters);
 
-const formatGpsPosition = (member?: FamilyMember) =>
+const formatGpsPosition = (member: FamilyMember | undefined, t: Translate) =>
   hasMeasuredGps(member)
     ? `${formatCoordinate(member.latitude)}, ${formatCoordinate(member.longitude)}`
     : hasMapPosition(member)
       ? `${formatCoordinate(member.latitude)}, ${formatCoordinate(member.longitude)}`
-      : 'No position yet';
+      : t('location.noPositionYet');
 
-const formatGpsAccuracy = (member?: FamilyMember) => {
+const formatGpsAccuracy = (member: FamilyMember | undefined, t: Translate) => {
   if (!member) return '';
-  if (!hasMapPosition(member)) return 'No position saved';
-  if (!hasMeasuredGps(member)) return 'Saved place - start GPS for live accuracy';
-  if (hasVerifiedGps(member)) return `${formatAccuracy(member.locationAccuracyMeters)} - verified`;
-  return `${formatAccuracy(member.locationAccuracyMeters)} - needs 1.0 m`;
+  if (!hasMapPosition(member)) return t('location.noPositionSaved');
+  if (!hasMeasuredGps(member)) return t('location.savedPlace');
+  if (hasVerifiedGps(member)) return t('location.verified', {
+    accuracy: formatAccuracy(member.locationAccuracyMeters, t),
+  });
+  return t('location.needsOneMeter', {
+    accuracy: formatAccuracy(member.locationAccuracyMeters, t),
+  });
 };
 
 export default function Location() {
   const { state, updateMemberLocation } = useTodoStore();
+  const { locale, t } = useLanguage();
   const mapRef = useRef<HTMLDivElement | null>(null);
   const leafletMapRef = useRef<LeafletMap | null>(null);
   const markerRefs = useRef<Map<string, LeafletMarker>>(new Map());
@@ -240,7 +250,7 @@ export default function Location() {
           title: member.name,
         })
           .addTo(map)
-          .bindTooltip(`${member.name}: ${member.locationLabel} (${formatGpsAccuracy(member)})`);
+          .bindTooltip(`${member.name}: ${member.locationLabel} (${formatGpsAccuracy(member, t)})`);
 
         marker.on('click', () => setMemberId(member.id));
         markerRefs.current.set(member.id, marker);
@@ -252,7 +262,7 @@ export default function Location() {
     return () => {
       cancelled = true;
     };
-  }, [mapReady, mappableMembers, memberId]);
+  }, [mapReady, mappableMembers, memberId, t]);
 
   useEffect(() => {
     const map = leafletMapRef.current;
@@ -313,7 +323,7 @@ export default function Location() {
       watchIdRef.current = null;
     }
     setLiveMemberId(null);
-    setGpsStatus('Live GPS stopped.');
+    setGpsStatus(t('location.liveGpsStopped'));
   };
 
   const updateLocation = (event: React.FormEvent) => {
@@ -324,7 +334,7 @@ export default function Location() {
 
   const useCurrentGps = () => {
     if (!navigator.geolocation) {
-      setLocationError(gpsUnavailableMessage());
+      setLocationError(gpsUnavailableMessage(t));
       return;
     }
 
@@ -333,30 +343,30 @@ export default function Location() {
         const nextLatitude = position.coords.latitude;
         const nextLongitude = position.coords.longitude;
         const accuracy = position.coords.accuracy;
-        const nextLabel = locationLabel.trim() || 'Current GPS location';
+        const nextLabel = locationLabel.trim() || t('location.currentGpsLocation');
 
         setLocationLabel(nextLabel);
         updateMemberLocation(memberId, nextLabel, nextLatitude, nextLongitude, accuracy);
         setGpsStatus(
           isPreciseEnough(accuracy)
-            ? `Saved verified GPS position with ${formatAccuracy(accuracy)}.`
-            : `Saved estimated GPS position with ${formatAccuracy(accuracy)}. Keep live GPS on for 1.0 m verification.`
+            ? t('location.savedVerifiedGps', { accuracy: formatAccuracy(accuracy, t) })
+            : t('location.savedEstimatedGps', { accuracy: formatAccuracy(accuracy, t) })
         );
         setLocationError('');
       },
-      () => setLocationError('Could not read GPS location. Check browser permissions.'),
+      () => setLocationError(t('location.gpsReadError')),
       { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 }
     );
   };
 
   const startLiveGps = () => {
     if (!navigator.geolocation) {
-      setLocationError(gpsUnavailableMessage());
+      setLocationError(gpsUnavailableMessage(t));
       return;
     }
 
     if (!selectedMember) {
-      setLocationError('Choose a family member before starting live GPS.');
+      setLocationError(t('location.chooseMemberForGps'));
       return;
     }
 
@@ -366,10 +376,10 @@ export default function Location() {
 
     const trackedMemberId = selectedMember.id;
     const trackedMemberName = selectedMember.name;
-    const nextLabel = locationLabel.trim() || `${trackedMemberName} live GPS`;
+    const nextLabel = locationLabel.trim() || t('location.liveGpsLabel', { name: trackedMemberName });
 
     setLocationError('');
-    setGpsStatus(`Starting live GPS for ${trackedMemberName}...`);
+    setGpsStatus(t('location.startingLiveGps', { name: trackedMemberName }));
     setLiveMemberId(trackedMemberId);
     setLocationLabel(nextLabel);
 
@@ -382,18 +392,18 @@ export default function Location() {
         updateMemberLocation(trackedMemberId, nextLabel, nextLatitude, nextLongitude, accuracy);
         setGpsStatus(
           isPreciseEnough(accuracy)
-            ? `Live GPS verified with ${formatAccuracy(accuracy)}.`
-            : `Live GPS updated with ${formatAccuracy(accuracy)}. Waiting for 1.0 m verification.`
+            ? t('location.liveGpsVerified', { accuracy: formatAccuracy(accuracy, t) })
+            : t('location.liveGpsUpdated', { accuracy: formatAccuracy(accuracy, t) })
         );
         setLocationError('');
       },
       (error) => {
         const message =
           error.code === error.PERMISSION_DENIED
-            ? 'Location permission was denied.'
-            : 'Could not keep live GPS running.';
+            ? t('location.permissionDenied')
+            : t('location.liveGpsError');
         setLocationError(message);
-        setGpsStatus('Live GPS stopped.');
+        setGpsStatus(t('location.liveGpsStopped'));
         setLiveMemberId(null);
         if (watchIdRef.current !== null) {
           navigator.geolocation.clearWatch(watchIdRef.current);
@@ -409,7 +419,7 @@ export default function Location() {
   };
 
   const formatTime = (value: string) =>
-    new Intl.DateTimeFormat('nb-NO', {
+    new Intl.DateTimeFormat(locale, {
       day: '2-digit',
       month: 'short',
       hour: '2-digit',
@@ -419,20 +429,20 @@ export default function Location() {
   return (
     <div className="location-view">
       <div className="location-header">
-        <h2>Location</h2>
-        <p className="subtitle">Live GPS map for family members</p>
+        <h2>{t('location.title')}</h2>
+        <p className="subtitle">{t('location.subtitle')}</p>
       </div>
 
       <section className="location-map-section">
         <div className="map-shell" ref={mapRef}>
-          {!mapReady && <div className="map-loading">Loading map...</div>}
+          {!mapReady && <div className="map-loading">{t('location.loadingMap')}</div>}
           {mapReady && mappableMembers.length === 0 && (
-            <div className="map-empty-state">No map positions yet</div>
+            <div className="map-empty-state">{t('location.noMapPositions')}</div>
           )}
         </div>
 
         <aside className="map-details">
-          <h3>Map positions</h3>
+          <h3>{t('location.mapPositions')}</h3>
           <div className="location-list">
             {state.members.map((member) => (
               <button
@@ -447,17 +457,17 @@ export default function Location() {
                 <span>
                   <strong>{member.name}</strong>
                   <small>{member.locationLabel}</small>
-                  <small>{formatGpsPosition(member)}</small>
-                  <small>{formatGpsAccuracy(member)}</small>
+                  <small>{formatGpsPosition(member, t)}</small>
+                  <small>{formatGpsAccuracy(member, t)}</small>
                 </span>
               </button>
             ))}
           </div>
           <a href={openMapUrl} target="_blank" rel="noreferrer" className="open-map-link">
-            Open full map
+            {t('location.openFullMap')}
           </a>
           <p className="map-note">
-            Live GPS tracks this device for the selected member.
+            {t('location.mapNote')}
           </p>
         </aside>
       </section>
@@ -472,7 +482,7 @@ export default function Location() {
               <h3>{member.name}</h3>
               <p>{member.locationLabel}</p>
               <span>{formatTime(member.locationUpdatedAt)}</span>
-              <span>{formatGpsAccuracy(member)}</span>
+              <span>{formatGpsAccuracy(member, t)}</span>
             </div>
           </article>
         ))}
@@ -481,7 +491,7 @@ export default function Location() {
       <form className="location-form" onSubmit={updateLocation}>
         <div className="form-row">
           <label>
-            Member
+            {t('location.member')}
             <select value={memberId} onChange={(event) => setMemberId(event.target.value)}>
               {state.members.map((member) => (
                 <option key={member.id} value={member.id}>
@@ -491,11 +501,11 @@ export default function Location() {
             </select>
           </label>
           <label>
-            Label
+            {t('location.label')}
             <input
               value={locationLabel}
               onChange={(event) => setLocationLabel(event.target.value)}
-              placeholder="Home, school, work..."
+              placeholder={t('location.labelPlaceholder')}
               required
             />
           </label>
@@ -503,23 +513,23 @@ export default function Location() {
 
         <div className="form-row coordinate-row">
           <div className="coordinate-display">
-            <span>Coordinates</span>
-            <strong>{formatGpsPosition(selectedMember)}</strong>
-            <small>{formatGpsAccuracy(selectedMember)}</small>
+            <span>{t('location.coordinates')}</span>
+            <strong>{formatGpsPosition(selectedMember, t)}</strong>
+            <small>{formatGpsAccuracy(selectedMember, t)}</small>
           </div>
           <button type="button" className="secondary-button" onClick={useCurrentGps}>
-            Update once
+            {t('location.updateOnce')}
           </button>
           {liveMemberId === memberId ? (
             <button type="button" className="danger-button" onClick={stopLiveGps}>
-              Stop live GPS
+              {t('location.stopLiveGps')}
             </button>
           ) : (
             <button type="button" className="live-button" onClick={startLiveGps}>
-              Start live GPS
+              {t('location.startLiveGps')}
             </button>
           )}
-          <button type="submit">Update</button>
+          <button type="submit">{t('location.update')}</button>
         </div>
 
         {gpsStatus && <p className="gps-status">{gpsStatus}</p>}

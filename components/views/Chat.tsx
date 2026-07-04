@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useTodoStore } from '@/lib/store/todoStore';
+import { useLanguage } from '@/lib/hooks/useLanguage';
 import './Chat.scss';
 
 export default function Chat() {
   const { state, addMessage } = useTodoStore();
+  const { locale, t } = useLanguage();
   const [senderId, setSenderId] = useState(state.members[0]?.id || '');
   const [message, setMessage] = useState('');
 
@@ -21,8 +23,8 @@ export default function Chat() {
     setMessage('');
   };
 
-  const memberName = (id: string) => state.members.find((member) => member.id === id)?.name || 'Unknown';
-  const formatTime = (value: string) => new Intl.DateTimeFormat('nb-NO', {
+  const memberName = (id: string) => state.members.find((member) => member.id === id)?.name || t('common.unknown');
+  const formatTime = (value: string) => new Intl.DateTimeFormat(locale, {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(value));
@@ -30,13 +32,13 @@ export default function Chat() {
   return (
     <div className="chat-view">
       <div className="chat-header">
-        <h2>Family Chat</h2>
-        <p className="subtitle">Send quick household updates</p>
+        <h2>{t('chat.title')}</h2>
+        <p className="subtitle">{t('chat.subtitle')}</p>
       </div>
 
       <div className="message-list">
         {state.messages.length === 0 ? (
-          <p className="empty-state">No messages yet.</p>
+          <p className="empty-state">{t('chat.noMessages')}</p>
         ) : (
           state.messages.map((item) => (
             <article className="message-item" key={item.id}>
@@ -54,8 +56,8 @@ export default function Chat() {
         <select
           value={senderId}
           onChange={(event) => setSenderId(event.target.value)}
-          aria-label="Message sender"
-          title="Message sender"
+          aria-label={t('chat.sender')}
+          title={t('chat.sender')}
         >
           {state.members.map((member) => (
             <option key={member.id} value={member.id}>
@@ -66,10 +68,10 @@ export default function Chat() {
         <input
           value={message}
           onChange={(event) => setMessage(event.target.value)}
-          placeholder="Message"
+          placeholder={t('chat.messagePlaceholder')}
           required
         />
-        <button type="submit">Send</button>
+        <button type="submit">{t('chat.send')}</button>
       </form>
     </div>
   );

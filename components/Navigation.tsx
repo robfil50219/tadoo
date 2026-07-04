@@ -1,6 +1,9 @@
 'use client';
 
 import Image from 'next/image';
+import { motion, useReducedMotion } from 'motion/react';
+import { subtleButtonHover, subtleButtonTap } from '@/lib/animations';
+import { useLanguage } from '@/lib/hooks/useLanguage';
 
 import './Navigation.scss';
 
@@ -24,25 +27,36 @@ export default function Navigation<TView extends string>({
   showMobileMenu,
   onToggleMobileMenu,
 }: NavigationProps<TView>) {
+  const shouldReduceMotion = useReducedMotion() ?? false;
+  const { t } = useLanguage();
+
   return (
     <nav className="navigation">
       <div className="nav-header">
         <Image className="nav-logo" src="/images/tadoologo2.png" alt="Tadoo logo" width={128} height={128} priority />
-        <button className="nav-toggle" onClick={onToggleMobileMenu}>
+        <motion.button
+          className="nav-toggle"
+          onClick={onToggleMobileMenu}
+          aria-label={t('nav.toggleMenu')}
+          aria-expanded={showMobileMenu}
+          whileTap={subtleButtonTap(shouldReduceMotion)}
+        >
           ☰
-        </button>
+        </motion.button>
       </div>
       <ul className={`nav-items ${showMobileMenu ? 'mobile-open' : ''}`}>
         {navItems.map((item) => (
           <li key={item.id}>
-            <a
+            <motion.a
               href={`#${item.id}`}
               className={`nav-item ${activeView === item.id ? 'active' : ''}`}
               aria-current={activeView === item.id ? 'page' : undefined}
               onClick={() => onSelectView(item.id)}
+              whileTap={subtleButtonTap(shouldReduceMotion)}
+              whileHover={subtleButtonHover(shouldReduceMotion)}
             >
               {item.label}
-            </a>
+            </motion.a>
           </li>
         ))}
       </ul>
