@@ -40,7 +40,7 @@ export default function Navigation<TView extends string>({
           <motion.button
             type="button"
             className={`nav-mode-toggle ${isNight ? 'night-selected' : 'day-selected'}`}
-            aria-label={isNight ? t('auth.dayMode') : t('auth.nightMode')}
+            aria-label={isNight ? t('auth.nightMode') : t('auth.dayMode')}
             aria-pressed={isNight}
             onClick={toggleThemeMode}
             whileTap={subtleButtonTap(shouldReduceMotion)}
