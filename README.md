@@ -217,6 +217,12 @@ See `LAUNCH_PLAN.md` for the full launch plan.
 
 Proprietary — All rights reserved by CodeForge Studio.
 
+This repository is public for transparency and portfolio purposes only.
+
+The source code may not be copied, reused, modified, distributed, or used commercially without written permission from CodeForge Studio.
+
+Copyright © 2026 CodeForge Studio.
+
 ---
 
 ## Contact
