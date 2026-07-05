@@ -221,5 +221,5 @@ Proprietary — All rights reserved by CodeForge Studio.
 
 ## Contact
 
-**Robert Filep** — Founder, CodeForge Studio 
+**Robert Filep** — CodeForge Studio 
 📧 robert@codeforgestudio.no
