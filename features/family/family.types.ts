@@ -12,6 +12,8 @@ export interface FamilyMember {
   role: FamilyRole;
   color: string;
   avatar: string;
+  profileImagePath?: string;
+  profileImageUpdatedAt?: string;
   status: string;
   locationLabel: string;
   locationUpdatedAt: string;

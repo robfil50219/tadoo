@@ -7,11 +7,20 @@ import {
   onSnapshot,
   serverTimestamp,
   setDoc,
+  updateDoc,
   writeBatch,
   type Firestore,
   type Unsubscribe,
 } from 'firebase/firestore';
 import { firebaseConfig, firebaseEnabled } from '@/lib/config/firebase';
+import {
+  deleteObject,
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  type UploadTask,
+} from 'firebase/storage';
 import type { FamilyInvite, FamilyMember, FamilyRole, FamilyState } from '../family.types';
 
 export interface RemoteFamilyUser {
@@ -33,6 +42,42 @@ const getDb = (): Firestore => {
 
   const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   return getFirestore(app);
+};
+
+const getFirebaseApp = () => getApps().length ? getApp() : initializeApp(firebaseConfig);
+
+const getProfileStorage = () => {
+  if (!firebaseEnabled) throw new Error('Firebase is not configured');
+  return getStorage(getFirebaseApp());
+};
+
+export const memberProfileImagePath = (familyId: string, member: FamilyMember) =>
+  member.uid
+    ? `families/${familyId}/profiles/${member.uid}/avatar`
+    : `families/${familyId}/local-profiles/${member.id}/avatar`;
+
+export const resolveMemberProfileImageUrl = async (path: string) =>
+  getDownloadURL(ref(getProfileStorage(), path));
+
+export const uploadMemberProfileImage = (
+  path: string,
+  file: File,
+  onProgress: (percent: number) => void
+): Promise<void> => new Promise((resolve, reject) => {
+  const task: UploadTask = uploadBytesResumable(ref(getProfileStorage(), path), file, {
+    contentType: file.type,
+    cacheControl: 'private,max-age=3600',
+  });
+  task.on(
+    'state_changed',
+    (snapshot) => onProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)),
+    reject,
+    () => resolve()
+  );
+});
+
+export const deleteMemberProfileImage = async (path: string) => {
+  await deleteObject(ref(getProfileStorage(), path));
 };
 
 const cleanForFirestore = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -74,6 +119,22 @@ const normalizeFamilyState = (data: Partial<FamilyState>, fallbackFamilyId: stri
 export const saveFamilyState = async (state: FamilyState) => {
   if (!state.familyId) return;
   await setDoc(doc(getDb(), 'families', state.familyId), cleanForFirestore(state));
+};
+
+type MemberProfileMutation =
+  | { action: 'create'; after: FamilyMember }
+  | { action: 'update'; before: FamilyMember; after: FamilyMember }
+  | { action: 'delete'; before: FamilyMember };
+
+export const saveMemberProfileMutation = async (
+  familyId: string,
+  members: FamilyMember[],
+  mutation: MemberProfileMutation
+) => {
+  await updateDoc(doc(getDb(), 'families', familyId), {
+    members: cleanForFirestore(members),
+    lastProfileMutation: cleanForFirestore(mutation),
+  });
 };
 
 export const subscribeToUserFamily = (
@@ -181,6 +242,7 @@ export const publishInviteCode = async (invite: FamilyInvite, createdByUid?: str
     createdByUid: createdByUid || null,
     createdAt: invite.createdAt,
     expiresAt: invite.expiresAt,
+    expiresAtMs: new Date(invite.expiresAt).getTime(),
     usedByUid: invite.usedByUid || null,
   });
 };
@@ -240,6 +302,7 @@ export const joinFamilyByInviteCode = async (
     members: arrayUnion(cleanForFirestore(member)),
     [`memberUids.${user.id}`]: true,
     ...(invite.role === 'adult' ? { [`adultUids.${user.id}`]: true } : {}),
+    lastMembershipInviteCode: normalizedCode,
   });
   batch.set(doc(db, 'userProfiles', user.id), {
     familyId: invite.familyId,

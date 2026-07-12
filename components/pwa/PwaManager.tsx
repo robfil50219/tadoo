@@ -68,7 +68,7 @@ export default function PwaManager() {
 
   return (
     <aside className="pwa-install-banner" aria-label="Install Tadoo">
-      <Image src="/icons/icon-192.png" alt="" width={48} height={48} />
+      <Image src="/icons/icon-512-maskable.png" alt="Tadoo app icon" width={48} height={48} />
       <div className="pwa-install-copy">
         <strong>Install Tadoo</strong>
         <span>{isIos && !installEvent ? 'Tap Share, then Add to Home Screen.' : 'Keep your family tasks one tap away.'}</span>

@@ -13,13 +13,213 @@ service cloud.firestore {
     function isFamilyMember(familyId) {
       return signedIn()
         && exists(/databases/$(database)/documents/families/$(familyId))
+        && request.auth.uid in familyDoc(familyId).data.memberUids
         && familyDoc(familyId).data.memberUids[request.auth.uid] == true;
     }
 
     function isFamilyAdult(familyId) {
       return signedIn()
         && exists(/databases/$(database)/documents/families/$(familyId))
+        && request.auth.uid in familyDoc(familyId).data.adultUids
         && familyDoc(familyId).data.adultUids[request.auth.uid] == true;
+    }
+
+    function ownerRemainsProtected() {
+      return request.resource.data.ownerUid == resource.data.ownerUid
+        && resource.data.ownerUid in request.resource.data.memberUids
+        && resource.data.ownerUid in request.resource.data.adultUids
+        && request.resource.data.memberUids[resource.data.ownerUid] == true
+        && request.resource.data.adultUids[resource.data.ownerUid] == true;
+    }
+
+    function adultUidsAreMembers() {
+      return request.resource.data.adultUids.keys().toSet()
+        .difference(request.resource.data.memberUids.keys().toSet()).size() == 0;
+    }
+
+    function membershipFieldsUnchanged() {
+      return request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.memberUids == resource.data.memberUids
+        && request.resource.data.adultUids == resource.data.adultUids
+        && request.resource.data.members == resource.data.members;
+    }
+
+    function validAdultMemberAdd(familyId) {
+      let mutation = request.resource.data.lastMembershipMutation;
+      let uid = mutation.uid;
+      let member = mutation.member;
+      return isFamilyAdult(familyId)
+        && mutation.action == 'add'
+        && mutation.role in ['adult', 'child']
+        && member.id == uid
+        && member.uid == uid
+        && member.role == mutation.role
+        && !(uid in resource.data.memberUids)
+        && request.resource.data.memberUids.diff(resource.data.memberUids).affectedKeys().hasOnly([uid])
+        && request.resource.data.memberUids.diff(resource.data.memberUids).affectedKeys().size() == 1
+        && request.resource.data.memberUids[uid] == true
+        && request.resource.data.members.size() == resource.data.members.size() + 1
+        && request.resource.data.members.removeAll([member]) == resource.data.members
+        && (
+          (mutation.role == 'adult'
+            && request.resource.data.adultUids.diff(resource.data.adultUids).affectedKeys().hasOnly([uid])
+            && request.resource.data.adultUids.diff(resource.data.adultUids).affectedKeys().size() == 1
+            && request.resource.data.adultUids[uid] == true)
+          || (mutation.role == 'child'
+            && request.resource.data.adultUids == resource.data.adultUids)
+        );
+    }
+
+    function validAdultMemberRemove(familyId) {
+      let mutation = request.resource.data.lastMembershipMutation;
+      let uid = mutation.uid;
+      let member = mutation.member;
+      return isFamilyAdult(familyId)
+        && mutation.action == 'remove'
+        && uid != resource.data.ownerUid
+        && uid in resource.data.memberUids
+        && member.id == uid
+        && member.uid == uid
+        && member.role == mutation.role
+        && request.resource.data.memberUids.diff(resource.data.memberUids).affectedKeys().hasOnly([uid])
+        && request.resource.data.memberUids.diff(resource.data.memberUids).affectedKeys().size() == 1
+        && !(uid in request.resource.data.memberUids)
+        && resource.data.members.removeAll([member]) == request.resource.data.members
+        && (
+          (uid in resource.data.adultUids
+            && request.resource.data.adultUids.diff(resource.data.adultUids).affectedKeys().hasOnly([uid])
+            && request.resource.data.adultUids.diff(resource.data.adultUids).affectedKeys().size() == 1
+            && !(uid in request.resource.data.adultUids))
+          || (!(uid in resource.data.adultUids)
+            && request.resource.data.adultUids == resource.data.adultUids)
+        );
+    }
+
+    function validAdultMembershipUpdate(familyId) {
+      return request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['memberUids', 'adultUids', 'members', 'lastMembershipMutation'])
+        && ownerRemainsProtected()
+        && adultUidsAreMembers()
+        && (validAdultMemberAdd(familyId) || validAdultMemberRemove(familyId));
+    }
+
+    function profileFieldsOnly(before, after) {
+      return after.diff(before).affectedKeys().hasOnly([
+        'name',
+        'avatar',
+        'profileImagePath',
+        'profileImageUpdatedAt',
+        'color',
+        'birthday',
+        'preferences',
+        'status',
+        'locationLabel',
+        'locationUpdatedAt',
+        'latitude',
+        'longitude',
+        'locationAccuracyMeters'
+      ]);
+    }
+
+    function canEditProfile(familyId, member) {
+      return isFamilyAdult(familyId)
+        || (member.get('uid', null) == request.auth.uid && isFamilyMember(familyId));
+    }
+
+    function validProfileImageReference(familyId, member) {
+      let path = member.get('profileImagePath', null);
+      return path == null
+        || (member.get('uid', null) != null
+          && path == 'families/' + familyId + '/profiles/' + member.uid + '/avatar')
+        || (member.get('uid', null) == null
+          && member.accountStatus == 'local'
+          && path == 'families/' + familyId + '/local-profiles/' + member.id + '/avatar');
+    }
+
+    function validLocalProfileCreate(familyId) {
+      let mutation = request.resource.data.lastProfileMutation;
+      let member = mutation.after;
+      return isFamilyAdult(familyId)
+        && mutation.action == 'create'
+        && member.accountStatus == 'local'
+        && member.get('uid', null) == null
+        && member.role in ['adult', 'child']
+        && request.resource.data.members.size() == resource.data.members.size() + 1
+        && request.resource.data.members.removeAll([member]) == resource.data.members;
+    }
+
+    function validProfileEdit(familyId) {
+      let mutation = request.resource.data.lastProfileMutation;
+      let before = mutation.before;
+      let after = mutation.after;
+      return mutation.action == 'update'
+        && canEditProfile(familyId, before)
+        && before.id == after.id
+        && before.get('uid', null) == after.get('uid', null)
+        && before.role == after.role
+        && before.accountStatus == after.accountStatus
+        && profileFieldsOnly(before, after)
+        && validProfileImageReference(familyId, after)
+        && resource.data.members.size() == request.resource.data.members.size()
+        && resource.data.members.removeAll([before]).size() == resource.data.members.size() - 1
+        && request.resource.data.members.removeAll([after]).size() == request.resource.data.members.size() - 1
+        && resource.data.members.removeAll([before]) == request.resource.data.members.removeAll([after]);
+    }
+
+    function validLocalProfileDelete(familyId) {
+      let mutation = request.resource.data.lastProfileMutation;
+      let member = mutation.before;
+      return isFamilyAdult(familyId)
+        && mutation.action == 'delete'
+        && member.accountStatus == 'local'
+        && member.get('uid', null) == null
+        && resource.data.members.size() == request.resource.data.members.size() + 1
+        && resource.data.members.removeAll([member]) == request.resource.data.members;
+    }
+
+    function validProfileMutation(familyId) {
+      return request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['members', 'lastProfileMutation'])
+        && (
+          validLocalProfileCreate(familyId)
+          || validProfileEdit(familyId)
+          || validLocalProfileDelete(familyId)
+        );
+    }
+
+    function validInviteJoin(familyId) {
+      let uid = request.auth.uid;
+      let code = request.resource.data.lastMembershipInviteCode;
+      let invitePath = /databases/$(database)/documents/inviteCodes/$(code);
+      let invite = get(invitePath).data;
+      let joinedMember = request.resource.data.members[resource.data.members.size()];
+      return signedIn()
+        && !isFamilyMember(familyId)
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['memberUids', 'adultUids', 'members', 'lastMembershipInviteCode'])
+        && request.resource.data.memberUids.diff(resource.data.memberUids).affectedKeys().hasOnly([uid])
+        && request.resource.data.memberUids.diff(resource.data.memberUids).affectedKeys().size() == 1
+        && request.resource.data.memberUids[uid] == true
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.members.size() == resource.data.members.size() + 1
+        && request.resource.data.members.removeAll([joinedMember]) == resource.data.members
+        && joinedMember.id == uid
+        && joinedMember.uid == uid
+        && joinedMember.role == invite.role
+        && exists(invitePath)
+        && invite.familyId == familyId
+        && invite.usedByUid == null
+        && invite.expiresAtMs > request.time.toMillis()
+        && getAfter(invitePath).data.usedByUid == uid
+        && getAfter(invitePath).data.usedAt == request.time
+        && (
+          (invite.role == 'adult'
+            && request.resource.data.adultUids.diff(resource.data.adultUids).affectedKeys().hasOnly([uid])
+            && request.resource.data.adultUids.diff(resource.data.adultUids).affectedKeys().size() == 1
+            && request.resource.data.adultUids[uid] == true)
+          || (invite.role == 'child'
+            && request.resource.data.adultUids == resource.data.adultUids)
+        );
     }
 
     match /families/{familyId} {
@@ -27,10 +227,17 @@ service cloud.firestore {
       allow create: if signedIn()
         && request.resource.data.ownerUid == request.auth.uid
         && request.resource.data.memberUids[request.auth.uid] == true
-        && request.resource.data.adultUids[request.auth.uid] == true;
-      allow update: if isFamilyAdult(familyId)
-        || (signedIn()
-          && request.resource.data.memberUids[request.auth.uid] == true);
+        && request.resource.data.adultUids[request.auth.uid] == true
+        && request.resource.data.memberUids.keys().size() == 1
+        && request.resource.data.adultUids.keys().size() == 1
+        && request.resource.data.members.size() == 1
+        && request.resource.data.members[0].id == request.auth.uid
+        && request.resource.data.members[0].uid == request.auth.uid
+        && request.resource.data.members[0].role == 'adult';
+      allow update: if (isFamilyMember(familyId) && membershipFieldsUnchanged())
+        || validAdultMembershipUpdate(familyId)
+        || validInviteJoin(familyId)
+        || validProfileMutation(familyId);
       allow delete: if false;
 
       match /tasks/{taskId} {
@@ -65,9 +272,20 @@ service cloud.firestore {
     match /inviteCodes/{code} {
       allow read: if signedIn();
       allow create: if signedIn()
-        && request.resource.data.createdByUid == request.auth.uid;
+        && request.resource.data.createdByUid == request.auth.uid
+        && isFamilyAdult(request.resource.data.familyId)
+        && request.resource.data.usedByUid == null
+        && request.resource.data.expiresAtMs > request.time.toMillis();
       allow update: if signedIn()
-        && request.resource.data.usedByUid == request.auth.uid;
+        && resource.data.usedByUid == null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedByUid', 'usedAt'])
+        && request.resource.data.usedByUid == request.auth.uid
+        && request.resource.data.usedAt == request.time
+        && resource.data.expiresAtMs > request.time.toMillis()
+        && request.auth.uid in getAfter(/databases/$(database)/documents/families/$(resource.data.familyId))
+          .data.memberUids
+        && getAfter(/databases/$(database)/documents/families/$(resource.data.familyId))
+          .data.memberUids[request.auth.uid] == true;
       allow delete: if false;
     }
   }
