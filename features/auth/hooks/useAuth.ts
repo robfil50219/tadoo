@@ -13,13 +13,7 @@ import {
 } from 'firebase/auth';
 import { create } from 'zustand';
 import { firebaseConfig, firebaseEnabled } from '@/lib/config/firebase';
-
-export interface AppUser {
-  id: string;
-  email?: string;
-  name?: string;
-  isDemo: boolean;
-}
+import type { AppUser } from '../auth.types';
 
 const demoUser: AppUser = {
   id: 'demo-user',

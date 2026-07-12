@@ -9,75 +9,10 @@ import {
   saveFamilyState,
   subscribeToUserFamily,
   type RemoteFamilyUser,
-} from '@/lib/services/familyFirestore';
-
-export type FamilyRole = 'adult' | 'child';
-export type TaskPriority = 'low' | 'normal' | 'high';
-export type TaskCategory = 'home' | 'school' | 'activity' | 'health' | 'shopping';
-
-export interface FamilyMember {
-  id: string;
-  uid?: string;
-  email?: string;
-  accountStatus: 'local' | 'invited' | 'joined';
-  name: string;
-  role: FamilyRole;
-  color: string;
-  avatar: string;
-  status: string;
-  locationLabel: string;
-  locationUpdatedAt: string;
-  latitude: number;
-  longitude: number;
-  locationAccuracyMeters?: number;
-}
-
-export interface TodoItem {
-  id: string;
-  title: string;
-  completed: boolean;
-  assigneeId: string;
-  createdById: string;
-  category: TaskCategory;
-  priority: TaskPriority;
-  reminderMinutesBefore?: number;
-  requiresApproval: boolean;
-  approvedById?: string;
-  dueDateTime?: string;
-}
-
-export interface FamilyMessage {
-  id: string;
-  senderId: string;
-  text: string;
-  sentAt: string;
-  linkedTaskId?: string;
-}
-
-export interface FamilyInvite {
-  id: string;
-  code: string;
-  familyId: string;
-  role: FamilyRole;
-  createdAt: string;
-  expiresAt: string;
-  createdById?: string;
-  recipient?: string;
-  usedByUid?: string;
-}
-
-export interface FamilyState {
-  familyId?: string;
-  familyName: string;
-  isSetupComplete: boolean;
-  ownerUid?: string;
-  memberUids?: Record<string, boolean>;
-  adultUids?: Record<string, boolean>;
-  members: FamilyMember[];
-  todos: TodoItem[];
-  messages: FamilyMessage[];
-  invites: FamilyInvite[];
-}
+} from '@/features/family/services/familyFirestore';
+import type { FamilyMessage } from '@/features/chat/chat.types';
+import type { FamilyInvite, FamilyMember, FamilyRole, FamilyState } from '@/features/family/family.types';
+import type { TaskCategory, TaskPriority, TodoItem } from '@/features/tasks/tasks.types';
 
 interface RemoteContext {
   enabled: boolean;

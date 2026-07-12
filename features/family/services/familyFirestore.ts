@@ -12,7 +12,7 @@ import {
   type Unsubscribe,
 } from 'firebase/firestore';
 import { firebaseConfig, firebaseEnabled } from '@/lib/config/firebase';
-import type { FamilyInvite, FamilyMember, FamilyRole, FamilyState } from '@/lib/store/todoStore';
+import type { FamilyInvite, FamilyMember, FamilyRole, FamilyState } from '../family.types';
 
 export interface RemoteFamilyUser {
   id: string;

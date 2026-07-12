@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { TodoItem, useTodoStore } from '@/lib/store/todoStore';
+import { useTodoStore } from '@/lib/store/todoStore';
+import type { TodoItem } from '../tasks.types';
 import { useLanguage } from '@/lib/hooks/useLanguage';
 import { memberColorClassName } from '@/lib/memberColors';
 import './Calendar.scss';
