@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Circle as LeafletCircle, Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
-import { type FamilyMember, useTodoStore } from '@/lib/store/todoStore';
+import { useTodoStore } from '@/lib/store/todoStore';
+import type { FamilyMember } from '../family.types';
 import { useLanguage } from '@/lib/hooks/useLanguage';
 import { memberColorClassName } from '@/lib/memberColors';
 import './Location.scss';

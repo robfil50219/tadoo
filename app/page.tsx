@@ -2,21 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useFamilySync } from '@/lib/hooks/useFamilySync';
+import { AuthModal, useAuth } from '@/features/auth';
+import { Family, FamilySetup, Location, useFamilySync } from '@/features/family';
+import { Calendar, Dashboard, TasksList } from '@/features/tasks';
+import { Chat } from '@/features/chat';
+import { Settings } from '@/features/settings';
 import { useLanguage } from '@/lib/hooks/useLanguage';
 import { useThemeMode } from '@/lib/hooks/useThemeMode';
 import { fadeInUpVariants, modalBackdropVariants } from '@/lib/animations';
-import Navigation from '@/components/Navigation';
-import Dashboard from '@/components/views/Dashboard';
-import TasksList from '@/components/views/TasksList';
-import Calendar from '@/components/views/Calendar';
-import Family from '@/components/views/Family';
-import Chat from '@/components/views/Chat';
-import Location from '@/components/views/Location';
-import Settings from '@/components/views/Settings';
-import AuthModal from '@/components/AuthModal';
-import FamilySetup from '@/components/FamilySetup';
+import { Navigation } from '@/components/layout';
 import './page.scss';
 
 type AppView = 'dashboard' | 'tasks' | 'calendar' | 'family' | 'chat' | 'location' | 'settings';

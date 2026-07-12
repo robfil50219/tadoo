@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useAuth } from '@/lib/hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
 import { firebaseEnabled } from '@/lib/config/firebase';
 import { useLanguage } from '@/lib/hooks/useLanguage';
 import { useThemeMode } from '@/lib/hooks/useThemeMode';
@@ -14,7 +14,7 @@ import {
   subtleButtonHover,
   subtleButtonTap,
 } from '@/lib/animations';
-import LanguageSwitcher from './LanguageSwitcher';
+import { LanguageSwitcher } from '@/components/shared';
 import AuthSceneCanvas from './AuthSceneCanvas';
 import './AuthModal.scss';
 

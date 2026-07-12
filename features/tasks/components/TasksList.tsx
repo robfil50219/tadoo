@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { TaskCategory, TaskPriority, TodoItem, useTodoStore } from '@/lib/store/todoStore';
+import { useTodoStore } from '@/lib/store/todoStore';
+import type { TaskCategory, TaskPriority, TodoItem } from '../tasks.types';
 import { useLanguage } from '@/lib/hooks/useLanguage';
 import { memberColorClassName } from '@/lib/memberColors';
 import {

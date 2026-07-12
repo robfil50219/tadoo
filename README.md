@@ -125,35 +125,32 @@ app/
 └── terms/                  Terms of service page
 
 components/
-├── AuthModal.tsx           Login and registration
-├── AuthSceneCanvas.tsx     Animated canvas background for auth
-├── FamilySetup.tsx         Create or join a family
-├── LanguageSwitcher.tsx    Language selector component
-├── Navigation.tsx          Sidebar navigation with responsive design
-└── views/
-    ├── Dashboard.tsx       Overview with today's tasks and family members
-    ├── TasksList.tsx       Task list with CRUD and filtering
-    ├── Calendar.tsx        Month calendar with agenda panel
-    ├── Chat.tsx            Real-time family chat
-    ├── Family.tsx          Family members and invitations
-    ├── Location.tsx        Map view and GPS sharing
-    └── Settings.tsx        Account, theme, language, and privacy
+├── layout/                 Application shell components such as Navigation
+└── shared/                 Reusable components such as LanguageSwitcher
+
+features/
+├── auth/                   Authentication components, hooks, and types
+├── chat/                   Family chat components, hooks, and types
+├── family/                 Setup, members, location, sync, and services
+├── settings/               Account, appearance, and privacy settings
+└── tasks/                  Task list, calendar, dashboard, hooks, and types
 
 lib/
 ├── config/firebase.ts      Firebase configuration and feature flag
 ├── hooks/
-│   ├── useAuth.ts          Authentication (login, register, logout)
-│   ├── useFamilySync.ts    Firestore synchronization
 │   ├── useLanguage.ts      i18n hook with t() function
 │   └── useThemeMode.ts     Dark/light mode
 ├── i18n/translations.ts    All translations (no, en, sv, da)
-├── services/
-│   └── familyFirestore.ts  Firestore CRUD and real-time listeners
 ├── store/
 │   └── todoStore.ts        Zustand store (family, tasks, chat, location)
 ├── animations.ts           Framer Motion variants
 └── memberColors.ts         Color map for family members
 ```
+
+Each feature owns its components, hooks, and domain types. Feature `index.ts` files
+are public entrypoints; code outside a feature should prefer those barrel exports
+over internal paths. ESLint's `import/no-cycle` rule guards these boundaries against
+circular dependencies.
 
 ---
 

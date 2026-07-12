@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { FamilyRole, useTodoStore } from '@/lib/store/todoStore';
+import { useTodoStore } from '@/lib/store/todoStore';
+import type { FamilyRole } from '../family.types';
 import { useLanguage } from '@/lib/hooks/useLanguage';
 import './Family.scss';
 

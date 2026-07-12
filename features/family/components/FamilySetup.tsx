@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useTodoStore } from '@/lib/store/todoStore';
-import type { AppUser } from '@/lib/hooks/useAuth';
+import type { AppUser } from '@/features/auth/auth.types';
 import { useLanguage } from '@/lib/hooks/useLanguage';
 import { useThemeMode } from '@/lib/hooks/useThemeMode';
 import { fadeInUpVariants, subtleButtonHover, subtleButtonTap } from '@/lib/animations';

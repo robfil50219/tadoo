@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useTodoStore } from '@/lib/store/todoStore';
-import type { AppUser } from '@/lib/hooks/useAuth';
+import type { AppUser } from '@/features/auth/auth.types';
 
 export function useFamilySync(user: AppUser | null) {
   const state = useTodoStore((store) => store.state);
