@@ -7,6 +7,7 @@ import {
   joinFamilyByInviteCode,
   publishInviteCode,
   saveFamilyState,
+  saveMemberProfileMutation,
   subscribeToUserFamily,
   type RemoteFamilyUser,
 } from '@/features/family/services/familyFirestore';
@@ -32,7 +33,8 @@ interface TodoStoreState {
   approveTodo: (taskId: string, adultId: string) => void;
   addMessage: (senderId: string, text: string, linkedTaskId?: string) => void;
   addMember: (name: string, role: FamilyRole, color: string) => void;
-  updateMember: (member: FamilyMember) => void;
+  updateMember: (member: FamilyMember) => Promise<void>;
+  deleteMember: (memberId: string) => Promise<void>;
   updateMemberLocation: (memberId: string, locationLabel: string, latitude?: number, longitude?: number, accuracyMeters?: number) => void;
   createFamily: (familyName: string, adultName: string) => void;
   createFamilyForUser: (user: RemoteFamilyUser, familyName: string, adultName: string) => Promise<void>;
@@ -78,6 +80,30 @@ export const useTodoStore = create<TodoStoreState>()(
             void saveFamilyState(nextState).catch((error) => {
               set({ familyError: errorMessageFor(error, 'Kunne ikke lagre familien.') });
             });
+          }
+        };
+
+        const commitMemberProfiles = async (
+          nextState: FamilyState,
+          mutation:
+            | { action: 'create'; after: FamilyMember }
+            | { action: 'update'; before: FamilyMember; after: FamilyMember }
+            | { action: 'delete'; before: FamilyMember }
+        ): Promise<void> => {
+          set({ state: nextState, familyError: null });
+          const { remote } = get();
+          if (remote.enabled && nextState.familyId) {
+            try {
+              await saveMemberProfileMutation(nextState.familyId, nextState.members, mutation);
+            } catch (error) {
+              set({ state: get().state === nextState ? { ...nextState, members: mutation.action === 'create'
+                ? nextState.members.filter((member) => member.id !== mutation.after.id)
+                : mutation.action === 'delete'
+                  ? [...nextState.members, mutation.before]
+                  : nextState.members.map((member) => member.id === mutation.before.id ? mutation.before : member) } : get().state,
+                familyError: errorMessageFor(error, 'Kunne ikke lagre medlemsprofilen.') });
+              throw error;
+            }
           }
         };
 
@@ -240,13 +266,31 @@ export const useTodoStore = create<TodoStoreState>()(
               latitude: 59.9139,
               longitude: 10.7522,
             };
-            commitState({ ...state, members: [...state.members, member] });
+            void commitMemberProfiles(
+              { ...state, members: [...state.members, member] },
+              { action: 'create', after: member }
+            ).catch(() => undefined);
           },
 
-          updateMember: (updated) => {
+          updateMember: async (updated) => {
             const state = get().state;
+            const previous = state.members.find((member) => member.id === updated.id);
+            if (!previous) return;
             const members = state.members.map((member) => (member.id === updated.id ? updated : member));
-            commitState({ ...state, members });
+            await commitMemberProfiles(
+              { ...state, members },
+              { action: 'update', before: previous, after: updated }
+            );
+          },
+
+          deleteMember: async (memberId) => {
+            const state = get().state;
+            const previous = state.members.find((member) => member.id === memberId);
+            if (!previous) return;
+            await commitMemberProfiles(
+              { ...state, members: state.members.filter((member) => member.id !== memberId) },
+              { action: 'delete', before: previous }
+            );
           },
 
           updateMemberLocation: (memberId, locationLabel, latitude, longitude, accuracyMeters) => {
@@ -254,19 +298,21 @@ export const useTodoStore = create<TodoStoreState>()(
             const hasLatitude = typeof latitude === 'number' && Number.isFinite(latitude);
             const hasLongitude = typeof longitude === 'number' && Number.isFinite(longitude);
             const hasAccuracy = typeof accuracyMeters === 'number' && Number.isFinite(accuracyMeters);
-            const members = state.members.map((member) =>
-              member.id === memberId
-                ? {
-                    ...member,
-                    locationLabel,
-                    locationUpdatedAt: new Date().toISOString(),
-                    latitude: hasLatitude ? latitude : member.latitude,
-                    longitude: hasLongitude ? longitude : member.longitude,
-                    locationAccuracyMeters: hasAccuracy ? accuracyMeters : member.locationAccuracyMeters,
-                  }
-                : member
-            );
-            commitState({ ...state, members });
+            const previous = state.members.find((member) => member.id === memberId);
+            if (!previous) return;
+            const updated: FamilyMember = {
+              ...previous,
+              locationLabel,
+              locationUpdatedAt: new Date().toISOString(),
+              latitude: hasLatitude ? latitude : previous.latitude,
+              longitude: hasLongitude ? longitude : previous.longitude,
+              locationAccuracyMeters: hasAccuracy ? accuracyMeters : previous.locationAccuracyMeters,
+            };
+            const members = state.members.map((member) => (member.id === memberId ? updated : member));
+            void commitMemberProfiles(
+              { ...state, members },
+              { action: 'update', before: previous, after: updated }
+            ).catch(() => undefined);
           },
 
           createFamily: (familyName, adultName) => {

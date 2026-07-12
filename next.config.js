@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   allowedDevOrigins: ['127.0.0.1', '10.0.0.12'],
+  images: {
+    unoptimized: true,
+  },
 };
 
 module.exports = nextConfig;
