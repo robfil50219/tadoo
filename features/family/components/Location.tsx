@@ -15,13 +15,55 @@ interface MapBounds {
   maxLon: number;
 }
 
+interface PendingGpsPosition {
+  memberId: string;
+  label: string;
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  receivedAt: number;
+}
+
+interface PersistedGpsPosition {
+  memberId: string;
+  latitude: number;
+  longitude: number;
+  persistedAt: number;
+}
+
 const REQUIRED_GPS_ACCURACY_METERS = 1;
+const MAX_LIVE_GPS_ACCURACY_METERS = 100;
+const LIVE_GPS_MIN_DISTANCE_METERS = 30;
+const LIVE_GPS_MAX_INTERVAL_MS = 20_000;
+const EARTH_RADIUS_METERS = 6_371_000;
 
 const isValidCoordinate = (value: number) => Number.isFinite(value);
 
 const clampLatitude = (latitude: number) => Math.max(-85, Math.min(85, latitude));
 
 const formatCoordinate = (value: number) => value.toFixed(5);
+
+const toRadians = (value: number) => (value * Math.PI) / 180;
+
+const distanceInMeters = (
+  fromLatitude: number,
+  fromLongitude: number,
+  toLatitude: number,
+  toLongitude: number
+) => {
+  const latitudeDelta = toRadians(toLatitude - fromLatitude);
+  const longitudeDelta = toRadians(toLongitude - fromLongitude);
+  const fromLatitudeRadians = toRadians(fromLatitude);
+  const toLatitudeRadians = toRadians(toLatitude);
+
+  const haversine =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(fromLatitudeRadians) *
+      Math.cos(toLatitudeRadians) *
+      Math.sin(longitudeDelta / 2) ** 2;
+
+  return 2 * EARTH_RADIUS_METERS * Math.asin(Math.sqrt(haversine));
+};
 
 type Translate = (key: string, replacements?: Record<string, string | number>) => string;
 
@@ -127,6 +169,9 @@ export default function Location() {
   const hasFittedMapRef = useRef(false);
   const fittedMemberCountRef = useRef(0);
   const watchIdRef = useRef<number | null>(null);
+  const pendingPersistTimerRef = useRef<number | null>(null);
+  const pendingGpsPositionRef = useRef<PendingGpsPosition | null>(null);
+  const lastPersistedGpsPositionRef = useRef<PersistedGpsPosition | null>(null);
   const [mapReady, setMapReady] = useState(false);
   const [mapZoom, setMapZoom] = useState(13);
   const [memberId, setMemberId] = useState(state.members[0]?.id || '');
@@ -156,6 +201,57 @@ export default function Location() {
   const selectedMemberLatitude = selectedMember?.latitude;
   const selectedMemberLongitude = selectedMember?.longitude;
   const selectedMemberHasMapPosition = hasMapPosition(selectedMember);
+
+  const clearPendingPersistTimer = () => {
+    if (pendingPersistTimerRef.current !== null) {
+      window.clearTimeout(pendingPersistTimerRef.current);
+      pendingPersistTimerRef.current = null;
+    }
+  };
+
+  const resetLiveGpsPersistence = () => {
+    clearPendingPersistTimer();
+    pendingGpsPositionRef.current = null;
+    lastPersistedGpsPositionRef.current = null;
+  };
+
+  const persistLiveGpsPosition = (position: PendingGpsPosition) => {
+    updateMemberLocation(
+      position.memberId,
+      position.label,
+      position.latitude,
+      position.longitude,
+      position.accuracy
+    );
+
+    lastPersistedGpsPositionRef.current = {
+      memberId: position.memberId,
+      latitude: position.latitude,
+      longitude: position.longitude,
+      persistedAt: Date.now(),
+    };
+    pendingGpsPositionRef.current = null;
+    clearPendingPersistTimer();
+  };
+
+  const schedulePendingGpsPersist = () => {
+    const lastPersisted = lastPersistedGpsPositionRef.current;
+    if (!lastPersisted || pendingPersistTimerRef.current !== null) return;
+
+    const elapsed = Date.now() - lastPersisted.persistedAt;
+    const delay = Math.max(0, LIVE_GPS_MAX_INTERVAL_MS - elapsed);
+
+    pendingPersistTimerRef.current = window.setTimeout(() => {
+      pendingPersistTimerRef.current = null;
+      const pending = pendingGpsPositionRef.current;
+      const currentLastPersisted = lastPersistedGpsPositionRef.current;
+
+      if (!pending || !currentLastPersisted) return;
+      if (pending.memberId !== currentLastPersisted.memberId) return;
+
+      persistLiveGpsPosition(pending);
+    }, delay);
+  };
 
   useEffect(() => {
     const mapElement = mapRef.current;
@@ -315,6 +411,9 @@ export default function Location() {
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
+      clearPendingPersistTimer();
+      pendingGpsPositionRef.current = null;
+      lastPersistedGpsPositionRef.current = null;
     };
   }, []);
 
@@ -323,6 +422,7 @@ export default function Location() {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
     }
+    resetLiveGpsPersistence();
     setLiveMemberId(null);
     setGpsStatus(t('location.liveGpsStopped'));
   };
@@ -373,7 +473,10 @@ export default function Location() {
 
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
     }
+
+    resetLiveGpsPersistence();
 
     const trackedMemberId = selectedMember.id;
     const trackedMemberName = selectedMember.name;
@@ -390,7 +493,57 @@ export default function Location() {
         const nextLongitude = position.coords.longitude;
         const accuracy = position.coords.accuracy;
 
-        updateMemberLocation(trackedMemberId, nextLabel, nextLatitude, nextLongitude, accuracy);
+        if (!isValidCoordinate(nextLatitude) || !isValidCoordinate(nextLongitude)) {
+          return;
+        }
+
+        const lastPersisted = lastPersistedGpsPositionRef.current;
+        const hasPreviousPersistedPosition =
+          lastPersisted?.memberId === trackedMemberId;
+
+        if (
+          hasPreviousPersistedPosition &&
+          (!Number.isFinite(accuracy) || accuracy > MAX_LIVE_GPS_ACCURACY_METERS)
+        ) {
+          setGpsStatus(
+            t('location.liveGpsUpdated', { accuracy: formatAccuracy(accuracy, t) })
+          );
+          setLocationError('');
+          return;
+        }
+
+        const pendingPosition: PendingGpsPosition = {
+          memberId: trackedMemberId,
+          label: nextLabel,
+          latitude: nextLatitude,
+          longitude: nextLongitude,
+          accuracy,
+          receivedAt: Date.now(),
+        };
+
+        pendingGpsPositionRef.current = pendingPosition;
+
+        if (!hasPreviousPersistedPosition || !lastPersisted) {
+          persistLiveGpsPosition(pendingPosition);
+        } else {
+          const movedDistance = distanceInMeters(
+            lastPersisted.latitude,
+            lastPersisted.longitude,
+            nextLatitude,
+            nextLongitude
+          );
+          const elapsed = Date.now() - lastPersisted.persistedAt;
+
+          if (
+            movedDistance >= LIVE_GPS_MIN_DISTANCE_METERS ||
+            elapsed >= LIVE_GPS_MAX_INTERVAL_MS
+          ) {
+            persistLiveGpsPosition(pendingPosition);
+          } else {
+            schedulePendingGpsPersist();
+          }
+        }
+
         setGpsStatus(
           isPreciseEnough(accuracy)
             ? t('location.liveGpsVerified', { accuracy: formatAccuracy(accuracy, t) })
@@ -410,6 +563,7 @@ export default function Location() {
           navigator.geolocation.clearWatch(watchIdRef.current);
           watchIdRef.current = null;
         }
+        resetLiveGpsPersistence();
       },
       {
         enableHighAccuracy: true,
