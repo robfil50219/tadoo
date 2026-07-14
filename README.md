@@ -71,7 +71,7 @@ Tadoo is a family organizer that helps parents and kids share tasks, coordinate 
 ### Installation
 
 ```bash
-git clone https://github.com/robfil50219/tadoo.git
+git clone https://github.com/robertfilep/tadoo.git
 cd tadoo
 npm install
 npm run dev
